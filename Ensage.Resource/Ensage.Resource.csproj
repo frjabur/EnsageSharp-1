@@ -40,7 +40,6 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BuildInfo.cs" />
     <Compile Include="MD5.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -5652,12 +5651,6 @@
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.-->
-  <Target Name="BeforeBuild">
-    <PropertyGroup>
-      <DateTimeNow>$([System.DateTime]::Now)</DateTimeNow>
-      <PreBuildEvent><![CDATA[echo public class BuildInfo { public const string ProjectDir = @"$(ProjectDir)"; public const string BuildStamp = @"$(DateTimeNow)"; } > $(ProjectDir)BuildInfo.cs]]></PreBuildEvent>
-    </PropertyGroup>
-  </Target>
   <Target Name="AfterBuild">
   </Target>
 </Project>
