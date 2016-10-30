@@ -44,10 +44,16 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ensage">
-      <HintPath>C:\EnsageSharp\System\Ensage.dll</HintPath>
+      <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\Ensage.dll</HintPath>
     </Reference>
     <Reference Include="Ensage.Common">
-      <HintPath>C:\EnsageSharp\System\Ensage.Common.dll</HintPath>
+      <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\Ensage.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX">
+      <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9">
+      <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>

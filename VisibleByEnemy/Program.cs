@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using SharpDX;
 
 namespace VisibleByEnemy
 {
@@ -15,13 +16,75 @@ namespace VisibleByEnemy
 
         private static readonly Menu Menu = new Menu("VisibleByEnemy", "visibleByEnemy", true);
 
+        private static int red => Menu.Item("red").GetValue<Slider>().Value;
+
+        private static int green => Menu.Item("green").GetValue<Slider>().Value;
+
+        private static int blue => Menu.Item("blue").GetValue<Slider>().Value;
+
+        private static int transparency => Menu.Item("transparency").GetValue<Slider>().Value;
+
+        private static int GetEffectId => Menu.Item("type").GetValue<StringList>().SelectedIndex;
+
+        private static readonly string[] Effects =
+        {
+            "particles/items_fx/aura_shivas.vpcf",
+            "materials/ensage_ui/particles/visiblebyenemy.vpcf",
+            "materials/ensage_ui/particles/vbe.vpcf",
+            "materials/ensage_ui/particles/visiblebyenemy.vpcf",
+            "materials/ensage_ui/particles/visiblebyenemy.vpcf",
+            "materials/ensage_ui/particles/visiblebyenemy.vpcf",
+            "materials/ensage_ui/particles/visiblebyenemy.vpcf",
+            "materials/ensage_ui/particles/visiblebyenemy.vpcf",
+            "materials/ensage_ui/particles/visiblebyenemy.vpcf",
+            "materials/ensage_ui/particles/visiblebyenemy.vpcf"
+        };
+        private static readonly string[] EffectsName =
+        {
+            "Default",
+            "New",
+            "vbe",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+        };
+
         #endregion
 
         #region Public Methods and Operators
 
         private static void Main()
         {
-            var item = new MenuItem("heroes", "Check allied heroes").SetValue(true);
+            var sList = new StringList()
+            {
+                SList   = EffectsName, SelectedIndex = 0
+            };
+            //var effectType = new MenuItem("type", "EffectType").SetValue(new Slider(0,0,9));
+            var effectType = new MenuItem("type", "EffectType").SetValue(sList);
+            effectType.ValueChanged += Item_ValueChanged;
+            Menu.AddItem(effectType);
+
+            var item = new MenuItem("red", "Red").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Red);
+            item.ValueChanged += Item_ValueChanged;
+            Menu.AddItem(item);
+
+            item = new MenuItem("green", "Green").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Green);
+            item.ValueChanged += Item_ValueChanged;
+            Menu.AddItem(item);
+
+            item = new MenuItem("blue", "Blue").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Blue);
+            item.ValueChanged += Item_ValueChanged;
+            Menu.AddItem(item);
+
+            item = new MenuItem("transparency", "Transparency").SetValue(new Slider(255, 0, 255));
+            item.ValueChanged += Item_ValueChanged;
+            Menu.AddItem(item);
+
+            item = new MenuItem("heroes", "Check allied heroes").SetValue(true);
             item.ValueChanged += Item_ValueChanged;
             Menu.AddItem(item);
 
@@ -158,18 +221,31 @@ namespace VisibleByEnemy
             }
         }
 
-        private static void HandleEffect(Unit unit, bool visible)
+        private static void HandleEffect(Unit unit, bool visible,int index=-1)
         {
             if (!unit.IsValid)
             {
                 return;
             }
+            if (index == -1)
+                index = GetEffectId;
             if (visible && unit.IsAlive)
             {
                 ParticleEffect effect;
                 if (!_effects.TryGetValue(unit, out effect))
                 {
-                    effect = unit.AddParticleEffect("particles/items_fx/aura_shivas.vpcf");
+                    
+                    effect = unit.AddParticleEffect(Effects[index]);
+                    switch (index)
+                    {
+                        case 0:
+
+                            break;
+                        case 1:
+                            effect.SetControlPoint(1,new Vector3(red, green, blue));
+                            effect.SetControlPoint(2,new Vector3(transparency));
+                            break;
+                    }
                     _effects.Add(unit, effect);
                 }
             }
@@ -211,6 +287,22 @@ namespace VisibleByEnemy
                     break;
             }
             // update dictionary
+            if (item.Name == "type")
+            {
+                /*hero = true;
+                wards = true;
+                mines = true;
+                units = true;
+                buildings = true;*/
+                var index = e.GetNewValue<StringList>().SelectedIndex;
+                //Game.PrintMessage(" Effect ==> " + EffectsName[index], MessageType.ChatMessage);
+                foreach (var source in ObjectManager.GetEntities<Hero>().Where(x=>x.Team==ObjectManager.LocalHero.Team))
+                {
+                    HandleEffect(source, false);
+                    if (source.IsVisible)
+                        HandleEffect(source, true, index);
+                }
+            }
             var newDict = new Dictionary<Unit,ParticleEffect>();
             foreach (var effect in _effects)
             {
@@ -228,6 +320,7 @@ namespace VisibleByEnemy
                     newDict.Add(effect.Key,effect.Value);
             }
             _effects = newDict;
+            
         }
 
         #endregion
