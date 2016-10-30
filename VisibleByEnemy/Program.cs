@@ -69,19 +69,19 @@ namespace VisibleByEnemy
             Menu.AddItem(effectType);
 
             var item = new MenuItem("red", "Red").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Red);
-            item.ValueChanged += Item_ValueChanged;
+            item.ValueChanged += ChangeColor;
             Menu.AddItem(item);
 
             item = new MenuItem("green", "Green").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Green);
-            item.ValueChanged += Item_ValueChanged;
+            item.ValueChanged += ChangeColor;
             Menu.AddItem(item);
 
             item = new MenuItem("blue", "Blue").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Blue);
-            item.ValueChanged += Item_ValueChanged;
+            item.ValueChanged += ChangeColor;
             Menu.AddItem(item);
 
             item = new MenuItem("transparency", "Transparency").SetValue(new Slider(255, 0, 255));
-            item.ValueChanged += Item_ValueChanged;
+            item.ValueChanged += ChangeTrans;
             Menu.AddItem(item);
 
             item = new MenuItem("heroes", "Check allied heroes").SetValue(true);
@@ -108,6 +108,23 @@ namespace VisibleByEnemy
 
             LoopEntities();
             Entity.OnInt32PropertyChange += Entity_OnInt32PropertyChange;
+        }
+
+        private static void ChangeColor(object sender, OnValueChangeEventArgs e)
+        {
+            foreach (var effect in _effects.Values.Where(x => x != null))
+            {
+                effect.SetControlPoint(1, new Vector3(red, green, blue));
+            }
+        }
+
+        private static void ChangeTrans(object sender, OnValueChangeEventArgs e)
+        {
+            foreach (var effect in _effects.Values.Where(x => x != null))
+            {
+                effect.SetControlPoint(2, new Vector3(transparency));
+                effect.Restart();
+            }
         }
 
         #endregion
@@ -259,6 +276,7 @@ namespace VisibleByEnemy
                 }
             }
         }
+
 
         // ReSharper disable once InconsistentNaming
         private static void Item_ValueChanged(object sender, OnValueChangeEventArgs e)
