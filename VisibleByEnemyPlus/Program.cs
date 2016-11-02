@@ -22,7 +22,7 @@ namespace VisibleByEnemyPlus
 
         private static int blue => Menu.Item("blue").GetValue<Slider>().Value;
 
-        private static int transparency => Menu.Item("transparency").GetValue<Slider>().Value;
+        private static int alpha => Menu.Item("alpha").GetValue<Slider>().Value;
 
         private static int GetEffectId => Menu.Item("type").GetValue<StringList>().SelectedIndex;
 
@@ -31,26 +31,18 @@ namespace VisibleByEnemyPlus
             "particles/items_fx/aura_shivas.vpcf",
             "materials/ensage_ui/particles/visiblebyenemy.vpcf",
             "materials/ensage_ui/particles/vbe.vpcf",
-            "materials/ensage_ui/particles/visiblebyenemy.vpcf",
-            "materials/ensage_ui/particles/visiblebyenemy.vpcf",
-            "materials/ensage_ui/particles/visiblebyenemy.vpcf",
-            "materials/ensage_ui/particles/visiblebyenemy.vpcf",
-            "materials/ensage_ui/particles/visiblebyenemy.vpcf",
-            "materials/ensage_ui/particles/visiblebyenemy.vpcf",
-            "materials/ensage_ui/particles/visiblebyenemy.vpcf"
+            "materials/ensage_ui/particles/visiblebyenemy_omniknight.vpcf",
+            "materials/ensage_ui/particles/visiblebyenemy_assault.vpcf",
+            "materials/ensage_ui/particles/visiblebyenemy_arrow.vpcf"
         };
         private static readonly string[] EffectsName =
         {
             "Default",
-            "New",
-            "vbe",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9"
+            "Default MOD",
+            "VBE",
+            "Omniknight",
+            "Assault",
+            "Arrow"
         };
 
         #endregion
@@ -80,7 +72,7 @@ namespace VisibleByEnemyPlus
             item.ValueChanged += ChangeColor;
             Menu.AddItem(item);
 
-            item = new MenuItem("transparency", "Transparency").SetValue(new Slider(255, 0, 255));
+            item = new MenuItem("alpha", "Alpha").SetValue(new Slider(255, 0, 255));
             item.ValueChanged += ChangeTrans;
             Menu.AddItem(item);
 
@@ -122,7 +114,7 @@ namespace VisibleByEnemyPlus
         {
             foreach (var effect in _effects.Values.Where(x => x != null))
             {
-                effect.SetControlPoint(2, new Vector3(transparency));
+                effect.SetControlPoint(2, new Vector3(alpha));
                 effect.Restart();
             }
         }
@@ -260,7 +252,23 @@ namespace VisibleByEnemyPlus
                             break;
                         case 1:
                             effect.SetControlPoint(1,new Vector3(red, green, blue));
-                            effect.SetControlPoint(2,new Vector3(transparency));
+                            effect.SetControlPoint(2,new Vector3(alpha));
+                            break;
+                        case 2:
+                            effect.SetControlPoint(1, new Vector3(red, green, blue));
+                            effect.SetControlPoint(2, new Vector3(alpha));
+                            break;
+                        case 3:
+                            effect.SetControlPoint(1, new Vector3(red, green, blue));
+                            effect.SetControlPoint(2, new Vector3(alpha));
+                            break;
+                        case 4:
+                            effect.SetControlPoint(1, new Vector3(red, green, blue));
+                            effect.SetControlPoint(2, new Vector3(alpha));
+                            break;
+                        case 5:
+                            effect.SetControlPoint(1, new Vector3(red, green, blue));
+                            effect.SetControlPoint(2, new Vector3(alpha));
                             break;
                     }
                     _effects.Add(unit, effect);
