@@ -33,7 +33,14 @@ namespace VisibleByEnemyPlus
             "materials/ensage_ui/particles/vbe.vpcf",
             "materials/ensage_ui/particles/visiblebyenemy_omniknight.vpcf",
             "materials/ensage_ui/particles/visiblebyenemy_assault.vpcf",
-            "materials/ensage_ui/particles/visiblebyenemy_arrow.vpcf"
+            "materials/ensage_ui/particles/visiblebyenemy_arrow.vpcf",
+			"materials/ensage_ui/particles/visiblebyenemy_mark.vpcf",
+			"materials/ensage_ui/particles/visiblebyenemy_glyph.vpcf",
+			"materials/ensage_ui/particles/visiblebyenemy_coin.vpcf",
+			"materials/ensage_ui/particles/visiblebyenemy_lightning.vpcf",
+			"materials/ensage_ui/particles/visiblebyenemy_energy_orb.vpcf",
+			"materials/ensage_ui/particles/visiblebyenemy_pentagon.vpcf",
+			"materials/ensage_ui/particles/visiblebyenemy_axis.vpcf"
         };
         private static readonly string[] EffectsName =
         {
@@ -42,7 +49,14 @@ namespace VisibleByEnemyPlus
             "VBE",
             "Omniknight",
             "Assault",
-            "Arrow"
+			"Arrow",
+            "Mark",
+			"Glyph",
+			"Coin",
+			"Lightning",
+			"Energy Orb",
+			"Pentagon",
+			"Axis"
         };
 
         #endregion
@@ -250,23 +264,7 @@ namespace VisibleByEnemyPlus
                         case 0:
 
                             break;
-                        case 1:
-                            effect.SetControlPoint(1,new Vector3(red, green, blue));
-                            effect.SetControlPoint(2,new Vector3(alpha));
-                            break;
-                        case 2:
-                            effect.SetControlPoint(1, new Vector3(red, green, blue));
-                            effect.SetControlPoint(2, new Vector3(alpha));
-                            break;
-                        case 3:
-                            effect.SetControlPoint(1, new Vector3(red, green, blue));
-                            effect.SetControlPoint(2, new Vector3(alpha));
-                            break;
-                        case 4:
-                            effect.SetControlPoint(1, new Vector3(red, green, blue));
-                            effect.SetControlPoint(2, new Vector3(alpha));
-                            break;
-                        case 5:
+                        default:
                             effect.SetControlPoint(1, new Vector3(red, green, blue));
                             effect.SetControlPoint(2, new Vector3(alpha));
                             break;
