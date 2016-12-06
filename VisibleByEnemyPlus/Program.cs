@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Ensage.Common.Extensions;
 using SharpDX;
 
 namespace VisibleByEnemyPlus
@@ -28,12 +29,12 @@ namespace VisibleByEnemyPlus
 
         private static readonly string[] Effects =
         {
-            "particles/items_fx/aura_shivas.vpcf",
-            "materials/ensage_ui/particles/visiblebyenemy.vpcf",
-            "materials/ensage_ui/particles/vbe.vpcf",
-            "materials/ensage_ui/particles/visiblebyenemy_omniknight.vpcf",
-            "materials/ensage_ui/particles/visiblebyenemy_assault.vpcf",
-            "materials/ensage_ui/particles/visiblebyenemy_arrow.vpcf",
+        "particles/items_fx/aura_shivas.vpcf",
+        "materials/ensage_ui/particles/visiblebyenemy.vpcf",
+        "materials/ensage_ui/particles/vbe.vpcf",
+        "materials/ensage_ui/particles/visiblebyenemy_omniknight.vpcf",
+        "materials/ensage_ui/particles/visiblebyenemy_assault.vpcf",
+        "materials/ensage_ui/particles/visiblebyenemy_arrow.vpcf",
 	    "materials/ensage_ui/particles/visiblebyenemy_mark.vpcf",
 	    "materials/ensage_ui/particles/visiblebyenemy_glyph.vpcf",
 	    "materials/ensage_ui/particles/visiblebyenemy_coin.vpcf",
@@ -44,13 +45,13 @@ namespace VisibleByEnemyPlus
         };
         private static readonly string[] EffectsName =
         {
-            "Default",
-            "Default MOD",
-            "VBE",
-            "Omniknight",
-            "Assault",
+        "Default",
+        "Default MOD",
+        "VBE",
+        "Omniknight",
+        "Assault",
 	    "Arrow",
-            "Mark",
+        "Mark",
 	    "Glyph",
 	    "Coin",
 	    "Lightning",
@@ -102,7 +103,7 @@ namespace VisibleByEnemyPlus
             item.ValueChanged += Item_ValueChanged;
             Menu.AddItem(item);
 
-            item = new MenuItem("units", "Check controlled units (not lane creeps)").SetValue(true);
+            item = new MenuItem("units", "Check controlled units (not lane creeps) and Neutral creeps").SetValue(true);
             item.ValueChanged += Item_ValueChanged;
             Menu.AddItem(item);
 
@@ -164,9 +165,12 @@ namespace VisibleByEnemyPlus
 
             if (args.PropertyName != "m_iTaggedAsVisibleByTeam")
                 return;
-
+            
             var player = ObjectManager.LocalPlayer;
-            if (player == null || player.Team == Team.Observer || sender.Team != player.Team)
+            var hero = ObjectManager.LocalHero;
+            if (hero==null)
+                return;
+            if (player == null || player.Team == Team.Observer || sender.Team == ObjectManager.LocalHero.GetEnemyTeam())
                 return;
 
             var visible = args.NewValue == 0x1E;
