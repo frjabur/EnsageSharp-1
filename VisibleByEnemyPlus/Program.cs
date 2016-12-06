@@ -103,7 +103,7 @@ namespace VisibleByEnemyPlus
             item.ValueChanged += Item_ValueChanged;
             Menu.AddItem(item);
 
-            item = new MenuItem("units", "Check controlled units (not lane creeps) and Neutral creeps").SetValue(true);
+            item = new MenuItem("units", "Check controlled units and Neutral creeps").SetValue(true);
             item.ValueChanged += Item_ValueChanged;
             Menu.AddItem(item);
 
