@@ -1,6 +1,10 @@
 using System;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using Ensage.Common;
 using Ensage.Common.Extensions;
+using Ensage.Common.Threading;
 using SharpDX;
 
 namespace VisibleByEnemyPlus
@@ -8,10 +12,14 @@ namespace VisibleByEnemyPlus
     using System.Collections.Generic;
     using Ensage;
     using Ensage.Common.Menu;
+    using log4net;
+    using PlaySharp.Toolkit.Logging;
 
     internal class Program
     {
         #region Static Fields
+
+        private static readonly ILog Log = AssemblyLogs.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private static Dictionary<Unit, ParticleEffect> _effects = new Dictionary<Unit, ParticleEffect>();
 
@@ -162,47 +170,54 @@ namespace VisibleByEnemyPlus
             var unit = sender as Unit;
             if (unit == null)
                 return;
-
+             
             if (args.PropertyName != "m_iTaggedAsVisibleByTeam")
                 return;
-            
-            var player = ObjectManager.LocalPlayer;
-            var hero = ObjectManager.LocalHero;
-            if (hero==null)
-                return;
-            if (player == null || player.Team == Team.Observer || sender.Team == ObjectManager.LocalHero.GetEnemyTeam())
-                return;
-
-            var visible = args.NewValue == 0x1E;
-            // heroes
-            if (sender is Hero && Menu.Item("heroes").GetValue<bool>())
+            DelayAction.Add(50, () =>
             {
-                HandleEffect(unit, visible);
-            }
+                var player = ObjectManager.LocalPlayer;
+                var hero = ObjectManager.LocalHero;
+                if (hero == null)
+                    return;
+                if (player == null || player.Team == Team.Observer ||
+                    sender.Team == ObjectManager.LocalHero.GetEnemyTeam())
+                    return;
 
-            // wards
-            else if (IsWard(sender) && Menu.Item("wards").GetValue<bool>())
-            {
-                HandleEffect(unit, visible);
-            }
+                /*Log.Debug("------------------------------------");
+                Log.Debug($"sender: {sender.Name}. hero: {sender.ClassID}");
+                Log.Debug($"team: {sender.Team}. EnemyTeam: {ObjectManager.LocalHero.GetEnemyTeam()}");
+                Log.Debug("------------------------------------");*/
+                var visible = args.NewValue == 0x1E;
+                // heroes
+                if (sender is Hero && Menu.Item("heroes").GetValue<bool>())
+                {
+                    HandleEffect(unit, visible);
+                }
 
-            // mines
-            else if (IsMine(sender) && Menu.Item("mines").GetValue<bool>())
-            {
-                HandleEffect(unit, visible);
-            }
+                // wards
+                else if (IsWard(sender) && Menu.Item("wards").GetValue<bool>())
+                {
+                    HandleEffect(unit, visible);
+                }
 
-            // units
-            else if (Menu.Item("units").GetValue<bool>() && IsUnit(unit))
-            {
-                HandleEffect(unit, visible);
-            }
+                // mines
+                else if (IsMine(sender) && Menu.Item("mines").GetValue<bool>())
+                {
+                    HandleEffect(unit, visible);
+                }
 
-            // buildings
-            else if (sender is Building && Menu.Item("buildings").GetValue<bool>())
-            {
-                HandleEffect(unit, visible);
-            }
+                // units
+                else if (Menu.Item("units").GetValue<bool>() && IsUnit(unit))
+                {
+                    HandleEffect(unit, visible);
+                }
+
+                // buildings
+                else if (sender is Building && Menu.Item("buildings").GetValue<bool>())
+                {
+                    HandleEffect(unit, visible);
+                }
+            });
         }
 
         private static void LoopEntities()
