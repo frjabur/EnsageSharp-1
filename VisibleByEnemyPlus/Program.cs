@@ -175,47 +175,55 @@ namespace VisibleByEnemyPlus
                 return;
             DelayAction.Add(50, () =>
             {
-                var player = ObjectManager.LocalPlayer;
-                var hero = ObjectManager.LocalHero;
-                if (hero == null)
-                    return;
-                if (player == null || player.Team == Team.Observer ||
-                    sender.Team == ObjectManager.LocalHero.GetEnemyTeam())
-                    return;
-
-                /*Log.Debug("------------------------------------");
-                Log.Debug($"sender: {sender.Name}. hero: {sender.ClassID}");
-                Log.Debug($"team: {sender.Team}. EnemyTeam: {ObjectManager.LocalHero.GetEnemyTeam()}");
-                Log.Debug("------------------------------------");*/
-                var visible = args.NewValue == 0x1E;
-                // heroes
-                if (sender is Hero && Menu.Item("heroes").GetValue<bool>())
+                try
                 {
-                    HandleEffect(unit, visible);
+                    var player = ObjectManager.LocalPlayer;
+                    var hero = ObjectManager.LocalHero;
+                    if (hero == null)
+                        return;
+
+                    if (player == null || player.Team == Team.Observer ||
+                        sender.Team == ObjectManager.LocalHero.GetEnemyTeam())
+                        return;
+
+                    /*Log.Debug("------------------------------------");
+                    Log.Debug($"sender: {sender.Name}. hero: {sender.ClassID}");
+                    Log.Debug($"team: {sender.Team}. EnemyTeam: {ObjectManager.LocalHero.GetEnemyTeam()}");
+                    Log.Debug("------------------------------------");*/
+                    var visible = args.NewValue == 0x1E;
+                    // heroes
+                    if (sender is Hero && Menu.Item("heroes").GetValue<bool>())
+                    {
+                        HandleEffect(unit, visible);
+                    }
+
+                    // wards
+                    else if (IsWard(sender) && Menu.Item("wards").GetValue<bool>())
+                    {
+                        HandleEffect(unit, visible);
+                    }
+
+                    // mines
+                    else if (IsMine(sender) && Menu.Item("mines").GetValue<bool>())
+                    {
+                        HandleEffect(unit, visible);
+                    }
+
+                    // units
+                    else if (Menu.Item("units").GetValue<bool>() && IsUnit(unit))
+                    {
+                        HandleEffect(unit, visible);
+                    }
+
+                    // buildings
+                    else if (sender is Building && Menu.Item("buildings").GetValue<bool>())
+                    {
+                        HandleEffect(unit, visible);
+                    }
                 }
-
-                // wards
-                else if (IsWard(sender) && Menu.Item("wards").GetValue<bool>())
+                catch (Exception)
                 {
-                    HandleEffect(unit, visible);
-                }
-
-                // mines
-                else if (IsMine(sender) && Menu.Item("mines").GetValue<bool>())
-                {
-                    HandleEffect(unit, visible);
-                }
-
-                // units
-                else if (Menu.Item("units").GetValue<bool>() && IsUnit(unit))
-                {
-                    HandleEffect(unit, visible);
-                }
-
-                // buildings
-                else if (sender is Building && Menu.Item("buildings").GetValue<bool>())
-                {
-                    HandleEffect(unit, visible);
+                    // ignored
                 }
             });
         }
