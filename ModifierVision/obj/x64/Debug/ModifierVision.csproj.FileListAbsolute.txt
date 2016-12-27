@@ -1,0 +1,12 @@
+C:\Users\osman\Desktop\ModifierVision\obj\x64\Debug\ModifierVision.csprojResolveAssemblyReference.cache
+C:\Users\osman\Desktop\ModifierVision\bin\Debug\ModifierVision.exe.config
+C:\Users\osman\Desktop\ModifierVision\bin\Debug\ModifierVision.exe
+C:\Users\osman\Desktop\ModifierVision\bin\Debug\ModifierVision.pdb
+C:\Users\osman\Desktop\ModifierVision\bin\Debug\Ensage.Common.dll
+C:\Users\osman\Desktop\ModifierVision\bin\Debug\Ensage.dll
+C:\Users\osman\Desktop\ModifierVision\bin\Debug\SharpDX.Direct3D9.dll
+C:\Users\osman\Desktop\ModifierVision\bin\Debug\SharpDX.dll
+C:\Users\osman\Desktop\ModifierVision\bin\Debug\Newtonsoft.Json.dll
+C:\Users\osman\Desktop\ModifierVision\bin\Debug\Ensage.Common.pdb
+C:\Users\osman\Desktop\ModifierVision\obj\x64\Debug\ModifierVision.exe
+C:\Users\osman\Desktop\ModifierVision\obj\x64\Debug\ModifierVision.pdb
