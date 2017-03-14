@@ -12,7 +12,7 @@ namespace BeAwarePlus
         private static Hero me;
         private static System.Collections.Generic.List<Ensage.Hero> enemies;
         private static SideMessage informationmessage;
-        private static readonly Menu Menu = new Menu("BeAwarePlus", "BeAwarePlus", true);
+        private static readonly Menu Menu = new Menu("BeAwarePlus", "BeAwarePlus", true, "beawareplus", true);
         private static void Main(string[] args)
         {
             Menu.AddItem(new MenuItem("enable", "Sound").SetValue(false));
@@ -45,9 +45,6 @@ namespace BeAwarePlus
         "EN",
         "RU"
         };
-        // Ses çalmak için metod bu.
-        // PlaySound("sesdosyasi.wav);
-        // şeklinde kullanılıyor
         private static void PlaySound(string path)
         {
             if (!Menu.Item("enable").GetValue<bool>()) return;
@@ -78,8 +75,6 @@ namespace BeAwarePlus
                 if (mod.Any(x => x.Name == "modifier_mirana_moonlight_shadow") && Utils.SleepCheck("mirana")) //mirana
                 {
                     MessageCreator("mirana", "mirana_invis");
-                    // Burada çalınacak dosyayı seçiyoruz
-                    // Sleep'in sonrada olması önemli
                     PlaySound("moonlight_shadow_" + Addition[GetLangId]);
                     Utils.Sleep(15000,"mirana");
                 }
@@ -101,11 +96,6 @@ namespace BeAwarePlus
                     PlaySound("bloodseeker_thirst_" + Addition[GetLangId]);
                     Utils.Sleep(15000, "bloodseeker");
                 }
-                //if (mod.Any(x => x.Name == "modifier_invoker_ghost_walk_enemy") && Utils.SleepCheck("invoker")) //invoker
-                //{
-                //    MessageCreator("invoker", "invoker_ghost_walk");
-                //    Utils.Sleep(15000, "invoker");
-                //}
                 if (mod.Any(x => x.Name == "modifier_item_invisibility_edge_windwalk") && Utils.SleepCheck("shadowblade")) //shadow blade
                 {
                     index = v.Name.Remove(0, 14);
