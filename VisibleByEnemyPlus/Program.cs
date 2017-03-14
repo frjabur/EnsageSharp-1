@@ -1,29 +1,23 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
+using Ensage;
 using Ensage.Common;
 using Ensage.Common.Extensions;
-using Ensage.Common.Threading;
+using Ensage.Common.Menu;
 using SharpDX;
 
 namespace VisibleByEnemyPlus
 {
-    using System.Collections.Generic;
-    using Ensage;
-    using Ensage.Common.Menu;
-    using log4net;
-    using PlaySharp.Toolkit.Logging;
-
-    internal class Program
+        internal class Program
     {
         #region Static Fields
 
-        private static readonly ILog Log = AssemblyLogs.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
         private static Dictionary<Unit, ParticleEffect> _effects = new Dictionary<Unit, ParticleEffect>();
 
-        private static readonly Menu Menu = new Menu("VisibleByEnemyPlus", "visibleByEnemyplus", true);
+        private static bool _loaded;
+
+        private static readonly Menu Menu = new Menu("VisibleByEnemyPlus", "visibleByEnemyplus", true, "visiblebyenemyplus", true);
 
         private static int red => Menu.Item("red").GetValue<Slider>().Value;
 
@@ -73,12 +67,25 @@ namespace VisibleByEnemyPlus
         #region Public Methods and Operators
 
         private static void Main()
+
         {
-            var sList = new StringList()
+            Events.OnLoad += Events_OnLoad;
+            Entity.OnInt32PropertyChange += Entity_OnInt32PropertyChange;
+        }
+
+        private static void Events_OnLoad(object sender, EventArgs e)
+        {
+            if (!_loaded)
+            {
+                _loaded = true;
+
+                PrintSuccess(">>>>>> VisibleByEnemyPlus Loaded!");
+
+                var sList = new StringList()
             {
                 SList   = EffectsName, SelectedIndex = 0
             };
-            //var effectType = new MenuItem("type", "EffectType").SetValue(new Slider(0,0,9));
+
             var effectType = new MenuItem("type", "EffectType").SetValue(sList);
             effectType.ValueChanged += Item_ValueChanged;
             Menu.AddItem(effectType);
@@ -121,8 +128,8 @@ namespace VisibleByEnemyPlus
 
             Menu.AddToMainMenu();
 
+            }
             LoopEntities();
-            Entity.OnInt32PropertyChange += Entity_OnInt32PropertyChange;
         }
 
         private static void ChangeColor(object sender, OnValueChangeEventArgs e)
@@ -141,7 +148,17 @@ namespace VisibleByEnemyPlus
                 effect.Restart();
             }
         }
-
+        private static void PrintSuccess(string text, params object[] arguments)
+        {
+            PrintEncolored(text, ConsoleColor.Green, arguments);
+        }
+        private static void PrintEncolored(string text, ConsoleColor color, params object[] arguments)
+        {
+            var clr = Console.ForegroundColor;
+            Console.ForegroundColor = color;
+            Console.WriteLine(text, arguments);
+            Console.ForegroundColor = clr;
+        }
         #endregion
 
         #region Methods
@@ -169,10 +186,15 @@ namespace VisibleByEnemyPlus
         {
             var unit = sender as Unit;
             if (unit == null)
+            {
                 return;
-             
+            }
+
             if (args.PropertyName != "m_iTaggedAsVisibleByTeam")
+            {
                 return;
+            }
+
             DelayAction.Add(50, () =>
             {
                 try
@@ -180,17 +202,18 @@ namespace VisibleByEnemyPlus
                     var player = ObjectManager.LocalPlayer;
                     var hero = ObjectManager.LocalHero;
                     if (hero == null)
+                    {
                         return;
+                    }
 
                     if (player == null || player.Team == Team.Observer ||
                         sender.Team == ObjectManager.LocalHero.GetEnemyTeam())
+                    {
                         return;
+                    }
 
-                    /*Log.Debug("------------------------------------");
-                    Log.Debug($"sender: {sender.Name}. hero: {sender.ClassID}");
-                    Log.Debug($"team: {sender.Team}. EnemyTeam: {ObjectManager.LocalHero.GetEnemyTeam()}");
-                    Log.Debug("------------------------------------");*/
                     var visible = args.NewValue == 0x1E;
+
                     // heroes
                     if (sender is Hero && Menu.Item("heroes").GetValue<bool>())
                     {
@@ -223,7 +246,7 @@ namespace VisibleByEnemyPlus
                 }
                 catch (Exception)
                 {
-                    // ignored
+                     // ignored
                 }
             });
         }
@@ -232,7 +255,9 @@ namespace VisibleByEnemyPlus
         {
             var player = ObjectManager.LocalPlayer;
             if (player == null || player.Team == Team.Observer )
+            {
                 return;
+            }
             var units = ObjectManager.GetEntities<Unit>().Where(x => x.Team == player.Team).ToList();
             if (Menu.Item("heroes").GetValue<bool>())
             {
@@ -241,7 +266,7 @@ namespace VisibleByEnemyPlus
                     HandleEffect(hero, hero.IsVisibleToEnemies);
                 }
             }
-            if ( Menu.Item("wards").GetValue<bool>())
+            if (Menu.Item("wards").GetValue<bool>())
             {
                 foreach (var ward in units.Where(IsWard).ToList())
                 {
@@ -316,9 +341,11 @@ namespace VisibleByEnemyPlus
         {
             var item = sender as MenuItem;
             if (item == null)
+            {
                 return;
+            }
 
-            bool hero = false, wards = false,  mines = false,units = false,buildings=false;
+            bool hero = false, wards = false,  mines = false, units = false, buildings = false;
             switch (item.Name)
             {
                 case "heroes":
@@ -340,13 +367,7 @@ namespace VisibleByEnemyPlus
             // update dictionary
             if (item.Name == "type")
             {
-                /*hero = true;
-                wards = true;
-                mines = true;
-                units = true;
-                buildings = true;*/
                 var index = e.GetNewValue<StringList>().SelectedIndex;
-                //Game.PrintMessage(" Effect ==> " + EffectsName[index], MessageType.ChatMessage);
                 foreach (var source in ObjectManager.GetEntities<Hero>().Where(x=>x.Team==ObjectManager.LocalHero.Team))
                 {
                     HandleEffect(source, false);
@@ -354,21 +375,33 @@ namespace VisibleByEnemyPlus
                         HandleEffect(source, true, index);
                 }
             }
-            var newDict = new Dictionary<Unit,ParticleEffect>();
+            var newDict = new Dictionary<Unit, ParticleEffect>();
             foreach (var effect in _effects)
             {
                 if( hero && effect.Key is Hero )
+                {
                     effect.Value.Dispose();
+                }
                 else if( wards && IsWard(effect.Key) )
+                {
                     effect.Value.Dispose();
+                }
                 else if (mines && IsMine(effect.Key))
+                {
                     effect.Value.Dispose();
+                }
                 else if (units && IsUnit(effect.Key))
+                {
                     effect.Value.Dispose();
+                }
                 else if (buildings && effect.Key is Building)
+                {
                     effect.Value.Dispose();
+                }
                 else
-                    newDict.Add(effect.Key,effect.Value);
+                {
+                    newDict.Add(effect.Key, effect.Value);
+                }
             }
             _effects = newDict;
             
