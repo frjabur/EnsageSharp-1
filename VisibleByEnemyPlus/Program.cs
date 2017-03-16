@@ -43,7 +43,14 @@ namespace VisibleByEnemyPlus
 	    "materials/ensage_ui/particles/visiblebyenemy_lightning.vpcf",
 	    "materials/ensage_ui/particles/visiblebyenemy_energy_orb.vpcf",
 	    "materials/ensage_ui/particles/visiblebyenemy_pentagon.vpcf",
-	    "materials/ensage_ui/particles/visiblebyenemy_axis.vpcf"
+	    "materials/ensage_ui/particles/visiblebyenemy_axis.vpcf",
+        "materials/ensage_ui/particles/visiblebyenemy_beam_jagged.vpcf",
+        "materials/ensage_ui/particles/visiblebyenemy_beam_rainbow.vpcf",
+        "materials/ensage_ui/particles/visiblebyenemy_walnut_statue.vpcf",
+        "materials/ensage_ui/particles/visiblebyenemy_thin_thick.vpcf",
+        "materials/ensage_ui/particles/visiblebyenemy_ring_wave.vpcf",
+        "materials/ensage_ui/particles/visiblebyenemy_visible.vpcf"
+
         };
         private static readonly string[] EffectsName =
         {
@@ -59,7 +66,13 @@ namespace VisibleByEnemyPlus
 	    "Lightning",
 	    "Energy Orb",
 	    "Pentagon",
-	    "Axis"
+	    "Axis",
+        "Beam Jagged",
+        "Beam Rainbow",
+        "Walnut Statue",
+        "Thin Thick",
+        "Ring Wave",
+        "Visible"
         };
 
         #endregion
@@ -70,7 +83,6 @@ namespace VisibleByEnemyPlus
 
         {
             Events.OnLoad += Events_OnLoad;
-            Entity.OnInt32PropertyChange += Entity_OnInt32PropertyChange;
         }
 
         private static void Events_OnLoad(object sender, EventArgs e)
@@ -82,51 +94,53 @@ namespace VisibleByEnemyPlus
                 PrintSuccess(">>>>>> VisibleByEnemyPlus Loaded!");
 
                 var sList = new StringList()
-            {
+                {
                 SList   = EffectsName, SelectedIndex = 0
-            };
+                };
 
-            var effectType = new MenuItem("type", "EffectType").SetValue(sList);
-            effectType.ValueChanged += Item_ValueChanged;
-            Menu.AddItem(effectType);
+                var effectType = new MenuItem("type", "EffectType").SetValue(sList);
+                effectType.ValueChanged += Item_ValueChanged;
+                Menu.AddItem(effectType);
 
-            var item = new MenuItem("red", "Red").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Red);
-            item.ValueChanged += ChangeColor;
-            Menu.AddItem(item);
+                var item = new MenuItem("red", "Red").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Red);
+                item.ValueChanged += ChangeColor;
+                Menu.AddItem(item);
 
-            item = new MenuItem("green", "Green").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Green);
-            item.ValueChanged += ChangeColor;
-            Menu.AddItem(item);
+                item = new MenuItem("green", "Green").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Green);
+                item.ValueChanged += ChangeColor;
+                Menu.AddItem(item);
 
-            item = new MenuItem("blue", "Blue").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Blue);
-            item.ValueChanged += ChangeColor;
-            Menu.AddItem(item);
+                item = new MenuItem("blue", "Blue").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Blue);
+                item.ValueChanged += ChangeColor;
+                Menu.AddItem(item);
 
-            item = new MenuItem("alpha", "Alpha").SetValue(new Slider(255, 0, 255));
-            item.ValueChanged += ChangeTrans;
-            Menu.AddItem(item);
+                item = new MenuItem("alpha", "Alpha").SetValue(new Slider(255, 0, 255));
+                item.ValueChanged += ChangeTrans;
+                Menu.AddItem(item);
 
-            item = new MenuItem("heroes", "Check allied heroes").SetValue(true);
-            item.ValueChanged += Item_ValueChanged;
-            Menu.AddItem(item);
+                item = new MenuItem("heroes", "Check allied heroes").SetValue(true);
+                item.ValueChanged += Item_ValueChanged;
+                Menu.AddItem(item);
 
-            item = new MenuItem("wards", "Check wards").SetValue(true);
-            item.ValueChanged += Item_ValueChanged;
-            Menu.AddItem(item);
+                item = new MenuItem("wards", "Check wards").SetValue(true);
+                item.ValueChanged += Item_ValueChanged;
+                Menu.AddItem(item);
 
-            item = new MenuItem("mines", "Check techies mines").SetValue(true);
-            item.ValueChanged += Item_ValueChanged;
-            Menu.AddItem(item);
+                item = new MenuItem("mines", "Check techies mines").SetValue(true);
+                item.ValueChanged += Item_ValueChanged;
+                Menu.AddItem(item);
 
-            item = new MenuItem("units", "Check controlled units and Neutral creeps").SetValue(true);
-            item.ValueChanged += Item_ValueChanged;
-            Menu.AddItem(item);
+                item = new MenuItem("units", "Check controlled units and Neutral creeps").SetValue(true);
+                item.ValueChanged += Item_ValueChanged;
+                Menu.AddItem(item);
 
-            item = new MenuItem("buildings", "Check buildings").SetValue(true);
-            item.ValueChanged += Item_ValueChanged;
-            Menu.AddItem(item);
+                item = new MenuItem("buildings", "Check buildings").SetValue(true);
+                item.ValueChanged += Item_ValueChanged;
+                Menu.AddItem(item);
 
-            Menu.AddToMainMenu();
+                Menu.AddToMainMenu();
+
+                Entity.OnInt32PropertyChange += Entity_OnInt32PropertyChange;
 
             }
             LoopEntities();
