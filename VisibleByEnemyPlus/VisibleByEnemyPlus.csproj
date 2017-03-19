@@ -49,9 +49,6 @@
     <Reference Include="Ensage.Common">
       <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\Ensage.Common.dll</HintPath>
     </Reference>
-    <Reference Include="PlaySharp.Toolkit">
-      <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\PlaySharp.Toolkit.dll</HintPath>
-    </Reference>
     <Reference Include="SharpDX, Version=2.6.3.0, Culture=neutral, PublicKeyToken=345b829e6e492981, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\SharpDX.dll</HintPath>
