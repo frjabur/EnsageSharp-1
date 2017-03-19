@@ -257,7 +257,7 @@ namespace BeAwarePlus
                 {
                     MessageAllyCreator(ally.Name.Substring(14), "sniper_assassinate");
                     PlaySound("sniper_assassinate_" + Addition[GetLangId]);
-                    Utils.Sleep(2500, "BeAwarePlus.assassinate");
+                    Utils.Sleep(3000, "BeAwarePlus.assassinate");
                 }
 
                 // BOUNTY ULT
