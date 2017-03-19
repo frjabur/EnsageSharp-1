@@ -7,8 +7,8 @@
     <ProjectGuid>{90C17F38-9E37-4253-AE25-7B097CF99A62}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Be_Aware_Ninja</RootNamespace>
-    <AssemblyName>Be Aware Ninja</AssemblyName>
+    <RootNamespace>BeAwarePlus</RootNamespace>
+    <AssemblyName>BeAwarePlus</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BeAwarePlus.cs" />
-    <Compile Include="properties\AssemblyInfo.cs" />
+    <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ensage">
