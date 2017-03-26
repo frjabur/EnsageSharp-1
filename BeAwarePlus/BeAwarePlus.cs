@@ -25,10 +25,14 @@ namespace BeAwarePlus
         private static bool UseDefSound => Menu.Item("default sound").GetValue<bool>();
         private static void Main(string[] args)
         {
+            Events.OnLoad += EventsOnOnLoad;
+        }
+        private static void EventsOnOnLoad(object sender, EventArgs eventArgs)
+        {
             Menu.AddItem(new MenuItem("enable", "Sound").SetValue(true));
             Menu.AddItem(new MenuItem("default sound", "Disable the sound heroes").SetValue(false)).SetTooltip("All sounds becomes default");
             Menu.AddToMainMenu();
-                        
+
             PrintSuccess(">>>>>> BeAwarePlus Loaded!");
             var sList = new StringList()
             {
@@ -38,10 +42,12 @@ namespace BeAwarePlus
             var language = new MenuItem("lang", "Language").SetValue(sList);
             Menu.AddItem(language);
 
+            me = ObjectManager.LocalHero;
             Entity.OnParticleEffectAdded += OnParticleEvent;
-            Unit.OnModifierAdded+=HeroOnOnModifierAdded;           
-            Game.OnUpdate +=GameOnOnUpdate;        
-        }             
+            Unit.OnModifierAdded += HeroOnOnModifierAdded;
+            Game.OnUpdate += GameOnOnUpdate;
+            Events.OnLoad -= EventsOnOnLoad;
+        }
         private static void GameOnOnUpdate(EventArgs args)
         {
             if (_loaded && Heroes.All.Count >= 10)
@@ -146,7 +152,7 @@ namespace BeAwarePlus
                 return;
             var name = args.Modifier.Name;
             string index;
-            if (sender.Team == me.Team && sender != null)
+            if (sender.Team == me.Team)
             {
                 switch (name)
                 {
