@@ -3,18 +3,23 @@ using System;
 using System.Linq;
 using Ensage;
 using Ensage.Common;
-using SharpDX;
+using Ensage.Common.Extensions;
 using Ensage.Common.Menu;
+using Ensage.Common.Objects;
+using Ensage.Common.Objects.UtilityObjects;
+using SharpDX;
 
 namespace BeAwarePlus
 {
     class BeAwarePlus
-    {
+    {       
         private static bool ancient_apparition_IsHere;
         private static bool nyx_assassin_IsHere;
         private static bool bounty_hunter_IsHere;
+        private static bool morphling_IsHere;
+        private static bool _loaded = false;
+        private static readonly Sleeper HeroChecker = new Sleeper();
         private static Hero me;
-        private static System.Collections.Generic.List<Ensage.Hero> enemies, allies;
         private static SideMessage informationmessage;
         private static readonly Menu Menu = new Menu("BeAwarePlus", "BeAwarePlus", true, "beawareplus", true);
         private static bool UseDefSound => Menu.Item("default sound").GetValue<bool>();
@@ -23,9 +28,7 @@ namespace BeAwarePlus
             Menu.AddItem(new MenuItem("enable", "Sound").SetValue(true));
             Menu.AddItem(new MenuItem("default sound", "Disable the sound heroes").SetValue(false)).SetTooltip("All sounds becomes default");
             Menu.AddToMainMenu();
-
-            Game.OnUpdate += Tick;
-            Entity.OnParticleEffectAdded += OnParticleEvent;
+                        
             PrintSuccess(">>>>>> BeAwarePlus Loaded!");
             var sList = new StringList()
             {
@@ -35,50 +38,60 @@ namespace BeAwarePlus
             var language = new MenuItem("lang", "Language").SetValue(sList);
             Menu.AddItem(language);
 
-            Events.OnLoad += (sender, eventArgs) =>
-            {
-                nyx_assassin_IsHere = ObjectManager.GetEntities<Hero>()
-                    .Any(
-                        x => x.ClassID == ClassID.CDOTA_Unit_Hero_Nyx_Assassin && x.Team != ObjectManager.LocalHero.Team);
-            };
+            Entity.OnParticleEffectAdded += OnParticleEvent;
+            Unit.OnModifierAdded+=HeroOnOnModifierAdded;           
+            Game.OnUpdate +=GameOnOnUpdate;        
+        }             
+        private static void GameOnOnUpdate(EventArgs args)
+        {
+            if (_loaded && Heroes.All.Count >= 10)
+                return;
+            if (HeroChecker.Sleeping)
+                return;
+            if (Heroes.All.Count >= 10)
+                _loaded = true;
+            HeroChecker.Sleep(5000);
+            if (me == null || !me.IsValid)
+                me = ObjectManager.LocalHero;
+            var enemyTeam = Heroes.GetByTeam(me.GetEnemyTeam());
 
-            {
-                bounty_hunter_IsHere = ObjectManager.GetEntities<Hero>()
-                    .Any(
-                        x => x.ClassID == ClassID.CDOTA_Unit_Hero_BountyHunter && x.Team != ObjectManager.LocalHero.Team);
-            };
+            if (!nyx_assassin_IsHere)
+                nyx_assassin_IsHere =
+                enemyTeam.Any(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Nyx_Assassin);
 
-            {
-                ancient_apparition_IsHere = ObjectManager.GetEntities<Hero>()
-                    .Any(
-                        x => x.ClassID == ClassID.CDOTA_Unit_Hero_AncientApparition && x.Team != ObjectManager.LocalHero.Team);
-            };
+            if (!bounty_hunter_IsHere)
+                bounty_hunter_IsHere =
+                enemyTeam.Any(x => x.ClassID == ClassID.CDOTA_Unit_Hero_BountyHunter);
 
+            if (!ancient_apparition_IsHere)
+                ancient_apparition_IsHere =
+                enemyTeam.Any(x => x.ClassID == ClassID.CDOTA_Unit_Hero_AncientApparition);
 
-        }
+            if (!morphling_IsHere)
+                morphling_IsHere =
+                enemyTeam.Any(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Morphling);
+        }        
         public static int GetLangId
         {
             get { return Menu.Item("lang").GetValue<StringList>().SelectedIndex; }
             set { throw new NotImplementedException(); }
         }
-
         private static readonly string[] Addition =
         {
-        "en.wav",
-        "ru.wav"
+            "en.wav",
+            "ru.wav"
         };
         private static readonly string[] LangName =
         {
-        "EN",
-        "RU"
+            "EN",
+            "RU"
         };
-
         private static void PlaySound(string path)
         {
             if (!Menu.Item("enable").GetValue<bool>()) return;
 
             var player =
-                new System.Media.SoundPlayer();
+            new System.Media.SoundPlayer();
             var fullpath = Environment.CurrentDirectory;
 
             fullpath = fullpath.Remove(fullpath.Length - 10);
@@ -93,276 +106,285 @@ namespace BeAwarePlus
             }
             player.SoundLocation = fullpath;
             player.Load();
-            player.Play();
+            player.Play();           
         }
-
-        public static void Tick(EventArgs args)
+        private static void HeroOnOnModifierAdded(Unit sender, ModifierChangedEventArgs args)
         {
-            if (!Game.IsInGame)
+
+                    //Invoker Sun Strike    
+                    if (args.Modifier.Name.Contains("modifier_invoker_sun_strike") && args.Modifier.Owner.Team != me.Team)
+                    {
+                       MessageCreator("invoker", "invoker_sun_strike");
+                       PlaySound("invoker_sun_strike_" + Addition[GetLangId]);
+                    }
+
+                    //Kunkka Torrent
+                    if (args.Modifier.Name.Contains("modifier_kunkka_torrent_thinker") && args.Modifier.Owner.Team != me.Team)
+                    {
+                       MessageCreator("kunkka", "kunkka_torrent");
+                       PlaySound("kunkka_torrent_" + Addition[GetLangId]);
+                    }
+
+                    //Monkey King Primal Spring
+                    if (args.Modifier.Name.Contains("modifier_monkey_king_spring_thinker") && args.Modifier.Owner.Team != me.Team)
+                    {
+                       MessageCreator("monkey_king", "monkey_king_primal_spring");
+                       PlaySound("monkey_king_primal_spring_" + Addition[GetLangId]);
+                    }
+         
+                    //Radar
+                    if (args.Modifier.Name.Contains("modifier_radar_thinker") && args.Modifier.Owner.Team != me.Team)
+                    {
+                       MessageCreator("radar", "radars_scan");
+                       PlaySound("radars_scan_" + Addition[GetLangId]);
+                    }
+
+           
+            if (!(sender is Hero))
                 return;
-            me = ObjectManager.LocalHero;
-            if (me == null)
+            if (sender.IsIllusion)
                 return;
-            enemies = ObjectManager.GetEntitiesParallel<Hero>().Where(x => me.Team != x.Team && x.IsVisible && !x.IsIllusion && x.IsAlive).ToList();
-            if (enemies == null)
-                return;
-            foreach (var v in enemies)
+            var name = args.Modifier.Name;
+            string index;
+            if (sender.Team == me.Team && sender != null)
             {
-                string index;
-                System.Collections.Generic.IEnumerable<Modifier> mod = v.Modifiers.ToList();
-
-                //Bloodseeker
-                if (mod.Any(x => x.Name == "modifier_bloodseeker_thirst_speed") && Utils.SleepCheck("BeAwarePlus.bloodseeker")) 
+                switch (name)
                 {
-                    MessageCreator("bloodseeker", "bloodseeker_thirst");
-                    PlaySound("bloodseeker_thirst_" + Addition[GetLangId]);
-                    Utils.Sleep(15000, "BeAwarePlus.bloodseeker");
+                    //Spirit Breaker Charge of Darkness
+                    case "modifier_spirit_breaker_charge_of_darkness_vision":
+                    {
+                       MessageAllyCreator(sender.Name.Substring(14), "spirit_breaker_charge_of_darkness");
+                       PlaySound("spirit_breaker_charge_of_darkness_" + Addition[GetLangId]);
+                    }
+                       break;
+
+                    //Sniper Assassinate
+                    case "modifier_sniper_assassinate":
+                    {
+                       MessageAllyCreator(sender.Name.Substring(14), "sniper_assassinate");
+                       PlaySound("sniper_assassinate_" + Addition[GetLangId]);
+                    }
+                       break;
+
+                    //Nevermore Dark Lord
+                    case "modifier_nevermore_presence":
+                    {
+                       MessageAllyCreator(sender.Name.Substring(14), "nevermore_dark_lord");
+                       PlaySound("nevermore_dark_lord_" + Addition[GetLangId]);
+                    }
+                       break;
+
+                    //Bounty Hunter Track
+                    case "modifier_bounty_hunter_track":
+                    {
+                       MessageAllyCreator(sender.Name.Substring(14), "bounty_hunter_track");
+                       PlaySound("bounty_hunter_track_" + Addition[GetLangId]);
+                    }
+                       break;
+
+                    //Invoker Ghost Walk
+                    case "modifier_invoker_ghost_walk_enemy":
+                    {
+                       MessageAllyCreator(sender.Name.Substring(14), "invoker_ghost_walk");
+                       PlaySound("invoker_ghost_walk_" + Addition[GetLangId]);
+                    }
+                       break;
                 }
-
-                //Rune Haste
-                if (mod.Any(x => x.Name == "modifier_rune_haste") && Utils.SleepCheck("BeAwarePlus.rune_haste")) 
-                {
-                    index = v.Name.Remove(0, 14);
-                    MessageRuneCreator(index, "rune_haste");
-                    PlaySound("rune_haste_" + Addition[GetLangId]);
-                    Utils.Sleep(15000, "BeAwarePlus.rune_haste");
-                }
-
-                //Rune Regen
-                if (mod.Any(x => x.Name == "modifier_rune_regen") && Utils.SleepCheck("BeAwarePlus.rune_regen")) 
-                {
-                    index = v.Name.Remove(0, 14);
-                    MessageRuneCreator(index, "rune_regen");
-                    PlaySound("rune_regen_" + Addition[GetLangId]);
-                    Utils.Sleep(15000, "BeAwarePlus.rune_regen");
-                }
-
-                //Rune Arcane
-                if (mod.Any(x => x.Name == "modifier_rune_arcane") && Utils.SleepCheck("BeAwarePlus.rune_arcane")) 
-                {
-                    index = v.Name.Remove(0, 14);
-                    MessageRuneCreator(index, "rune_arcane");
-                    PlaySound("rune_arcane_" + Addition[GetLangId]);
-                    Utils.Sleep(15000, "BeAwarePlus.rune_arcane");
-                }
-
-                //Rune Doubledamage
-                if (mod.Any(x => x.Name == "modifier_rune_doubledamage") && Utils.SleepCheck("BeAwarePlus.rune_doubledamage")) 
-                {
-                    index = v.Name.Remove(0, 14);
-                    MessageRuneCreator(index, "rune_doubledamage");
-                    PlaySound("rune_doubledamage_" + Addition[GetLangId]);
-                    Utils.Sleep(15000, "BeAwarePlus.rune_doubledamage");
-                }
-
-                //Rune Invis
-                if (mod.Any(x => x.Name == "modifier_rune_invis") && Utils.SleepCheck("BeAwarePlus.rune_invis"))
-                {
-                    index = v.Name.Remove(0, 14);
-                    MessageRuneCreator(index, "rune_invis");
-                    PlaySound("rune_invis_" + Addition[GetLangId]);
-                    Utils.Sleep(15000, "BeAwarePlus.rune_invis");
-                }
-
-                //Shadow Blade
-                if (mod.Any(x => x.Name == "modifier_item_invisibility_edge_windwalk") && Utils.SleepCheck("BeAwarePlus.shadowblade"))
-                {
-                    index = v.Name.Remove(0, 14);
-                    MessageItemCreator(index, "invis_sword");
-                    PlaySound("invis_sword_" + Addition[GetLangId]);
-                    Utils.Sleep(15000, "BeAwarePlus.shadowblade");
-                }
-
-                //Shadow Amulet
-                if (mod.Any(x => x.Name == "modifier_item_shadow_amulet_fade") && Utils.SleepCheck("BeAwarePlus.shadow_amulet")) 
-                {
-                    index = v.Name.Remove(0, 14);
-                    MessageItemCreator(index, "shadow_amulet");
-                    PlaySound("shadow_amulet_" + Addition[GetLangId]);
-                    Utils.Sleep(10000, "BeAwarePlus.shadow_amulet");
-                }
-
-                //Glimmer Cape
-                if (mod.Any(x => x.Name == "modifier_item_glimmer_cape_fade") && Utils.SleepCheck("BeAwarePlus.glimmer_cape")) 
-                {
-                    index = v.Name.Remove(0, 14);
-                    MessageItemCreator(index, "glimmer_cape");
-                    PlaySound("glimmer_cape_" + Addition[GetLangId]);
-                    Utils.Sleep(15000, "BeAwarePlus.glimmer_cape");
-                }
-
-                //Silver Edge
-                if (mod.Any(x => x.Name == "modifier_item_silver_edge_windwalk") && Utils.SleepCheck("BeAwarePlus.silver_edge")) 
-                {
-                    index = v.Name.Remove(0, 14);
-                    MessageItemCreator(index, "silver_edge");
-                    PlaySound("silver_edge_" + Addition[GetLangId]);
-                    Utils.Sleep(15000, "BeAwarePlus.silver_edge");
-                }             
             }
-
-            allies = ObjectManager.GetEntitiesParallel<Hero>().Where(x => me.Team == x.Team && x.IsValid && !x.IsIllusion && x.IsAlive).ToList();
-            if (allies == null) return;
-
-            foreach (var ally in allies)
+            else
             {
-                System.Collections.Generic.IEnumerable<Modifier> modA = ally.Modifiers.ToList();
-
-                //Spirit Breaker
-                if (modA.Any(x => x.Name.Contains("spirit_breaker_charge_of_darkness_vision")) && Utils.SleepCheck("BeAwarePlus.spirit_breaker")) 
+                switch (name)
                 {
-                    MessageAllyCreator(ally.Name.Substring(14), "spirit_breaker_charge_of_darkness");
-                    PlaySound("spirit_breaker_charge_of_darkness_" + Addition[GetLangId]);
-                    Utils.Sleep(12000, "BeAwarePlus.spirit_breaker");
-                }
+                    //Bloodseeker Thirst
+                    case "modifier_bloodseeker_thirst_speed":
+                    {
+                       MessageCreator("bloodseeker", "bloodseeker_thirst");
+                       PlaySound("bloodseeker_thirst_" + Addition[GetLangId]);
+                    }
+                       break;
 
-                //Sniper
-                if (modA.Any(x => x.Name.Contains("sniper_assassinate")) && Utils.SleepCheck("BeAwarePlus.sniper")) 
-                {
-                    MessageAllyCreator(ally.Name.Substring(14), "sniper_assassinate");
-                    PlaySound("sniper_assassinate_" + Addition[GetLangId]);
-                    Utils.Sleep(3000, "BeAwarePlus.sniper");
-                }
+                    //Rune Haste
+                    case "modifier_rune_haste":
+                    {
+                       index = sender.Name.Remove(0, 14);
+                       MessageRuneCreator(index, "rune_haste");
+                       PlaySound("rune_haste_" + Addition[GetLangId]);
+                    }
+                       break;
 
-                //Nevermore
-                if (modA.Any(x => x.Name.Contains("modifier_nevermore_presence")) && Utils.SleepCheck("BeAwarePlus.nevermore"))
-                {
-                    MessageAllyCreator(ally.Name.Substring(14), "nevermore_dark_lord"); 
-                    PlaySound("nevermore_dark_lord_" + Addition[GetLangId]);
-                    Utils.Sleep(10000, "BeAwarePlus.nevermore");
-                }
+                    //Rune Regen
+                    case "modifier_rune_regen":
+                    {
+                       index = sender.Name.Remove(0, 14);
+                       MessageRuneCreator(index, "rune_regen");
+                       PlaySound("rune_regen_" + Addition[GetLangId]);
+                    }
+                       break;
 
-                //Bounty Hunter ULT
-                if (modA.Any(x => x.Name == "modifier_bounty_hunter_track") && Utils.SleepCheck("BeAwarePlus.bounty_hunter" + ally.Handle)) 
-                {
-                    MessageAllyCreator(ally.Name.Substring(14), "bounty_hunter_track");
-                    PlaySound("bounty_hunter_track_" + Addition[GetLangId]);
-                    Utils.Sleep(30000, "BeAwarePlus.bounty_hunter" + ally.Handle);
-                }
+                    //Rune Arcane
+                    case "modifier_rune_arcane":
+                    {
+                       index = sender.Name.Remove(0, 14);
+                       MessageRuneCreator(index, "rune_arcane");
+                       PlaySound("rune_arcane_" + Addition[GetLangId]);
+                    }
+                       break;
 
-                //Invoker
-                if (modA.Any(x => x.Name.Contains("modifier_invoker_ghost_walk")) && Utils.SleepCheck("BeAwarePlus.invoker")) 
-                {
-                    MessageAllyCreator(ally.Name.Substring(14), "invoker_ghost_walk");
-                    PlaySound("invoker_ghost_walk_" + Addition[GetLangId]);
-                    Utils.Sleep(15000, "BeAwarePlus.invoker");
+                    //Rune Doubledamage
+                    case "modifier_rune_doubledamage":
+                    {
+                       index = sender.Name.Remove(0, 14);
+                       MessageRuneCreator(index, "rune_doubledamage");
+                       PlaySound("rune_doubledamage_" + Addition[GetLangId]);
+                    }
+                       break;
+
+                    //Rune Invis
+                    case "modifier_rune_invis":
+                    {
+                       index = sender.Name.Remove(0, 14);
+                       MessageRuneCreator(index, "rune_invis");
+                       PlaySound("rune_invis_" + Addition[GetLangId]);
+                    }
+                       break;
+
+                    //Shadow Blade
+                    case "modifier_item_invisibility_edge_windwalk":
+                    {
+                       index = sender.Name.Remove(0, 14);
+                       MessageItemCreator(index, "invis_sword");
+                       PlaySound("invis_sword_" + Addition[GetLangId]);
+                    }
+                       break;
+
+                    //Shadow Amulet
+                    case "modifier_item_shadow_amulet_fade":
+                    {    
+                       index = sender.Name.Remove(0, 14);
+                       MessageItemCreator(index, "shadow_amulet");
+                       PlaySound("shadow_amulet_" + Addition[GetLangId]);
+                    }
+                       break;
+                        
+                    //Glimmer Cape
+                    case "modifier_item_glimmer_cape_fade":
+                    {
+                       index = sender.Name.Remove(0, 14);
+                       MessageItemCreator(index, "glimmer_cape");
+                       PlaySound("glimmer_cape_" + Addition[GetLangId]);
+                    }
+                       break;
+
+                    //Silver Edge
+                    case "modifier_item_silver_edge_windwalk":
+                    {
+                       index = sender.Name.Remove(0, 14);
+                       MessageItemCreator(index, "silver_edge");
+                       PlaySound("silver_edge_" + Addition[GetLangId]);
+                    }
+                       break;
                 }
             }
         }
-
         public static void OnParticleEvent(Entity hero, ParticleEffectAddedEventArgs args)
         {
-            //Smoke of Deceit
-            if (args.Name.Contains("smoke_of_deceit") && Utils.SleepCheck("BeAwarePlus.smoke_of_deceit")) 
-            {
-                MessageItemCreator("default2", "smoke_of_deceit");
-                PlaySound("item_smoke_of_deceit_" + Addition[GetLangId]);
-                Utils.Sleep(3000, "BeAwarePlus.smoke_of_deceit");
-            }
+                    //Smoke of Deceit
+                    if (args.Name.Contains("smoke_of_deceit"))
+                    {
+                       MessageItemCreator("default2", "smoke_of_deceit");
+                       PlaySound("item_smoke_of_deceit_" + Addition[GetLangId]);
+                    }
 
-            //Ancient Apparition
-            if (args.Name.Contains("ancient_apparition_ice_blast") && ancient_apparition_IsHere && Utils.SleepCheck("BeAwarePlus.ancient_apparition")) 
-            {
-                MessageCreator("ancient_apparition", "ancient_apparition_ice_blast");
-                PlaySound("ancient_apparition_ice_blast_" + Addition[GetLangId]);
-                Utils.Sleep(3000, "BeAwarePlus.ancient_apparition");
-            }
+                    //Ancient Apparition Ice Blast
+                    if (args.Name.Contains("ancient_apparition_ice_blast") && ancient_apparition_IsHere) 
+                    {
+                       MessageCreator("ancient_apparition", "ancient_apparition_ice_blast");
+                       PlaySound("ancient_apparition_ice_blast_" + Addition[GetLangId]);
+                    }
 
-            //Mirana
-            if (args.Name.Contains("mirana_moonlight_cast") && args.ParticleEffect.Owner.Team != me.Team && Utils.SleepCheck("BeAwarePlus.mirana")) 
-            {
-                MessageCreator("mirana", "mirana_invis");
-                PlaySound("moonlight_shadow_" + Addition[GetLangId]);
-                Utils.Sleep(15000, "BeAwarePlus.mirana");
-            }
+                    //Mirana Moonlight
+                    if (args.Name.Contains("mirana_moonlight_cast") && args.ParticleEffect.Owner.Team != me.Team) 
+                    {
+                       MessageCreator("mirana", "mirana_invis");
+                       PlaySound("moonlight_shadow_" + Addition[GetLangId]);
+                    }
 
-            //Sandking
-            if (args.Name.Contains("sandking_epicenter") && args.ParticleEffect.Owner.Team != me.Team && Utils.SleepCheck("BeAwarePlus.sand_king"))
-            {
-                MessageCreator("sand_king", "sandking_epicenter");
-                PlaySound("sandking_epicenter_" + Addition[GetLangId]);
-                Utils.Sleep(15000, "BeAwarePlus.sand_king");
-            }
+                    //Sandking Epicenter
+                    if (args.Name.Contains("sandking_epicenter") && args.ParticleEffect.Owner.Team != me.Team)
+                    {
+                       MessageCreator("sand_king", "sandking_epicenter");
+                       PlaySound("sandking_epicenter_" + Addition[GetLangId]);
+                    }
 
-            //Furion Teleport
-            if (args.Name.Contains("furion_teleport") && args.ParticleEffect.Owner.Team != me.Team && Utils.SleepCheck("BeAwarePlus.furion"))
-            {
-                MessageCreator("furion", "furion_teleportation");
-                PlaySound("furion_teleportation_" + Addition[GetLangId]);
-                Utils.Sleep(1000, "BeAwarePlus.furion");
-            }
+                    //Furion Teleport
+                    if (args.Name.Contains("furion_teleport") && args.ParticleEffect.Owner.Team != me.Team)
+                    {
+                       MessageCreator("furion", "furion_teleportation");
+                       PlaySound("furion_teleportation_" + Addition[GetLangId]);               
+                    }
 
-            //Furion ULT
-            if (args.Name.Contains("furion_wrath_of_nature") && args.ParticleEffect.Owner.Team != me.Team && Utils.SleepCheck("BeAwarePlus.furion"))
-            {
-                MessageCreator("furion", "furion_wrath_of_nature");
-                PlaySound("furion_wrath_of_nature_" + Addition[GetLangId]);
-                Utils.Sleep(1000, "BeAwarePlus.furion");
-            }
+                    //Furion Wrath of Nature
+                    if (args.Name.Contains("furion_wrath_of_nature") && args.ParticleEffect.Owner.Team != me.Team)
+                    {
+                       MessageCreator("furion", "furion_wrath_of_nature");
+                       PlaySound("furion_wrath_of_nature_" + Addition[GetLangId]);               
+                    }
 
-            //Alchemist
-            if (args.Name.Contains("alchemist_unstableconc") && args.ParticleEffect.Owner.Team != me.Team && Utils.SleepCheck("BeAwarePlus.alchemist"))
-            {
-                MessageCreator("alchemist", "alchemist_unstable_concoction");
-                PlaySound("unstable_concoction_" + Addition[GetLangId]);
-                Utils.Sleep(15000, "BeAwarePlus.alchemist");
-            }
+                    //Alchemist Unstable Concoction
+                    if (args.Name.Contains("alchemist_unstableconc") && args.ParticleEffect.Owner.Team != me.Team)
+                    {
+                       MessageCreator("alchemist", "alchemist_unstable_concoction");
+                       PlaySound("unstable_concoction_" + Addition[GetLangId]);
+                    }
 
-            //Bounty Hunter
-            if (args.Name.Contains("bounty_hunter_windwalk") && bounty_hunter_IsHere && Utils.SleepCheck("BeAwarePlus.bounty_hunter"))
-            {
-                MessageCreator("bounty_hunter", "bounty_hunter_wind_walk");
-                PlaySound("bounty_hunter_wind_walk_" + Addition[GetLangId]);
-                Utils.Sleep(1000, "BeAwarePlus.bounty_hunter");
-            }
+                    //Bounty Hunter Wind Walk
+                    if (args.Name.Contains("bounty_hunter_windwalk") && bounty_hunter_IsHere)
+                    {
+                       MessageCreator("bounty_hunter", "bounty_hunter_wind_walk");
+                       PlaySound("bounty_hunter_wind_walk_" + Addition[GetLangId]);
+                    }
 
-            //Clinkz
-            if (args.Name.Contains("clinkz_windwalk") && args.ParticleEffect.Owner.Team != me.Team && Utils.SleepCheck("BeAwarePlus.clinkz"))
-            {
-                MessageCreator("clinkz", "clinkz_wind_walk");
-                PlaySound("clinkz_wind_walk_" + Addition[GetLangId]);
-                Utils.Sleep(1000, "BeAwarePlus.clinkz");
-            }
+                    //Clinkz Wind Walk
+                    if (args.Name.Contains("clinkz_windwalk") && args.ParticleEffect.Owner.Team != me.Team)
+                    {
+                       MessageCreator("clinkz", "clinkz_wind_walk");
+                       PlaySound("clinkz_wind_walk_" + Addition[GetLangId]);
+                    }
 
-            //Nyx Assassin
-            if (args.Name.Contains("nyx_assassin_vendetta") && nyx_assassin_IsHere && Utils.SleepCheck("BeAwarePlus.nyx_assassin"))
-            {
-                MessageCreator("nyx_assassin", "nyx_assassin_vendetta");
-                PlaySound("nyx_assassin_vendetta_" + Addition[GetLangId]);
-                Utils.Sleep(1000, "BeAwarePlus.nyx_assassin");
-            }
-         
-            //Wisp
-            if (args.Name.Contains("wisp_relocate_channel") && args.ParticleEffect.Owner.Team != me.Team && Utils.SleepCheck("BeAwarePlus.wisp"))
-            {
-                MessageCreator("wisp", "wisp_relocate");
-                PlaySound("wisp_relocate_" + Addition[GetLangId]);
-                Utils.Sleep(1000, "BeAwarePlus.wisp");
-            }
+                    //Nyx Assassin Vendetta
+                    if (args.Name.Contains("nyx_assassin_vendetta") && nyx_assassin_IsHere)
+                    {
+                       MessageCreator("nyx_assassin", "nyx_assassin_vendetta");
+                       PlaySound("nyx_assassin_vendetta_" + Addition[GetLangId]);
+                    }
 
-            //Morphling
-            if (args.Name.Contains("morphling_replicate") && args.ParticleEffect.Owner.Team != me.Team && Utils.SleepCheck("BeAwarePlus.morphling"))
-            {
-                MessageCreator("morphling", "morphling_replicate");
-                PlaySound("morphling_replicate_" + Addition[GetLangId]);
-                Utils.Sleep(15000, "BeAwarePlus.morphling");
-            }
+                    //Wisp Relocate
+                    if (args.Name.Contains("wisp_relocate_channel") && args.ParticleEffect.Owner.Team != me.Team)
+                    {
+                       MessageCreator("wisp", "wisp_relocate");
+                       PlaySound("wisp_relocate_" + Addition[GetLangId]);
+                    }
 
-            //Troll Warlord
-            if (args.Name.Contains("troll_warlord_battletrance_cast") && args.ParticleEffect.Owner.Team != me.Team && Utils.SleepCheck("BeAwarePlus.troll_warlord"))
-            {
-                MessageCreator("troll_warlord", "troll_warlord_battle_trance");
-                PlaySound("troll_warlord_battle_trance_" + Addition[GetLangId]);
-                Utils.Sleep(15000, "BeAwarePlus.troll_warlord");
-            }
+                    //Morphling Replicate
+                    if (args.Name.Contains("morphling_replicate") && morphling_IsHere)
+                    {
+                       MessageCreator("morphling", "morphling_replicate");
+                       PlaySound("morphling_replicate_" + Addition[GetLangId]);
+                    }
 
-            //Ursa
-            if (args.Name.Contains("ursa_enrage_buff") && args.ParticleEffect.Owner.Team != me.Team && Utils.SleepCheck("BeAwarePlus.ursa"))
-            {
-                MessageCreator("ursa", "ursa_enrage");
-                PlaySound("ursa_enrage_" + Addition[GetLangId]);
-                Utils.Sleep(15000, "BeAwarePlus.ursa");
-            }
+                    //Troll Warlord Battle Trance
+                    if (args.Name.Contains("troll_warlord_battletrance_cast") && args.ParticleEffect.Owner.Team != me.Team)
+                    {
+                       MessageCreator("troll_warlord", "troll_warlord_battle_trance");
+                       PlaySound("troll_warlord_battle_trance_" + Addition[GetLangId]);
+                    }
+
+                    //Ursa Enrage
+                    if (args.Name.Contains("ursa_enrage_buff") && args.ParticleEffect.Owner.Team != me.Team)
+                    {
+                       MessageCreator("ursa", "ursa_enrage");
+                       PlaySound("ursa_enrage_" + Addition[GetLangId]);
+                    }         
         }
         static void MessageAllyCreator(string saitama, string onepunch)
         {
