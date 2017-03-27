@@ -117,280 +117,275 @@ namespace BeAwarePlus
         private static void HeroOnOnModifierAdded(Unit sender, ModifierChangedEventArgs args)
         {
 
-                    //Invoker Sun Strike    
-                    if (args.Modifier.Name.Contains("modifier_invoker_sun_strike") && args.Modifier.Owner.Team != me.Team)
-                    {
-                       MessageCreator("invoker", "invoker_sun_strike");
-                       PlaySound("invoker_sun_strike_" + Addition[GetLangId]);
-                    }
+                //Invoker Sun Strike    
+                if (args.Modifier.Name.Contains("modifier_invoker_sun_strike") && args.Modifier.Owner.Team != me.Team)
+                {
+                    MessageCreator("invoker", "invoker_sun_strike");
+                    PlaySound("invoker_sun_strike_" + Addition[GetLangId]);
+                }
 
-                    //Kunkka Torrent
-                    if (args.Modifier.Name.Contains("modifier_kunkka_torrent_thinker") && args.Modifier.Owner.Team != me.Team)
-                    {
-                       MessageCreator("kunkka", "kunkka_torrent");
-                       PlaySound("kunkka_torrent_" + Addition[GetLangId]);
-                    }
+                //Kunkka Torrent
+                if (args.Modifier.Name.Contains("modifier_kunkka_torrent_thinker") && args.Modifier.Owner.Team != me.Team)
+                {
+                    MessageCreator("kunkka", "kunkka_torrent");
+                    PlaySound("kunkka_torrent_" + Addition[GetLangId]);
+                }
 
-                    //Monkey King Primal Spring
-                    if (args.Modifier.Name.Contains("modifier_monkey_king_spring_thinker") && args.Modifier.Owner.Team != me.Team)
-                    {
-                       MessageCreator("monkey_king", "monkey_king_primal_spring");
-                       PlaySound("monkey_king_primal_spring_" + Addition[GetLangId]);
-                    }
+                //Monkey King Primal Spring
+                if (args.Modifier.Name.Contains("modifier_monkey_king_spring_thinker") && args.Modifier.Owner.Team != me.Team)
+                {
+                    MessageCreator("monkey_king", "monkey_king_primal_spring");
+                    PlaySound("monkey_king_primal_spring_" + Addition[GetLangId]);
+                }
          
-                    //Radar
-                    if (args.Modifier.Name.Contains("modifier_radar_thinker") && args.Modifier.Owner.Team != me.Team)
-                    {
-                       MessageCreator("radar", "radars_scan");
-                       PlaySound("radars_scan_" + Addition[GetLangId]);
-                    }
-
-           
+                //Radar
+                if (args.Modifier.Name.Contains("modifier_radar_thinker") && args.Modifier.Owner.Team != me.Team)
+                {
+                    MessageCreator("radar", "radars_scan");
+                    PlaySound("radars_scan_" + Addition[GetLangId]);
+                }  
+                      
             if (!(sender is Hero))
                 return;
             if (sender.IsIllusion)
-                return;
-            var name = args.Modifier.Name;
+                return;            
             string index;
             if (sender.Team == me.Team)
             {
-                switch (name)
+
+                //Spirit Breaker Charge of Darkness
+                if (args.Modifier.Name.Contains("modifier_spirit_breaker_charge_of_darkness_vision"))
                 {
-                    //Spirit Breaker Charge of Darkness
-                    case "modifier_spirit_breaker_charge_of_darkness_vision":
-                    {
-                       MessageAllyCreator(sender.Name.Substring(14), "spirit_breaker_charge_of_darkness");
-                       PlaySound("spirit_breaker_charge_of_darkness_" + Addition[GetLangId]);
-                    }
-                       break;
-
-                    //Sniper Assassinate
-                    case "modifier_sniper_assassinate":
-                    {
-                       MessageAllyCreator(sender.Name.Substring(14), "sniper_assassinate");
-                       PlaySound("sniper_assassinate_" + Addition[GetLangId]);
-                    }
-                       break;
-
-                    //Nevermore Dark Lord
-                    case "modifier_nevermore_presence":
-                    {
-                       MessageAllyCreator(sender.Name.Substring(14), "nevermore_dark_lord");
-                       PlaySound("nevermore_dark_lord_" + Addition[GetLangId]);
-                    }
-                       break;
-
-                    //Bounty Hunter Track
-                    case "modifier_bounty_hunter_track":
-                    {
-                       MessageAllyCreator(sender.Name.Substring(14), "bounty_hunter_track");
-                       PlaySound("bounty_hunter_track_" + Addition[GetLangId]);
-                    }
-                       break;
-
-                    //Invoker Ghost Walk
-                    case "modifier_invoker_ghost_walk_enemy":
-                    {
-                       MessageAllyCreator(sender.Name.Substring(14), "invoker_ghost_walk");
-                       PlaySound("invoker_ghost_walk_" + Addition[GetLangId]);
-                    }
-                       break;
+                    MessageAllyCreator(sender.Name.Substring(14), "sniper_assassinate");
+                    PlaySound("spirit_breaker_charge_of_darkness_" + Addition[GetLangId]);                   
                 }
+
+                //Sniper Assassinate
+                if (args.Modifier.Name.Contains("modifier_sniper_assassinate"))
+                {
+                    MessageAllyCreator(sender.Name.Substring(14), "sniper_assassinate");
+                    PlaySound("sniper_assassinate_" + Addition[GetLangId]);
+                }
+
+                //Nevermore Dark Lord
+                if (args.Modifier.Name.Contains("modifier_nevermore_presence") && Utils.SleepCheck("nevermore_dark_lord"))
+                {
+                    MessageAllyCreator(sender.Name.Substring(14), "nevermore_dark_lord");
+                    PlaySound("nevermore_dark_lord_" + Addition[GetLangId]);
+                    Utils.Sleep(5000, "nevermore_dark_lord");
+                }
+
+                //Bounty Hunter Track
+                if (args.Modifier.Name.Contains("modifier_bounty_hunter_track"))
+                {
+                    MessageAllyCreator(sender.Name.Substring(14), "bounty_hunter_track");
+                    PlaySound("bounty_hunter_track_" + Addition[GetLangId]);
+                }
+
+                //Invoker Ghost Walk
+                if (args.Modifier.Name.Contains("modifier_invoker_ghost_walk_enemy") && Utils.SleepCheck("invoker_ghost_walk"))
+                {
+                    MessageAllyCreator(sender.Name.Substring(14), "invoker_ghost_walk");
+                    PlaySound("invoker_ghost_walk_" + Addition[GetLangId]);
+                    Utils.Sleep(3000, "invoker_ghost_walk");
+                }
+
             }
             else
             {
-                switch (name)
+
+                //Bloodseeker Thirst
+                if (args.Modifier.Name.Contains("modifier_bloodseeker_thirst_speed") && Utils.SleepCheck("bloodseeker_thirst"))
                 {
-                    //Bloodseeker Thirst
-                    case "modifier_bloodseeker_thirst_speed":
-                    {
-                       MessageCreator("bloodseeker", "bloodseeker_thirst");
-                       PlaySound("bloodseeker_thirst_" + Addition[GetLangId]);
-                    }
-                       break;
-
-                    //Rune Haste
-                    case "modifier_rune_haste":
-                    {
-                       index = sender.Name.Remove(0, 14);
-                       MessageRuneCreator(index, "rune_haste");
-                       PlaySound("rune_haste_" + Addition[GetLangId]);
-                    }
-                       break;
-
-                    //Rune Regen
-                    case "modifier_rune_regen":
-                    {
-                       index = sender.Name.Remove(0, 14);
-                       MessageRuneCreator(index, "rune_regen");
-                       PlaySound("rune_regen_" + Addition[GetLangId]);
-                    }
-                       break;
-
-                    //Rune Arcane
-                    case "modifier_rune_arcane":
-                    {
-                       index = sender.Name.Remove(0, 14);
-                       MessageRuneCreator(index, "rune_arcane");
-                       PlaySound("rune_arcane_" + Addition[GetLangId]);
-                    }
-                       break;
-
-                    //Rune Doubledamage
-                    case "modifier_rune_doubledamage":
-                    {
-                       index = sender.Name.Remove(0, 14);
-                       MessageRuneCreator(index, "rune_doubledamage");
-                       PlaySound("rune_doubledamage_" + Addition[GetLangId]);
-                    }
-                       break;
-
-                    //Rune Invis
-                    case "modifier_rune_invis":
-                    {
-                       index = sender.Name.Remove(0, 14);
-                       MessageRuneCreator(index, "rune_invis");
-                       PlaySound("rune_invis_" + Addition[GetLangId]);
-                    }
-                       break;
-
-                    //Shadow Blade
-                    case "modifier_item_invisibility_edge_windwalk":
-                    {
-                       index = sender.Name.Remove(0, 14);
-                       MessageItemCreator(index, "invis_sword");
-                       PlaySound("invis_sword_" + Addition[GetLangId]);
-                    }
-                       break;
-
-                    //Shadow Amulet
-                    case "modifier_item_shadow_amulet_fade":
-                    {    
-                       index = sender.Name.Remove(0, 14);
-                       MessageItemCreator(index, "shadow_amulet");
-                       PlaySound("shadow_amulet_" + Addition[GetLangId]);
-                    }
-                       break;
-                        
-                    //Glimmer Cape
-                    case "modifier_item_glimmer_cape_fade":
-                    {
-                       index = sender.Name.Remove(0, 14);
-                       MessageItemCreator(index, "glimmer_cape");
-                       PlaySound("glimmer_cape_" + Addition[GetLangId]);
-                    }
-                       break;
-
-                    //Silver Edge
-                    case "modifier_item_silver_edge_windwalk":
-                    {
-                       index = sender.Name.Remove(0, 14);
-                       MessageItemCreator(index, "silver_edge");
-                       PlaySound("silver_edge_" + Addition[GetLangId]);
-                    }
-                       break;
+                    MessageCreator("bloodseeker", "bloodseeker_thirst");
+                    PlaySound("bloodseeker_thirst_" + Addition[GetLangId]);
+                    Utils.Sleep(10000, "bloodseeker_thirst");
                 }
+
+                //Rune Haste
+                if (args.Modifier.Name.Contains("modifier_rune_haste") && Utils.SleepCheck("rune_haste"))
+                {
+                    index = sender.Name.Remove(0, 14);
+                    MessageRuneCreator(index, "rune_haste");
+                    PlaySound("rune_haste_" + Addition[GetLangId]);
+                    Utils.Sleep(10000, "rune_haste");
+                }
+
+                //Rune Regen
+                if (args.Modifier.Name.Contains("modifier_rune_regen") && Utils.SleepCheck("rune_regen"))
+                {
+                    index = sender.Name.Remove(0, 14);
+                    MessageRuneCreator(index, "rune_haste");
+                    PlaySound("rune_regen_" + Addition[GetLangId]);
+                    Utils.Sleep(10000, "rune_regen");
+                }
+
+                //Rune Arcane
+                if (args.Modifier.Name.Contains("modifier_rune_arcane") && Utils.SleepCheck("rune_arcane"))
+                {
+                    index = sender.Name.Remove(0, 14);
+                    MessageRuneCreator(index, "rune_arcane");
+                    PlaySound("rune_arcane_" + Addition[GetLangId]);
+                    Utils.Sleep(10000, "rune_arcane");
+                }
+
+                //Rune Doubledamage
+                if (args.Modifier.Name.Contains("modifier_rune_doubledamage") && Utils.SleepCheck("rune_doubledamage"))
+                {
+                    index = sender.Name.Remove(0, 14);
+                    MessageRuneCreator(index, "rune_doubledamage");
+                    PlaySound("rune_doubledamage_" + Addition[GetLangId]);
+                    Utils.Sleep(10000, "rune_doubledamage");              
+                }
+
+                //Rune Invis
+                if (args.Modifier.Name.Contains("modifier_rune_invis") && Utils.SleepCheck("rune_invis"))
+                {
+                    index = sender.Name.Remove(0, 14);
+                    MessageRuneCreator(index, "rune_invis");
+                    PlaySound("rune_invis_" + Addition[GetLangId]);
+                    Utils.Sleep(3000, "rune_invis");
+                }
+
+                //Shadow Blade
+                if (args.Modifier.Name.Contains("modifier_item_invisibility_edge_windwalk") && Utils.SleepCheck("invis_sword"))
+                {
+                    index = sender.Name.Remove(0, 14);
+                    MessageItemCreator(index, "invis_sword");
+                    PlaySound("invis_sword_" + Addition[GetLangId]);
+                    Utils.Sleep(3000, "invis_sword");
+                }
+
+                //Shadow Amulet
+                if (args.Modifier.Name.Contains("modifier_item_shadow_amulet_fade") && Utils.SleepCheck("shadow_amulet"))
+                {
+                    index = sender.Name.Remove(0, 14);
+                    MessageItemCreator(index, "shadow_amulet");
+                    PlaySound("shadow_amulet_" + Addition[GetLangId]);
+                    Utils.Sleep(3000, "shadow_amulet");
+                }
+
+                //Glimmer Cape
+                if (args.Modifier.Name.Contains("modifier_item_glimmer_cape_fade") && Utils.SleepCheck("glimmer_cape"))
+                {
+                    index = sender.Name.Remove(0, 14);
+                    MessageItemCreator(index, "glimmer_cape");
+                    PlaySound("glimmer_cape_" + Addition[GetLangId]);
+                    Utils.Sleep(3000, "glimmer_cape");
+                }
+
+                //Silver Edge
+                if (args.Modifier.Name.Contains("modifier_item_silver_edge_windwalk") && Utils.SleepCheck("silver_edge"))
+                {
+                    index = sender.Name.Remove(0, 14);
+                    MessageItemCreator(index, "silver_edge");
+                    PlaySound("silver_edge_" + Addition[GetLangId]);
+                    Utils.Sleep(3000, "silver_edge");
+                }  
+                              
             }
         }
         public static void OnParticleEvent(Entity hero, ParticleEffectAddedEventArgs args)
         {
-                    //Smoke of Deceit
-                    if (args.Name.Contains("smoke_of_deceit"))
-                    {
-                       MessageItemCreator("default2", "smoke_of_deceit");
-                       PlaySound("item_smoke_of_deceit_" + Addition[GetLangId]);
-                    }
 
-                    //Ancient Apparition Ice Blast
-                    if (args.Name.Contains("ancient_apparition_ice_blast") && ancient_apparition_IsHere) 
-                    {
-                       MessageCreator("ancient_apparition", "ancient_apparition_ice_blast");
-                       PlaySound("ancient_apparition_ice_blast_" + Addition[GetLangId]);
-                    }
+                //Smoke of Deceit
+                if (args.Name.Contains("smoke_of_deceit"))
+                {
+                    MessageItemCreator("default2", "smoke_of_deceit");
+                    PlaySound("item_smoke_of_deceit_" + Addition[GetLangId]);
+                }
 
-                    //Mirana Moonlight
-                    if (args.Name.Contains("mirana_moonlight_cast") && args.ParticleEffect.Owner.Team != me.Team) 
-                    {
-                       MessageCreator("mirana", "mirana_invis");
-                       PlaySound("moonlight_shadow_" + Addition[GetLangId]);
-                    }
+                //Ancient Apparition Ice Blast
+                if (args.Name.Contains("ancient_apparition_ice_blast") && ancient_apparition_IsHere) 
+                {
+                    MessageCreator("ancient_apparition", "ancient_apparition_ice_blast");
+                    PlaySound("ancient_apparition_ice_blast_" + Addition[GetLangId]);
+                }
 
-                    //Sandking Epicenter
-                    if (args.Name.Contains("sandking_epicenter") && args.ParticleEffect.Owner.Team != me.Team)
-                    {
-                       MessageCreator("sand_king", "sandking_epicenter");
-                       PlaySound("sandking_epicenter_" + Addition[GetLangId]);
-                    }
+                //Mirana Moonlight
+                if (args.Name.Contains("mirana_moonlight_cast") && args.ParticleEffect.Owner.Team != me.Team) 
+                {
+                    MessageCreator("mirana", "mirana_invis");
+                    PlaySound("moonlight_shadow_" + Addition[GetLangId]);
+                }
 
-                    //Furion Teleport
-                    if (args.Name.Contains("furion_teleport") && args.ParticleEffect.Owner.Team != me.Team)
-                    {
-                       MessageCreator("furion", "furion_teleportation");
-                       PlaySound("furion_teleportation_" + Addition[GetLangId]);               
-                    }
+                //Sandking Epicenter
+                if (args.Name.Contains("sandking_epicenter") && args.ParticleEffect.Owner.Team != me.Team)
+                {
+                    MessageCreator("sand_king", "sandking_epicenter");
+                    PlaySound("sandking_epicenter_" + Addition[GetLangId]);
+                }
 
-                    //Furion Wrath of Nature
-                    if (args.Name.Contains("furion_wrath_of_nature") && args.ParticleEffect.Owner.Team != me.Team)
-                    {
-                       MessageCreator("furion", "furion_wrath_of_nature");
-                       PlaySound("furion_wrath_of_nature_" + Addition[GetLangId]);               
-                    }
+                //Furion Teleport
+                if (args.Name.Contains("furion_teleport") && args.ParticleEffect.Owner.Team != me.Team)
+                {
+                    MessageCreator("furion", "furion_teleportation");
+                    PlaySound("furion_teleportation_" + Addition[GetLangId]);               
+                }
 
-                    //Alchemist Unstable Concoction
-                    if (args.Name.Contains("alchemist_unstableconc") && args.ParticleEffect.Owner.Team != me.Team)
-                    {
-                       MessageCreator("alchemist", "alchemist_unstable_concoction");
-                       PlaySound("unstable_concoction_" + Addition[GetLangId]);
-                    }
+                //Furion Wrath of Nature
+                if (args.Name.Contains("furion_wrath_of_nature") && args.ParticleEffect.Owner.Team != me.Team)
+                {
+                    MessageCreator("furion", "furion_wrath_of_nature");
+                    PlaySound("furion_wrath_of_nature_" + Addition[GetLangId]);               
+                }
 
-                    //Bounty Hunter Wind Walk
-                    if (args.Name.Contains("bounty_hunter_windwalk") && bounty_hunter_IsHere)
-                    {
-                       MessageCreator("bounty_hunter", "bounty_hunter_wind_walk");
-                       PlaySound("bounty_hunter_wind_walk_" + Addition[GetLangId]);
-                    }
+                //Alchemist Unstable Concoction
+                if (args.Name.Contains("alchemist_unstableconc") && args.ParticleEffect.Owner.Team != me.Team)
+                {
+                    MessageCreator("alchemist", "alchemist_unstable_concoction");
+                    PlaySound("unstable_concoction_" + Addition[GetLangId]);
+                }
 
-                    //Clinkz Wind Walk
-                    if (args.Name.Contains("clinkz_windwalk") && args.ParticleEffect.Owner.Team != me.Team)
-                    {
-                       MessageCreator("clinkz", "clinkz_wind_walk");
-                       PlaySound("clinkz_wind_walk_" + Addition[GetLangId]);
-                    }
+                //Bounty Hunter Wind Walk
+                if (args.Name.Contains("bounty_hunter_windwalk") && bounty_hunter_IsHere)
+                {
+                    MessageCreator("bounty_hunter", "bounty_hunter_wind_walk");
+                    PlaySound("bounty_hunter_wind_walk_" + Addition[GetLangId]);
+                }
 
-                    //Nyx Assassin Vendetta
-                    if (args.Name.Contains("nyx_assassin_vendetta") && nyx_assassin_IsHere)
-                    {
-                       MessageCreator("nyx_assassin", "nyx_assassin_vendetta");
-                       PlaySound("nyx_assassin_vendetta_" + Addition[GetLangId]);
-                    }
+                //Clinkz Wind Walk
+                if (args.Name.Contains("clinkz_windwalk") && args.ParticleEffect.Owner.Team != me.Team)
+                {
+                    MessageCreator("clinkz", "clinkz_wind_walk");
+                    PlaySound("clinkz_wind_walk_" + Addition[GetLangId]);
+                }
 
-                    //Wisp Relocate
-                    if (args.Name.Contains("wisp_relocate_channel") && args.ParticleEffect.Owner.Team != me.Team)
-                    {
-                       MessageCreator("wisp", "wisp_relocate");
-                       PlaySound("wisp_relocate_" + Addition[GetLangId]);
-                    }
+                //Nyx Assassin Vendetta
+                if (args.Name.Contains("nyx_assassin_vendetta_start") && nyx_assassin_IsHere)
+                {
+                    MessageCreator("nyx_assassin", "nyx_assassin_vendetta");
+                    PlaySound("nyx_assassin_vendetta_" + Addition[GetLangId]);
+                }
 
-                    //Morphling Replicate
-                    if (args.Name.Contains("morphling_replicate") && morphling_IsHere)
-                    {
-                       MessageCreator("morphling", "morphling_replicate");
-                       PlaySound("morphling_replicate_" + Addition[GetLangId]);
-                    }
+                //Wisp Relocate
+                if (args.Name.Contains("wisp_relocate_channel") && args.ParticleEffect.Owner.Team != me.Team)
+                {
+                    MessageCreator("wisp", "wisp_relocate");
+                    PlaySound("wisp_relocate_" + Addition[GetLangId]);
+                }
 
-                    //Troll Warlord Battle Trance
-                    if (args.Name.Contains("troll_warlord_battletrance_cast") && args.ParticleEffect.Owner.Team != me.Team)
-                    {
-                       MessageCreator("troll_warlord", "troll_warlord_battle_trance");
-                       PlaySound("troll_warlord_battle_trance_" + Addition[GetLangId]);
-                    }
+                //Morphling Replicate
+                if (args.Name.Contains("morphling_replicate") && morphling_IsHere)
+                {
+                    MessageCreator("morphling", "morphling_replicate");
+                    PlaySound("morphling_replicate_" + Addition[GetLangId]);
+                }
 
-                    //Ursa Enrage
-                    if (args.Name.Contains("ursa_enrage_buff") && args.ParticleEffect.Owner.Team != me.Team)
-                    {
-                       MessageCreator("ursa", "ursa_enrage");
-                       PlaySound("ursa_enrage_" + Addition[GetLangId]);
-                    }         
+                //Troll Warlord Battle Trance
+                if (args.Name.Contains("troll_warlord_battletrance_cast") && args.ParticleEffect.Owner.Team != me.Team)
+                {
+                    MessageCreator("troll_warlord", "troll_warlord_battle_trance");
+                    PlaySound("troll_warlord_battle_trance_" + Addition[GetLangId]);
+                }
+
+                //Ursa Enrage
+                if (args.Name.Contains("ursa_enrage_buff") && args.ParticleEffect.Owner.Team != me.Team)
+                {
+                    MessageCreator("ursa", "ursa_enrage");
+                    PlaySound("ursa_enrage_" + Addition[GetLangId]);
+                } 
+                        
         }
         static void MessageAllyCreator(string saitama, string onepunch)
         {
