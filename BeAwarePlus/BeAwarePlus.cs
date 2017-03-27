@@ -215,7 +215,7 @@ namespace BeAwarePlus
                 if (args.Modifier.Name.Contains("modifier_rune_regen") && Utils.SleepCheck("rune_regen"))
                 {
                     index = sender.Name.Remove(0, 14);
-                    MessageRuneCreator(index, "rune_haste");
+                    MessageRuneCreator(index, "rune_regen");
                     PlaySound("rune_regen_" + Addition[GetLangId]);
                     Utils.Sleep(10000, "rune_regen");
                 }
