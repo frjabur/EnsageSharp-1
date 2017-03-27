@@ -128,14 +128,14 @@ namespace BeAwarePlus
                 if (args.Modifier.Name.Contains("modifier_kunkka_torrent_thinker") && args.Modifier.Owner.Team != me.Team)
                 {
                     MessageCreator("kunkka", "kunkka_torrent");
-                    PlaySound("kunkka_torrent_" + Addition[GetLangId]);
+                    PlaySound("default_" + Addition[GetLangId]);
                 }
 
                 //Monkey King Primal Spring
                 if (args.Modifier.Name.Contains("modifier_monkey_king_spring_thinker") && args.Modifier.Owner.Team != me.Team)
                 {
                     MessageCreator("monkey_king", "monkey_king_primal_spring");
-                    PlaySound("monkey_king_primal_spring_" + Addition[GetLangId]);
+                    PlaySound("default_" + Addition[GetLangId]);
                 }
          
                 //Radar
@@ -171,7 +171,7 @@ namespace BeAwarePlus
                 if (args.Modifier.Name.Contains("modifier_nevermore_presence") && Utils.SleepCheck("nevermore_dark_lord"))
                 {
                     MessageAllyCreator(sender.Name.Substring(14), "nevermore_dark_lord");
-                    PlaySound("nevermore_dark_lord_" + Addition[GetLangId]);
+                    PlaySound("default_" + Addition[GetLangId]);
                     Utils.Sleep(5000, "nevermore_dark_lord");
                 }
 
@@ -190,18 +190,18 @@ namespace BeAwarePlus
                     Utils.Sleep(3000, "invoker_ghost_walk");
                 }
 
-            }
-            else
-            {
-
                 //Bloodseeker Thirst
-                if (args.Modifier.Name.Contains("modifier_bloodseeker_thirst_speed") && Utils.SleepCheck("bloodseeker_thirst"))
+                if (args.Modifier.Name.Contains("modifier_bloodseeker_thirst_vision") && Utils.SleepCheck("bloodseeker_thirst"))
                 {
-                    MessageCreator("bloodseeker", "bloodseeker_thirst");
+                    MessageAllyCreator(sender.Name.Substring(14), "bloodseeker_thirst");
                     PlaySound("bloodseeker_thirst_" + Addition[GetLangId]);
                     Utils.Sleep(10000, "bloodseeker_thirst");
                 }
 
+            }
+            else
+            {
+                               
                 //Rune Haste
                 if (args.Modifier.Name.Contains("modifier_rune_haste") && Utils.SleepCheck("rune_haste"))
                 {
@@ -225,7 +225,7 @@ namespace BeAwarePlus
                 {
                     index = sender.Name.Remove(0, 14);
                     MessageRuneCreator(index, "rune_arcane");
-                    PlaySound("rune_arcane_" + Addition[GetLangId]);
+                    PlaySound("default_" + Addition[GetLangId]);
                     Utils.Sleep(10000, "rune_arcane");
                 }
 
@@ -281,8 +281,26 @@ namespace BeAwarePlus
                     MessageItemCreator(index, "silver_edge");
                     PlaySound("silver_edge_" + Addition[GetLangId]);
                     Utils.Sleep(3000, "silver_edge");
-                }  
-                              
+                }
+
+                //Gem of True Sight
+                if (args.Modifier.Name.Contains("modifier_item_gem_of_true_sight") && Utils.SleepCheck("gem"))
+                {
+                    index = sender.Name.Remove(0, 14);
+                    MessageItemCreator(index, "gem");
+                    PlaySound("default_" + Addition[GetLangId]);
+                    Utils.Sleep(15000, "gem");
+                }
+
+                //Divine Rapier
+                if (args.Modifier.Name.Contains("modifier_item_divine_rapier") && Utils.SleepCheck("rapier"))
+                {
+                    index = sender.Name.Remove(0, 14);
+                    MessageItemCreator(index, "rapier");
+                    PlaySound("default_" + Addition[GetLangId]);
+                    Utils.Sleep(15000, "rapier");
+                }
+
             }
         }
         public static void OnParticleEvent(Entity hero, ParticleEffectAddedEventArgs args)
