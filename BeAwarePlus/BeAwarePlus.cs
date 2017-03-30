@@ -28,17 +28,19 @@ namespace BeAwarePlus
         private static Hero me;
         private static SideMessage informationmessage;
         private static readonly Menu Menu = new Menu("BeAwarePlus", "BeAwarePlus", true, "beawareplus", true);
-        private static bool UseDefSound => Menu.Item("default sound").GetValue<bool>();
+        private static bool UseDefSound => Menu.Item("disable_heroes_sound").GetValue<bool>();
         private static void Main(string[] args)
         {
             Events.OnLoad += EventsOnOnLoad;
         }
         private static void EventsOnOnLoad(object sender, EventArgs eventArgs)
         {
-            Menu.AddItem(new MenuItem("enable", "Sound").SetValue(true));
-            Menu.AddItem(new MenuItem("default sound", "Disable the Sound Heroes").SetValue(false)).SetTooltip("All Sounds Becomes Default");           
-            Menu.AddItem(new MenuItem("rune", "Time per Sec Rune").SetValue(new Slider(10, 0, 30)));
-            Menu.AddItem(new MenuItem("hand_of_midas", "Time per Sec Midas").SetValue(new Slider(5, 0, 10)));
+            Menu.AddItem(new MenuItem("enable", "Enable Sound").SetValue(true));
+            Menu.AddItem(new MenuItem("disable_heroes_sound", "Disable the Sound Heroes").SetValue(false)).SetTooltip("All Sounds Becomes Default");
+            Menu.AddItem(new MenuItem("rune", "Enable Rune").SetValue(true));
+            Menu.AddItem(new MenuItem("rune_sec", "Time per Sec Rune").SetValue(new Slider(10, 0, 30)));
+            Menu.AddItem(new MenuItem("midas", "Enable Midas").SetValue(true));
+            Menu.AddItem(new MenuItem("midas_sec", "Time per Sec Midas").SetValue(new Slider(5, 0, 10)));
             Menu.AddToMainMenu();
 
             Roshan_Dead = false;
@@ -454,7 +456,7 @@ namespace BeAwarePlus
             if (me == null || me.Hero == null) return;
 
             //Rune
-            if (((Math.Round(Game.GameTime) + Menu.Item("rune").GetValue<Slider>().Value) % 120) == 0 && Utils.SleepCheck("check_rune"))
+            if (Menu.Item("rune").GetValue<bool>() && ((Math.Round(Game.GameTime) + Menu.Item("rune_sec").GetValue<Slider>().Value) % 120) == 0 && Utils.SleepCheck("check_rune"))
             {
                 MessageCheckRuneCreator(null);
                 PlaySound("check_rune_" + Addition[GetLangId] + ".wav");
@@ -463,7 +465,7 @@ namespace BeAwarePlus
 
             //Hand of Midas
             var Midas = me.Hero.FindItem("item_hand_of_midas");
-            if (Midas != null && Math.Round(Midas.Cooldown) == Menu.Item("hand_of_midas").GetValue<Slider>().Value && Utils.SleepCheck("use_midas"))
+            if (Menu.Item("midas").GetValue<bool>() && Midas != null && Math.Round(Midas.Cooldown) == Menu.Item("midas_sec").GetValue<Slider>().Value && Utils.SleepCheck("use_midas"))
             {
                 MessageUseMidasCreator(null);
                 PlaySound("use_midas_" + Addition[GetLangId] + ".wav");
