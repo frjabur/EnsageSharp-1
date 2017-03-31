@@ -52,7 +52,11 @@
     <Reference Include="SharpDX">
       <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\SharpDX.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX.Direct3D9">
+      <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

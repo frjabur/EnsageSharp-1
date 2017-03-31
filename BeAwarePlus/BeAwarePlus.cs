@@ -2,6 +2,8 @@
 using System;
 using System.Linq;
 using System.Timers;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Ensage;
 using Ensage.Common;
 using Ensage.Common.Extensions;
@@ -9,11 +11,16 @@ using Ensage.Common.Menu;
 using Ensage.Common.Objects;
 using Ensage.Common.Objects.UtilityObjects;
 using SharpDX;
+using SharpDX.Direct3D9;
+
 
 namespace BeAwarePlus
 {
     class BeAwarePlus
     {
+        private static Vector2 minimap_pos2d;
+        private static List<Vector2> pos = new List<Vector2>();
+        private static Font font;
         private static bool Roshan_Dead;
         private static int Roshan_Respawn_Min_Time;
         private static int Roshan_Respawn_Max_Time;
@@ -43,6 +50,21 @@ namespace BeAwarePlus
             Menu.AddItem(new MenuItem("midas_sec", "Time per Sec Midas").SetValue(new Slider(5, 0, 10)));
             Menu.AddToMainMenu();
 
+            font = new Font(
+                Drawing.Direct3DDevice9,
+                new FontDescription
+                {
+                    FaceName = "Arial",
+                    Height = 60,
+                    OutputPrecision = FontPrecision.Character,
+                    Quality = FontQuality.ClearTypeNatural,
+                    CharacterSet = FontCharacterSet.Ansi,
+                    MipLevels = 100,
+                    PitchAndFamily = FontPitchAndFamily.Modern,
+                    Weight = FontWeight.Heavy,
+                    Width = 30
+                });
+
             Roshan_Dead = false;
             Roshan_Respawn_Min_Time = 480;
             Roshan_Respawn_Max_Time = 660;
@@ -68,6 +90,32 @@ namespace BeAwarePlus
             Game.OnUpdate += GameOnOnUpdate;
             Events.OnLoad -= EventsOnOnLoad;
             Game.OnFireEvent += Game_OnGameEvent;
+
+            Drawing.OnEndScene += draw;
+            Drawing.OnPreReset += Drawing_OnPreReset;
+            Drawing.OnPostReset += Drawing_OnPostReset;
+        }
+        private static void draw(EventArgs args)
+        {            
+            foreach (Vector2 position in pos.ToList())
+                font.DrawText(null, "*", (int)position.X + -13, (int)position.Y + -22, Color.Red);            
+        }
+        private static async void remover(Vector2 val)
+        {
+            await Task.Delay(5000);
+            pos.RemoveAt(0);
+            if (pos.Contains(val))
+            {
+                pos.Remove(val);
+            }
+        }
+        static void Drawing_OnPostReset(EventArgs args)
+        {
+            font.OnResetDevice();
+        }
+        static void Drawing_OnPreReset(EventArgs args)
+        {
+            font.OnLostDevice();
         }
         private static void GameOnOnUpdate(EventArgs args)
         {
@@ -101,8 +149,7 @@ namespace BeAwarePlus
             if (!Clinkz_IsHere)
                 Clinkz_IsHere =
                 enemyTeam.Any(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Clinkz);
-
-          
+         
         }        
         public static int GetLangId
         {
@@ -118,7 +165,7 @@ namespace BeAwarePlus
         {
             "EN",
             "RU"
-        };
+        };      
         private static void PlaySound(string path)
         {
             if (!Menu.Item("enable").GetValue<bool>()) return;
@@ -149,6 +196,9 @@ namespace BeAwarePlus
             {
                 MessageEnemyCreator("invoker", "invoker_sun_strike");
                 PlaySound("invoker_sun_strike_" + Addition[GetLangId] + ".wav");
+                minimap_pos2d = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
+                pos.Add(minimap_pos2d);
+                remover(minimap_pos2d);
             }
 
             //Kunkka Torrent
@@ -156,6 +206,9 @@ namespace BeAwarePlus
             {
                 MessageEnemyCreator("kunkka", "kunkka_torrent");
                 PlaySound("default_" + Addition[GetLangId] + ".wav");
+                minimap_pos2d = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
+                pos.Add(minimap_pos2d);
+                remover(minimap_pos2d);
             }
 
             //Monkey King Primal Spring
@@ -170,6 +223,9 @@ namespace BeAwarePlus
             {
                 MessageEnemyCreator("radar", "radars_scan");
                 PlaySound("radars_scan_" + Addition[GetLangId] + ".wav");
+                minimap_pos2d = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
+                pos.Add(minimap_pos2d);
+                remover(minimap_pos2d);
             }
 
             if (!(sender is Hero))
@@ -185,6 +241,9 @@ namespace BeAwarePlus
                 {
                     MessageAllyCreator(sender.Name.Substring(14), "spirit_breaker_charge_of_darkness");
                     PlaySound("spirit_breaker_charge_of_darkness_" + Addition[GetLangId] + ".wav");
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
                 }
 
                 //Nevermore Dark Lord
@@ -280,6 +339,9 @@ namespace BeAwarePlus
                     index = sender.Name.Remove(0, 14);
                     MessageItemCreator(index, "invis_sword");
                     PlaySound("invis_sword_" + Addition[GetLangId] + ".wav");
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
                     Utils.Sleep(3000, "invis_sword");
                 }
 
@@ -289,6 +351,9 @@ namespace BeAwarePlus
                     index = sender.Name.Remove(0, 14);
                     MessageItemCreator(index, "shadow_amulet");
                     PlaySound("shadow_amulet_" + Addition[GetLangId] + ".wav");
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
                     Utils.Sleep(3000, "shadow_amulet");
                 }
 
@@ -298,6 +363,9 @@ namespace BeAwarePlus
                     index = sender.Name.Remove(0, 14);
                     MessageItemCreator(index, "glimmer_cape");
                     PlaySound("glimmer_cape_" + Addition[GetLangId] + ".wav");
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
                     Utils.Sleep(3000, "glimmer_cape");
                 }
 
@@ -307,6 +375,9 @@ namespace BeAwarePlus
                     index = sender.Name.Remove(0, 14);
                     MessageItemCreator(index, "silver_edge");
                     PlaySound("silver_edge_" + Addition[GetLangId] + ".wav");
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
                     Utils.Sleep(3000, "silver_edge");
                 }
 
@@ -336,7 +407,7 @@ namespace BeAwarePlus
             //Smoke of Deceit  
             if (args.Name.Contains("smoke_of_deceit"))
             {
-                DelayAction.Add(150, () =>
+                DelayAction.Add(200, () =>
                 {
                     var anyAllyWithSmokeEffect =
                     Heroes.GetByTeam(me.Team).Any(x => x.HasModifier("modifier_smoke_of_deceit"));
@@ -344,29 +415,49 @@ namespace BeAwarePlus
                     {
                         MessageItemCreator("default2", "smoke_of_deceit");
                         PlaySound("item_smoke_of_deceit_" + Addition[GetLangId] + ".wav");
+                        minimap_pos2d = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                        pos.Add(minimap_pos2d);
+                        remover(minimap_pos2d);
                     }
-                });
+                });                 
             }
 
             //Ancient Apparition Ice Blast
-            if (args.Name.Contains("ancient_apparition_ice_blast") && Ancient_Apparition_IsHere)
+            if (args.Name.Contains("ancient_apparition_ice_blast_final") && Ancient_Apparition_IsHere)
             {
                 MessageEnemyCreator("ancient_apparition", "ancient_apparition_ice_blast");
                 PlaySound("ancient_apparition_ice_blast_" + Addition[GetLangId] + ".wav");
+                DelayAction.Add(200, () =>
+                {
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
+                });
             }
 
             //Mirana Moonlight
-            if (args.Name.Contains("mirana_moonlight_cast") && args.ParticleEffect.Owner.Team != me.Team)
-            {
+            if (args.Name.Contains("mirana_moonlight_cast") && args.ParticleEffect.Owner.Team != me.Team)                       
+                {
                 MessageEnemyCreator("mirana", "mirana_invis");
                 PlaySound("moonlight_shadow_" + Addition[GetLangId] + ".wav");
+                DelayAction.Add(200, () =>
+                {
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
+                });
             }
-
             //Sandking Epicenter
             if (args.Name.Contains("sandking_epicenter") && args.ParticleEffect.Owner.Team != me.Team)
             {
                 MessageEnemyCreator("sand_king", "sandking_epicenter");
-                PlaySound("sandking_epicenter_" + Addition[GetLangId] + ".wav");
+                PlaySound("default_" + Addition[GetLangId] + ".wav");
+                DelayAction.Add(200, () =>
+                {
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
+                });
             }
 
             //Furion Teleport
@@ -374,13 +465,25 @@ namespace BeAwarePlus
             {
                 MessageEnemyCreator("furion", "furion_teleportation");
                 PlaySound("furion_teleportation_" + Addition[GetLangId] + ".wav");
-            }
-
+                DelayAction.Add(200, () =>
+                {
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
+                });
+            }  
+                    
             //Furion Wrath of Nature
             if (args.Name.Contains("furion_wrath_of_nature") && args.ParticleEffect.Owner.Team != me.Team)
             {
                 MessageEnemyCreator("furion", "furion_wrath_of_nature");
                 PlaySound("furion_wrath_of_nature_" + Addition[GetLangId] + ".wav");
+                DelayAction.Add(200, () =>
+                {
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
+                });
             }
 
             //Alchemist Unstable Concoction
@@ -388,6 +491,12 @@ namespace BeAwarePlus
             {
                 MessageEnemyCreator("alchemist", "alchemist_unstable_concoction");
                 PlaySound("unstable_concoction_" + Addition[GetLangId] + ".wav");
+                DelayAction.Add(200, () =>
+                {
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
+                });
             }
 
             //Bounty Hunter Wind Walk
@@ -395,6 +504,12 @@ namespace BeAwarePlus
             {
                 MessageEnemyCreator("bounty_hunter", "bounty_hunter_wind_walk");
                 PlaySound("bounty_hunter_wind_walk_" + Addition[GetLangId] + ".wav");
+                DelayAction.Add(200, () =>
+                {
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
+                });
             }
 
             //Clinkz Wind Walk
@@ -402,13 +517,25 @@ namespace BeAwarePlus
             {
                 MessageEnemyCreator("clinkz", "clinkz_wind_walk");
                 PlaySound("clinkz_wind_walk_" + Addition[GetLangId] + ".wav");
+                DelayAction.Add(200, () =>
+                {
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
+                });
             }
 
             //Nyx Assassin Vendetta
             if (args.Name.Contains("nyx_assassin_vendetta_start") && Nyx_Assassin_IsHere)
-            {
+            {         
                 MessageEnemyCreator("nyx_assassin", "nyx_assassin_vendetta");
                 PlaySound("nyx_assassin_vendetta_" + Addition[GetLangId] + ".wav");
+                DelayAction.Add(200, () =>
+                {
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
+                });
             }
 
             //Wisp Relocate
@@ -416,6 +543,12 @@ namespace BeAwarePlus
             {
                 MessageEnemyCreator("wisp", "wisp_relocate");
                 PlaySound("wisp_relocate_" + Addition[GetLangId] + ".wav");
+                DelayAction.Add(200, () =>
+                {
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
+                });
             }
 
             //Morphling Replicate
@@ -423,6 +556,12 @@ namespace BeAwarePlus
             {
                 MessageEnemyCreator("morphling", "morphling_replicate");
                 PlaySound("morphling_replicate_" + Addition[GetLangId] + ".wav");
+                DelayAction.Add(200, () =>
+                {
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
+                });
             }
 
             //Troll Warlord Battle Trance
@@ -430,6 +569,12 @@ namespace BeAwarePlus
             {
                 MessageEnemyCreator("troll_warlord", "troll_warlord_battle_trance");
                 PlaySound("troll_warlord_battle_trance_" + Addition[GetLangId] + ".wav");
+                DelayAction.Add(200, () =>
+                {
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
+                });
             }
 
             //Ursa Enrage
@@ -437,6 +582,12 @@ namespace BeAwarePlus
             {
                 MessageEnemyCreator("ursa", "ursa_enrage");
                 PlaySound("ursa_enrage_" + Addition[GetLangId] + ".wav");
+                DelayAction.Add(200, () =>
+                {
+                    minimap_pos2d = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                    pos.Add(minimap_pos2d);
+                    remover(minimap_pos2d);
+                });
             }
 
         }
