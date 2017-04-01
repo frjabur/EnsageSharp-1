@@ -149,7 +149,7 @@ namespace BeAwarePlus
             moonlightshadowMenu.AddItem(new MenuItem("mirana_invis_msg", "Enable Information Message").SetValue(true));
             moonlightshadowMenu.AddItem(new MenuItem("mirana_invis_sound", "Enable Sound").SetValue(true));
             moonlightshadowMenu.AddItem(new MenuItem("mirana_invis_minimap_mirana", "Enable Min Map Mirana").SetValue(true));
-            moonlightshadowMenu.AddItem(new MenuItem("mirana_invis_minimap_all", "Enable Min Map All").SetValue(true));
+            moonlightshadowMenu.AddItem(new MenuItem("mirana_invis_minimap_all_heroes", "Enable Min Map All Heroes").SetValue(true));
             miranaMenu.AddSubMenu(moonlightshadowMenu);
 
             var sandkingMenu = new Menu("Sand King", "Sand King", false, "npc_dota_hero_sand_king", true);
@@ -971,7 +971,7 @@ namespace BeAwarePlus
             {
                 DelayAction.Add(200, () =>
                 {
-                    if (Menu.Item("mirana_invis_minimap_all").GetValue<bool>())
+                    if (Menu.Item("mirana_invis_minimap_all_heroes").GetValue<bool>())
                     {
                         minimap_pos2d = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         pos.Add(minimap_pos2d);
