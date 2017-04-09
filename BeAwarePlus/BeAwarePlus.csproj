@@ -39,8 +39,16 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BeAwarePlus.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="BeAwarePlus.cs" />
+    <Compile Include="Helper.cs" />
+    <Compile Include="Resolution.cs" />
+    <Compile Include="Others.cs" />
+    <Compile Include="Sound.cs" />
+    <Compile Include="DrawingMiniMap.cs" />
+    <Compile Include="HeroChecker.cs" />
+    <Compile Include="MessageCreator.cs" />
+    <Compile Include="MenuManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ensage">
