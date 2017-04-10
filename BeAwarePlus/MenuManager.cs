@@ -235,10 +235,8 @@ namespace BeAwarePlus
             bootsoftravelMenu.AddItem(new MenuItem("bt_teleport_all", "Enable Teleport All").SetValue(false));
             bootsoftravelMenu.AddItem(new MenuItem("bt_teleport_enemy", "Enable Teleport Enemy").SetValue(true));
             bootsoftravelMenu.AddItem(new MenuItem("bt_teleport_enemy_msg", "Enable Enemy Information Message").SetValue(true));
-            bootsoftravelMenu.AddItem(new MenuItem("bt_teleport_enemy_sound", "Enable Enemy Sound").SetValue(true));           
-            bootsoftravelMenu.AddItem(new MenuItem("bt_teleport_red.X", "Red").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Red));
-            bootsoftravelMenu.AddItem(new MenuItem("bt_teleport_green.Y", "Green").SetValue(new Slider(0, 0, 255)).SetFontColor(Color.Green));
-            bootsoftravelMenu.AddItem(new MenuItem("bt_teleport_blue.Z", "Blue").SetValue(new Slider(0, 0, 255)).SetFontColor(Color.Blue));
+            bootsoftravelMenu.AddItem(new MenuItem("bt_teleport_enemy_sound", "Enable Enemy Sound").SetValue(true));
+            bootsoftravelMenu.AddItem(new MenuItem("colorbt", "Color").SetValue(new StringList(new[] { "Red", "Blue", "Teal", "Purple", "Yellow", "Orange", "Pink", "Gray", "Light Blue", "Green", "Brown" })));
             itemsMenu.AddSubMenu(bootsoftravelMenu);
 
             var smokeofdeceitMenu = new Menu("Smoke of Deceit", "Smoke of Deceit", false, "item_smoke_of_deceit", true);
@@ -365,9 +363,7 @@ namespace BeAwarePlus
             var DrawMinimapType = new MenuItem("drawminimap_type", "Minimap Icon Type").SetValue(xList);
             minimapsettingMenu.AddItem(DrawMinimapType);
             minimapsettingMenu.AddItem(new MenuItem("text1", "Item Color:").SetFontColor(Color.Red));
-            minimapsettingMenu.AddItem(new MenuItem("item_red.X", "Red").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Red));
-            minimapsettingMenu.AddItem(new MenuItem("item_green.Y", "Green").SetValue(new Slider(0, 0, 255)).SetFontColor(Color.Green));
-            minimapsettingMenu.AddItem(new MenuItem("item_blue.Z", "Blue").SetValue(new Slider(0, 0, 255)).SetFontColor(Color.Blue));
+            minimapsettingMenu.AddItem(new MenuItem("coloritem", "Item Color").SetValue(new StringList(new[] { "Red", "Blue", "Teal", "Purple", "Yellow", "Orange", "Pink", "Gray", "Light Blue", "Green", "Brown" })));
             settingsMenu.AddSubMenu(minimapsettingMenu);
 
             //Menu

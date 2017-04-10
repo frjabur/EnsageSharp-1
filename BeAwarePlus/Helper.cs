@@ -316,18 +316,12 @@ namespace BeAwarePlus
         {
             DrawingMiniMap.Position_BT.Add(BeAwarePlus.MiniMapPosition);
             DrawingMiniMap.Remover(BeAwarePlus.MiniMapPosition);
-
-            DrawingMiniMap.HeroColor_BT = (Color)new Vector3(MenuManager.Menu.Item("bt_teleport_red.X").GetValue<Slider>().Value, 
-                                                             MenuManager.Menu.Item("bt_teleport_green.Y").GetValue<Slider>().Value, 
-                                                             MenuManager.Menu.Item("bt_teleport_blue.Z").GetValue<Slider>().Value);                                             
+                                                   
         }
         public static void Item()
         {
             DrawingMiniMap.Position_Item.Add(BeAwarePlus.MiniMapPosition);
-            DrawingMiniMap.Remover(BeAwarePlus.MiniMapPosition);
-            DrawingMiniMap.HeroColor_Item = (Color)new Vector3(MenuManager.Menu.Item("item_red.X").GetValue<Slider>().Value,
-                                                             MenuManager.Menu.Item("item_green.Y").GetValue<Slider>().Value,
-                                                             MenuManager.Menu.Item("item_blue.Z").GetValue<Slider>().Value);
+            DrawingMiniMap.Remover(BeAwarePlus.MiniMapPosition);           
         }
     }
 }
