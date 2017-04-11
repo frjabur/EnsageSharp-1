@@ -856,7 +856,7 @@ namespace BeAwarePlus
                 DelayAction.Add(30, () =>
                 {
                     TPID = args.ParticleEffect.GetControlPoint(6);
-                    player = ObjectManager.GetPlayerByID((uint)ColorList.FindIndex(x => x == new Vector3(TPID.X, TPID.Y, TPID.Z)));
+                    player = ObjectManager.GetPlayerById((uint)ColorList.FindIndex(x => x == new Vector3(TPID.X, TPID.Y, TPID.Z)));
                     try
                     {
                         Team = (player.Hero.Owner.Team != me.Team);
@@ -869,7 +869,7 @@ namespace BeAwarePlus
                     //TP Ally
                     if (!Team && MenuManager.Menu.Item("tpscroll_teleport_ally").GetValue<bool>())
                     {
-                        HeroID = player.ID;
+                        HeroID = player.Id;
                         RealName = player.Hero.GetRealName();
                         HeroNameLength = RealName.Length;
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
@@ -887,7 +887,7 @@ namespace BeAwarePlus
                     //TP Enemy                       
                     if (Team && MenuManager.Menu.Item("tpscroll_teleport_enemy").GetValue<bool>())
                     {
-                        HeroID = player.ID;
+                        HeroID = player.Id;
                         RealName = player.Hero.GetRealName();
                         HeroNameLength = RealName.Length;
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
@@ -914,14 +914,14 @@ namespace BeAwarePlus
                         //TP Ally
                         if (!Team && MenuManager.Menu.Item("tpscroll_teleport_ally").GetValue<bool>())
                         {
-                            HeroID = player.ID;
+                            HeroID = player.Id;
                             MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                             Helper.TPTeleportStart();
                         }
                         //TP Enemy                       
                         if (Team && MenuManager.Menu.Item("tpscroll_teleport_enemy").GetValue<bool>())
                         {
-                            HeroID = player.ID;
+                            HeroID = player.Id;
                             MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                             Helper.TPTeleportStart();
                         }

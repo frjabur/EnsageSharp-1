@@ -12,7 +12,7 @@ namespace BeAwarePlus
         {
             try
             {
-                var HeroCheckColor_0 = ObjectManager.GetPlayerByID(0);
+                var HeroCheckColor_0 = ObjectManager.GetPlayerById(0);
                 var HeroName_0 = (HeroCheckColor_0.Hero.Name);
                 if (HeroName_0 == Color)
                 {
@@ -20,7 +20,7 @@ namespace BeAwarePlus
                     DrawingMiniMap.Remover(BeAwarePlus.MiniMapPosition);
                     DrawingMiniMap.HeroColor_0 = (Color)new Vector3(0.2f, 0.4588236f, 1);
                 }
-                var HeroCheckColor_1 = ObjectManager.GetPlayerByID(1);
+                var HeroCheckColor_1 = ObjectManager.GetPlayerById(1);
                 var HeroName_1 = (HeroCheckColor_1.Hero.Name);
                 if (HeroName_1 == Color)
                 {
@@ -28,7 +28,7 @@ namespace BeAwarePlus
                     DrawingMiniMap.Remover(BeAwarePlus.MiniMapPosition);
                     DrawingMiniMap.HeroColor_1 = (Color)new Vector3(0.4f, 1, 0.7490196f);
                 }
-                var HeroCheckColor_2 = ObjectManager.GetPlayerByID(2);
+                var HeroCheckColor_2 = ObjectManager.GetPlayerById(2);
                 var HeroName_2 = (HeroCheckColor_2.Hero.Name);
                 if (HeroName_2 == Color)
                 {
@@ -36,7 +36,7 @@ namespace BeAwarePlus
                     DrawingMiniMap.Remover(BeAwarePlus.MiniMapPosition);
                     DrawingMiniMap.HeroColor_2 = (Color)new Vector3(0.7490196f, 0, 0.7490196f);
                 }
-                var HeroCheckColor_3 = ObjectManager.GetPlayerByID(3);
+                var HeroCheckColor_3 = ObjectManager.GetPlayerById(3);
                 var HeroName_3 = (HeroCheckColor_3.Hero.Name);
                 if (HeroName_3 == Color)
                 {
@@ -44,7 +44,7 @@ namespace BeAwarePlus
                     DrawingMiniMap.Remover(BeAwarePlus.MiniMapPosition);
                     DrawingMiniMap.HeroColor_3 = (Color)new Vector3(0.9529412f, 0.9411765f, 0.04313726f);
                 }
-                var HeroCheckColor_4 = ObjectManager.GetPlayerByID(4);
+                var HeroCheckColor_4 = ObjectManager.GetPlayerById(4);
                 var HeroName_4 = (HeroCheckColor_4.Hero.Name);
                 if (HeroName_4 == Color)
                 {
@@ -52,7 +52,7 @@ namespace BeAwarePlus
                     DrawingMiniMap.Remover(BeAwarePlus.MiniMapPosition);
                     DrawingMiniMap.HeroColor_4 = (Color)new Vector3(1, 0.4196079f, 0);
                 }
-                var HeroCheckColor_5 = ObjectManager.GetPlayerByID(5);
+                var HeroCheckColor_5 = ObjectManager.GetPlayerById(5);
                 var HeroName_5 = (HeroCheckColor_5.Hero.Name);
                 if (HeroName_5 == Color)
                 {
@@ -60,7 +60,7 @@ namespace BeAwarePlus
                     DrawingMiniMap.Remover(BeAwarePlus.MiniMapPosition);
                     DrawingMiniMap.HeroColor_5 = (Color)new Vector3(0.9960785f, 0.5254902f, 0.7607844f);
                 }
-                var HeroCheckColor_6 = ObjectManager.GetPlayerByID(6);
+                var HeroCheckColor_6 = ObjectManager.GetPlayerById(6);
                 var HeroName_6 = (HeroCheckColor_6.Hero.Name);
                 if (HeroName_6 == Color)
                 {
@@ -68,7 +68,7 @@ namespace BeAwarePlus
                     DrawingMiniMap.Remover(BeAwarePlus.MiniMapPosition);
                     DrawingMiniMap.HeroColor_6 = (Color)new Vector3(0.6313726f, 0.7058824f, 0.2784314f);
                 }
-                var HeroCheckColor_7 = ObjectManager.GetPlayerByID(7);
+                var HeroCheckColor_7 = ObjectManager.GetPlayerById(7);
                 var HeroName_7 = (HeroCheckColor_7.Hero.Name);
                 if (HeroName_7 == Color)
                 {
@@ -76,7 +76,7 @@ namespace BeAwarePlus
                     DrawingMiniMap.Remover(BeAwarePlus.MiniMapPosition);
                     DrawingMiniMap.HeroColor_7 = (Color)new Vector3(0.3960785f, 0.8509805f, 0.9686275f);
                 }
-                var HeroCheckColor_8 = ObjectManager.GetPlayerByID(8);
+                var HeroCheckColor_8 = ObjectManager.GetPlayerById(8);
                 var HeroName_8 = (HeroCheckColor_8.Hero.Name);
                 if (HeroName_8 == Color)
                 {
@@ -84,7 +84,7 @@ namespace BeAwarePlus
                     DrawingMiniMap.Remover(BeAwarePlus.MiniMapPosition);
                     DrawingMiniMap.HeroColor_8 = (Color)new Vector3(0, 0.5137255f, 0.1294118f);
                 }
-                var HeroCheckColor_9 = ObjectManager.GetPlayerByID(9);
+                var HeroCheckColor_9 = ObjectManager.GetPlayerById(9);
                 var HeroName_9 = (HeroCheckColor_9.Hero.Name);
                 if (HeroName_9 == Color)
                 {

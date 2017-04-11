@@ -40,35 +40,35 @@ namespace BeAwarePlus
 
             if (!Nyx_Assassin_IsHere)
                 Nyx_Assassin_IsHere =
-                enemyTeam.Any(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Nyx_Assassin);
+                enemyTeam.Any(x => x.ClassId == ClassId.CDOTA_Unit_Hero_Nyx_Assassin);
 
             if (!Bounty_Hunter_IsHere)
                 Bounty_Hunter_IsHere =
-                enemyTeam.Any(x => x.ClassID == ClassID.CDOTA_Unit_Hero_BountyHunter);
+                enemyTeam.Any(x => x.ClassId == ClassId.CDOTA_Unit_Hero_BountyHunter);
 
             if (!Ancient_Apparition_IsHere)
                 Ancient_Apparition_IsHere =
-                enemyTeam.Any(x => x.ClassID == ClassID.CDOTA_Unit_Hero_AncientApparition);
+                enemyTeam.Any(x => x.ClassId == ClassId.CDOTA_Unit_Hero_AncientApparition);
 
             if (!Morphling_IsHere)
                 Morphling_IsHere =
-                enemyTeam.Any(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Morphling);
+                enemyTeam.Any(x => x.ClassId == ClassId.CDOTA_Unit_Hero_Morphling);
 
             if (!Clinkz_IsHere)
                 Clinkz_IsHere =
-                enemyTeam.Any(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Clinkz);
+                enemyTeam.Any(x => x.ClassId == ClassId.CDOTA_Unit_Hero_Clinkz);
 
             if (!Furion_IsHere)
                 Furion_IsHere =
-                enemyTeam.Any(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Furion);
+                enemyTeam.Any(x => x.ClassId == ClassId.CDOTA_Unit_Hero_Furion);
 
             if (!Wisp_IsHere)
                 Wisp_IsHere =
-                enemyTeam.Any(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Wisp);
+                enemyTeam.Any(x => x.ClassId == ClassId.CDOTA_Unit_Hero_Wisp);
 
             if (!Nevermore_IsHere)
                 Nevermore_IsHere =
-                enemyTeam.Any(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Nevermore);
+                enemyTeam.Any(x => x.ClassId == ClassId.CDOTA_Unit_Hero_Nevermore);
         }        
     }   
 }
