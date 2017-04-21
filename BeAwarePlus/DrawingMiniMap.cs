@@ -103,9 +103,11 @@ namespace BeAwarePlus
             Drawing.OnPreReset += DrawingOnPreReset;
             Drawing.OnPostReset += DrawingNameOnPostReset;
             Drawing.OnPreReset += DrawingNameOnPreReset;
-        
-                Font = new Font(
-                    Drawing.Direct3DDevice9,
+
+            if (Drawing.RenderMode == RenderMode.Dx9)
+            {
+                Font = new Font(             
+                    Drawing.Direct3DDevice9,            
                     new FontDescription
                     {
                         FaceName = "Arial",
@@ -117,8 +119,11 @@ namespace BeAwarePlus
                         PitchAndFamily = FontPitchAndFamily.Default,
                         Weight = FontWeight.Black,
                     });
+            }
 
-            HeroNameFont = new Font(
+            if (Drawing.RenderMode == RenderMode.Dx9)
+            {
+                HeroNameFont = new Font(
                     Drawing.Direct3DDevice9,
                     new FontDescription
                     {
@@ -131,7 +136,7 @@ namespace BeAwarePlus
                         PitchAndFamily = FontPitchAndFamily.Default,
                         Weight = FontWeight.Black,
                     });
-
+            }
             if (DrawMinimapIcon[DrawMinimapIndex] == "*")
             {
                 x = 0;
@@ -203,24 +208,29 @@ namespace BeAwarePlus
         };
         internal static void OnValueChanged(object sender, OnValueChangeEventArgs onValueChangeEventArgs)
         {
-            Font = new Font(
-                Drawing.Direct3DDevice9,
-                new FontDescription
-                {
-                    FaceName = "Arial",
-                    Height = 60 + MiniMapSizeIcon,
-                    OutputPrecision = FontPrecision.Default,
-                    Quality = FontQuality.Default,
-                    CharacterSet = FontCharacterSet.Default,
-                    MipLevels = 3,
-                    PitchAndFamily = FontPitchAndFamily.Default,
-                    Weight = FontWeight.Black,
-                });
-
-            HeroNameFont = new Font(
-                    Drawing.Direct3DDevice9,
-                    new FontDescription
+            if (Drawing.RenderMode == RenderMode.Dx9)
+            {
+                Font = new Font(            
+                    Drawing.Direct3DDevice9,            
+                    new FontDescription                
                     {
+                        FaceName = "Arial",
+                        Height = 60 + MiniMapSizeIcon,
+                        OutputPrecision = FontPrecision.Default,
+                        Quality = FontQuality.Default,
+                        CharacterSet = FontCharacterSet.Default,
+                        MipLevels = 3,
+                        PitchAndFamily = FontPitchAndFamily.Default,
+                        Weight = FontWeight.Black,
+                    });
+            }
+
+            if (Drawing.RenderMode == RenderMode.Dx9)
+            {
+                HeroNameFont = new Font(                     
+                    Drawing.Direct3DDevice9,                                   
+                    new FontDescription
+                {
                         FaceName = "Arial",
                         Height = 20 + MiniMapSizeName,
                         OutputPrecision = FontPrecision.Default,
@@ -230,6 +240,7 @@ namespace BeAwarePlus
                         PitchAndFamily = FontPitchAndFamily.Default,
                         Weight = FontWeight.Black,
                     });
+            }
         }
         private static void DrawShadowText(Font f, string stext, int x, int y, Color color)
         {
