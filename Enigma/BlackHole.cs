@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Ensage;
-using Ensage.Common.Extensions;
+﻿using Ensage;
 using Ensage.Common;
-using SharpDX;
+using Ensage.Common.Extensions;
 using Ensage.Common.Menu;
+using SharpDX;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SharpDX.Direct3D9;
-using System.Globalization;
 
 namespace Enigma
 {
@@ -20,7 +15,6 @@ namespace Enigma
         private static readonly Menu Menu_Items = new Menu("Items: ", "Items: ");
         private static Ability midnightpulse, blackhole;
         private static Item blink, bkb, veil, shivas, refresher, glimmer;
-        private static ParticleEffect particleEffect;
         private static Hero me, target;
         private static Vector3 mousepos;
         private static bool SafeBlackHole;
@@ -53,8 +47,8 @@ namespace Enigma
         {
             if (!Game.IsInGame || Game.IsPaused || Game.IsWatchingGame)
                 return;
-            me = ObjectMgr.LocalHero;
-            if (me == null || me.ClassID != ClassID.CDOTA_Unit_Hero_Enigma)
+            me = ObjectManager.LocalHero;
+            if (me == null || me.ClassId != ClassId.CDOTA_Unit_Hero_Enigma)
                 return;
             if (Game.IsKeyDown(Menu.Item("Black Hole Key!").GetValue<KeyBind>().Key) && !Game.IsChatOpen)
             {
@@ -104,7 +98,7 @@ namespace Enigma
                         }
                         if ((!blink.CanBeCasted() || me.Distance2D(mousepos) <= blackhole.CastRange || (blink != null && !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(blink.Name))) && (!veil.CanBeCasted() || me.Mana < veil.ManaCost + blackhole.ManaCost || (veil != null && !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name))) && (!midnightpulse.CanBeCasted() || me.Mana < midnightpulse.ManaCost + blackhole.ManaCost || (midnightpulse != null && !Menu.Item("Skills: ").GetValue<AbilityToggler>().IsEnabled(midnightpulse.Name))) && (!bkb.CanBeCasted() || (bkb != null && !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(bkb.Name))) && (!shivas.CanBeCasted() || me.Mana < shivas.ManaCost + blackhole.ManaCost ||(shivas != null && !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(shivas.Name))))
                         {
-                            target = ObjectMgr.GetEntities<Hero>().FirstOrDefault(x => x.IsAlive && !x.IsIllusion && x.IsValid && x.NetworkPosition.Distance2D(mousepos) < 420 && x.Team != me.Team);
+                            target = ObjectManager.GetEntities<Hero>().FirstOrDefault(x => x.IsAlive && !x.IsIllusion && x.IsValid && x.NetworkPosition.Distance2D(mousepos) < 420 && x.Team != me.Team);
                             if (Menu.Item("Safe Black Hole").GetValue<bool>())
                             {
                                 if (target != null)
