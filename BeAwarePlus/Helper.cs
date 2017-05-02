@@ -312,11 +312,17 @@ namespace BeAwarePlus
             }
 
         }
-        public static void BTTeleportStart()
+        public static void BTTeleportStartEnemy()
         {
-            DrawingMiniMap.Position_BT.Add(BeAwarePlus.MiniMapPosition);
+            DrawingMiniMap.Position_BT_Enemy.Add(BeAwarePlus.MiniMapPosition);
             DrawingMiniMap.Remover(BeAwarePlus.MiniMapPosition);
                                                    
+        }
+        public static void BTTeleportStartAlly()
+        {
+            DrawingMiniMap.Position_BT_Ally.Add(BeAwarePlus.MiniMapPosition);
+            DrawingMiniMap.Remover(BeAwarePlus.MiniMapPosition);
+
         }
         public static void Item()
         {

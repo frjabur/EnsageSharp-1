@@ -51,7 +51,8 @@ namespace BeAwarePlus
         internal static List<Vector2> Position_9 = new List<Vector2>();
 
         internal static List<Vector2> Position_Item = new List<Vector2>();
-        internal static List<Vector2> Position_BT = new List<Vector2>();
+        internal static List<Vector2> Position_BT_Enemy = new List<Vector2>();
+        internal static List<Vector2> Position_BT_Ally = new List<Vector2>();
 
         internal static List<Vector2> NamePosition_0 = new List<Vector2>();
         internal static List<Vector2> NamePosition_1 = new List<Vector2>();
@@ -426,15 +427,24 @@ namespace BeAwarePlus
 
             }
 
-            //BT Teleport
+            //BT Teleport Enemy
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPosition_BT in Position_BT.ToList())                  
+                foreach (Vector2 HeroPosition_BT_Enemy in Position_BT_Enemy.ToList())                  
                 DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]), 
-                    (int)HeroPosition_BT.X - 12 - MiniMapSizeIcon / 6 - x, 
-                    (int)HeroPosition_BT.Y - 23 - MiniMapSizeIcon / 3 - y, 
+                    (int)HeroPosition_BT_Enemy.X - 12 - MiniMapSizeIcon / 6 - x, 
+                    (int)HeroPosition_BT_Enemy.Y - 23 - MiniMapSizeIcon / 3 - y, 
                     ColorSelectBT[MenuManager.Menu.Item("colorbt").GetValue<StringList>().SelectedValue]);
                 
+            }
+            //BT Teleport Ally
+            if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
+            {
+                foreach (Vector2 HeroPosition_BT_Ally in Position_BT_Ally.ToList())
+                    DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]),
+                        (int)HeroPosition_BT_Ally.X - 12 - MiniMapSizeIcon / 6 - x,
+                        (int)HeroPosition_BT_Ally.Y - 23 - MiniMapSizeIcon / 3 - y, Color.White);
+
             }
         }
         internal static void Remover(Vector2 val)
@@ -490,10 +500,16 @@ namespace BeAwarePlus
                     Position_Item.Remove(val);
                 }
 
-                //PositionBT
-                if (Position_BT.Contains(val))
+                //PositionBT Enemy
+                if (Position_BT_Enemy.Contains(val))
                 {
-                    Position_BT.Remove(val);
+                    Position_BT_Enemy.Remove(val);
+                }
+
+                //PositionBT Ally
+                if (Position_BT_Ally.Contains(val))
+                {
+                    Position_BT_Ally.Remove(val);
                 }
 
                 //NamePosition

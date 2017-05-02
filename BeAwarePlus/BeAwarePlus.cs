@@ -14,6 +14,7 @@ namespace BeAwarePlus
 {
     public static class BeAwarePlus
     {
+        private static bool FurionFix;
         private static Player player;
         private static Vector3 TPID;
         internal static int HeroID;
@@ -460,7 +461,7 @@ namespace BeAwarePlus
             //Smoke of Deceit  
             if (args.Name.Contains("smoke_of_deceit") && MenuManager.Menu.Item("smoke_of_deceit").GetValue<bool>())
             {
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     var anyAllyWithSmokeEffect =
                     Heroes.GetByTeam(me.Team).Any(x => x.HasModifier("modifier_smoke_of_deceit"));
@@ -497,7 +498,7 @@ namespace BeAwarePlus
                 {
                     Sound.PlaySound("ancient_apparition_ice_blast_" + Addition[GetLangId] + ".wav");
                 }
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("ancient_apparition_ice_blast_minimap").GetValue<bool>())
                     {
@@ -519,7 +520,7 @@ namespace BeAwarePlus
                 {
                     Sound.PlaySound("moonlight_shadow_" + Addition[GetLangId] + ".wav");
                 }
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("mirana_invis_minimap_mirana").GetValue<bool>())
                     {
@@ -533,7 +534,7 @@ namespace BeAwarePlus
             //Mirana Moonlight Shadow All Mini Map Heroes
             if (args.Name.Contains("mirana_moonlight_recipient") && args.ParticleEffect.Owner.Team != me.Team && MenuManager.Menu.Item("mirana_invis").GetValue<bool>())
             {
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("mirana_invis_minimap_all_heroes").GetValue<bool>())
                     {
@@ -555,7 +556,7 @@ namespace BeAwarePlus
                 {
                     Sound.PlaySound("default_" + Addition[GetLangId] + ".wav");
                 }
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("sandking_epicenter_minimap").GetValue<bool>())
                     {
@@ -569,6 +570,7 @@ namespace BeAwarePlus
             //Nature's Prophet Teleportation Start
             if (args.Name.Contains("furion_teleport") && args.ParticleEffect.Owner.Team != me.Team && MenuManager.Menu.Item("furion_teleportation").GetValue<bool>())
             {
+                FurionFix = true;
                 if (MenuManager.Menu.Item("furion_teleportation_msg").GetValue<bool>())
                 {
                     MessageCreator.MessageEnemyCreator("furion", "furion_teleportation");
@@ -577,13 +579,16 @@ namespace BeAwarePlus
                 {
                     Sound.PlaySound("furion_teleportation_" + Addition[GetLangId] + ".wav");
                 }
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("furion_teleportation_minimap_start").GetValue<bool>())
                     {
+                        
+                        //Console.WriteLine(FurionFix);
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         Helper.Color = "npc_dota_hero_furion";
                         Helper.Hero();
+                        FurionFix = false;
                     }
                 });
             }
@@ -591,7 +596,7 @@ namespace BeAwarePlus
             //Nature's Prophet Teleportation End
             if (args.Name.Contains("furion_teleport_end") && HeroChecker.Furion_IsHere && MenuManager.Menu.Item("furion_teleportation").GetValue<bool>())
             {
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("furion_teleportation_minimap_end").GetValue<bool>())
                     {
@@ -613,7 +618,7 @@ namespace BeAwarePlus
                 {
                     Sound.PlaySound("furion_wrath_of_nature_" + Addition[GetLangId] + ".wav");
                 }
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("furion_wrath_of_nature_minimap").GetValue<bool>())
                     {
@@ -635,7 +640,7 @@ namespace BeAwarePlus
                 {
                     Sound.PlaySound("unstable_concoction_" + Addition[GetLangId] + ".wav");
                 }
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("alchemist_unstable_concoction_minimap").GetValue<bool>())
                     {
@@ -657,7 +662,7 @@ namespace BeAwarePlus
                 {
                     Sound.PlaySound("bounty_hunter_wind_walk_" + Addition[GetLangId] + ".wav");
                 }
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("bounty_hunter_wind_walk_minimap").GetValue<bool>())
                     {
@@ -679,7 +684,7 @@ namespace BeAwarePlus
                 {
                     Sound.PlaySound("clinkz_wind_walk_" + Addition[GetLangId] + ".wav");
                 }
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("clinkz_wind_walk_minimap").GetValue<bool>())
                     {
@@ -701,7 +706,7 @@ namespace BeAwarePlus
                 {
                     Sound.PlaySound("nyx_assassin_vendetta_" + Addition[GetLangId] + ".wav");
                 }
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("nyx_assassin_vendetta_minimap").GetValue<bool>())
                     {
@@ -723,7 +728,7 @@ namespace BeAwarePlus
                 {
                     Sound.PlaySound("wisp_relocate_" + Addition[GetLangId] + ".wav");
                 }
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("wisp_relocate_minimap_start").GetValue<bool>())
                     {
@@ -737,7 +742,7 @@ namespace BeAwarePlus
             //Wisp Relocate End
             if (args.Name.Contains("wisp_relocate_marker_endpoint") && HeroChecker.Wisp_IsHere && MenuManager.Menu.Item("wisp_relocate").GetValue<bool>())
             {
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("wisp_relocate_minimap_end").GetValue<bool>())
                     {
@@ -759,7 +764,7 @@ namespace BeAwarePlus
                 {
                     Sound.PlaySound("morphling_replicate_" + Addition[GetLangId] + ".wav");
                 }
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("morphling_replicate_minimap").GetValue<bool>())
                     {
@@ -781,7 +786,7 @@ namespace BeAwarePlus
                 {
                     Sound.PlaySound("troll_warlord_battle_trance_" + Addition[GetLangId] + ".wav");
                 }
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("troll_warlord_battle_trance_minimap").GetValue<bool>())
                     {
@@ -803,7 +808,7 @@ namespace BeAwarePlus
                 {
                     Sound.PlaySound("ursa_enrage_" + Addition[GetLangId] + ".wav");
                 }
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("ursa_enrage_minimap").GetValue<bool>())
                     {
@@ -817,7 +822,7 @@ namespace BeAwarePlus
             //Spirit Breaker Charge Start
             if (args.Name.Contains("spirit_breaker_charge_start") && args.ParticleEffect.Owner.Team != me.Team && MenuManager.Menu.Item("spirit_breaker_charge_of_darkness").GetValue<bool>())
             {
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("spirit_breaker_charge_of_darkness_minimap_start").GetValue<bool>())
                     {
@@ -839,7 +844,7 @@ namespace BeAwarePlus
                 {
                     Sound.PlaySound("default_" + Addition[GetLangId] + ".wav");
                 }
-                DelayAction.Add(200, () =>
+                DelayAction.Add(50, () =>
                 {
                     if (MenuManager.Menu.Item("monkey_king_tree_dance_minimap").GetValue<bool>())
                     {
@@ -933,23 +938,24 @@ namespace BeAwarePlus
                 });
             }
 
-            //Boots Of Travel Teleport Start == End
-            DelayAction.Add(50, () =>
+            //Boots Of Travel Teleport Start == End               
+            //TP Enemy 
+            //===========================================================================================//  
+                                                                                 
+            //TP Start
+            if (args.Name.Contains("teleport_start") 
+                    && MenuManager.Menu.Item("bt_teleport_enemy").GetValue<bool>()
+                    && !MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
             {
                 if (new Vector3(TPID.X, TPID.Y, TPID.Z) == (new Vector3(0, 0, 0)))
                 {
-
-                    //TP Enemy
-                    //===========================================================================================//
-                    var AllyTeam = Heroes.GetByTeam(me.Team).Any(x => x.HasModifier("modifier_teleporting"));
-                    //TP Start
-                    if (args.Name.Contains("teleport_start") && !AllyTeam
-                        && MenuManager.Menu.Item("bt_teleport_enemy").GetValue<bool>()
-                        && !MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
-                        DelayAction.Add(30, () =>
+                    DelayAction.Add(50, () =>
+                    {
+                        var AllyTeam = Heroes.GetByTeam(me.Team).Any(x => x.HasModifier("modifier_teleporting"));
+                        if (!AllyTeam)
                         {
                             MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                            Helper.BTTeleportStart();
+                            Helper.BTTeleportStartEnemy();
                             if (MenuManager.Menu.Item("bt_teleport_enemy_msg").GetValue<bool>())
                             {
                                 MessageCreator.MessageItemCreator("default2", "travel_boots");
@@ -958,46 +964,80 @@ namespace BeAwarePlus
                             {
                                 Sound.PlaySound("default_" + Addition[GetLangId] + ".wav");
                             }
-                        });
+                        }
+                    });
+                }
+            }
+                    
 
-                    //TP End
-                    if (args.Name.Contains("teleport_end") && !AllyTeam
-                        && MenuManager.Menu.Item("bt_teleport_enemy").GetValue<bool>()
-                        && !MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
-                        DelayAction.Add(30, () =>
+            //TP End                           
+            if ((args.Name.Contains("teleport_end") && !FurionFix)              
+                && MenuManager.Menu.Item("bt_teleport_enemy").GetValue<bool>()    
+                && !MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
+            {
+                if (new Vector3(TPID.X, TPID.Y, TPID.Z) == (new Vector3(0, 0, 0)))
+                {
+                    DelayAction.Add(30, () =>
+                    {
+                        var AllyTeam = Heroes.GetByTeam(me.Team).Any(x => x.HasModifier("modifier_teleporting"));
+                        if (!AllyTeam)
                         {
                             MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                            Helper.BTTeleportStart();
-                        });
+                            Helper.BTTeleportStartEnemy();
+                        }
+                    });
+                }                    
+            }
 
-                    //TP All
-                    //===========================================================================================//
-                    if (MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
+            //TP All
+            //===========================================================================================//
+
+            //TP Start
+            if (args.Name.Contains("teleport_start") && MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
+            {
+                DelayAction.Add(30, () =>
+                {
+                    var AllyTeam = Heroes.GetByTeam(me.Team).Any(x => x.HasModifier("modifier_teleporting"));
+                    if (!AllyTeam)
                     {
-
-                        //TP Start
-                        if (args.Name.Contains("teleport_start"))
-                            DelayAction.Add(30, () =>
-                            {
-                                MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                                Helper.BTTeleportStart();
-                                if (!AllyTeam && MenuManager.Menu.Item("bt_teleport_enemy_sound").GetValue<bool>())
-                                {
-                                    Sound.PlaySound("default_" + Addition[GetLangId] + ".wav");
-                                }                                
-                            });
-
-                        //TP End
-                        if (args.Name.Contains("teleport_end"))
-                            DelayAction.Add(30, () =>
-                            {
-                                MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                                Helper.BTTeleportStart();
-                            });
+                        MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                        Helper.BTTeleportStartEnemy();
+                    }                    
+                    if (!AllyTeam && MenuManager.Menu.Item("bt_teleport_enemy_msg").GetValue<bool>())
+                    {
+                        MessageCreator.MessageItemCreator("default2", "travel_boots");
                     }
-                }
-            });
-        }
+                    if (!AllyTeam && MenuManager.Menu.Item("bt_teleport_enemy_sound").GetValue<bool>())
+                    {
+                        Sound.PlaySound("default_" + Addition[GetLangId] + ".wav");
+                    }
+                    if (AllyTeam)
+                    {
+                        MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                        Helper.BTTeleportStartAlly();
+                    }
+                });
+            }
+
+            //TP End
+            if (args.Name.Contains("teleport_end") && MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
+            {
+                DelayAction.Add(30, () =>
+                {
+                    var AllyTeam = Heroes.GetByTeam(me.Team).Any(x => x.HasModifier("modifier_teleporting"));
+                    if (!AllyTeam)
+                    {
+                        MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                        Helper.BTTeleportStartEnemy();
+                    }
+                    if (AllyTeam)
+                    {
+                        MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                        Helper.BTTeleportStartAlly();
+                    }
+                });
+            }
+        }                                   
         public static readonly List<Vector3> ColorList = new List<Vector3>()
         {
             new Vector3(0.2f, 0.4588236f, 1),
@@ -1011,6 +1051,7 @@ namespace BeAwarePlus
             new Vector3(0, 0.5137255f, 0.1294118f),
             new Vector3(0.6431373f, 0.4117647f, 0)
         };
+
         static void Game_OnGameEvent(FireEventEventArgs args)
         {
             if (args.GameEvent.Name == "dota_roshan_kill")
