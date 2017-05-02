@@ -6,18 +6,23 @@ using Ensage.Common;
 using Ensage.Common.Extensions;
 using Ensage.Common.Menu;
 using SharpDX;
+using SharpDX.Direct3D9;
 
 namespace VisibleByEnemyPlus
 {
-        internal class Program
+    internal class Program
     {
         #region Static Fields
 
         private static Dictionary<Unit, ParticleEffect> _effects = new Dictionary<Unit, ParticleEffect>();
 
+        private static Font Font;
+        
+        private static List<Vector2> Position = new List<Vector2>();
+
         private static bool _loaded;
 
-        private static readonly Menu Menu = new Menu("VisibleByEnemyPlus", "visibleByEnemyplus", true, "visiblebyenemyplus", true);
+        private static readonly Menu Menu = new Menu("VisibleByEnemyPlus", "visibleByEnemyplus", true, "visiblebyenemyplus", true).SetFontColor(Color.Aqua);
 
         private static int red => Menu.Item("red").GetValue<Slider>().Value;
 
@@ -95,10 +100,10 @@ namespace VisibleByEnemyPlus
 
                 var sList = new StringList()
                 {
-                SList   = EffectsName, SelectedIndex = 0
+                    SList = EffectsName, SelectedIndex = 0
                 };
 
-                var effectType = new MenuItem("type", "EffectType").SetValue(sList);
+                var effectType = new MenuItem("type", "Effect Type").SetValue(sList);
                 effectType.ValueChanged += Item_ValueChanged;
                 Menu.AddItem(effectType);
 
@@ -118,23 +123,35 @@ namespace VisibleByEnemyPlus
                 item.ValueChanged += ChangeTrans;
                 Menu.AddItem(item);
 
-                item = new MenuItem("heroes", "Check allied heroes").SetValue(true);
+                item = new MenuItem("heroes", "Check Allied Heroes").SetValue(true);
                 item.ValueChanged += Item_ValueChanged;
                 Menu.AddItem(item);
 
-                item = new MenuItem("wards", "Check wards").SetValue(true);
+                item = new MenuItem("wards", "Check Wards").SetValue(true);
                 item.ValueChanged += Item_ValueChanged;
                 Menu.AddItem(item);
 
-                item = new MenuItem("mines", "Check techies mines").SetValue(true);
+                item = new MenuItem("mines", "Check Techies Mines").SetValue(true);
+                item.ValueChanged += Item_ValueChanged;
+                Menu.AddItem(item);
+                
+                item = new MenuItem("shrines", "Check Shrines").SetValue(true);
                 item.ValueChanged += Item_ValueChanged;
                 Menu.AddItem(item);
 
-                item = new MenuItem("units", "Check controlled units and Neutral creeps").SetValue(true);
+                item = new MenuItem("draw_minimap_shrines", "Draw Mini Map Shrines").SetValue(true);
                 item.ValueChanged += Item_ValueChanged;
                 Menu.AddItem(item);
 
-                item = new MenuItem("buildings", "Check buildings").SetValue(true);
+                item = new MenuItem("neutrals", "Check Neutral Creeps").SetValue(true);
+                item.ValueChanged += Item_ValueChanged;
+                Menu.AddItem(item);
+
+                item = new MenuItem("units", "Check Controlled Units").SetValue(true);
+                item.ValueChanged += Item_ValueChanged;
+                Menu.AddItem(item);
+
+                item = new MenuItem("buildings", "Check Buildings").SetValue(false);
                 item.ValueChanged += Item_ValueChanged;
                 Menu.AddItem(item);
 
@@ -142,6 +159,25 @@ namespace VisibleByEnemyPlus
 
                 Entity.OnInt32PropertyChange += Entity_OnInt32PropertyChange;
 
+                if (Drawing.RenderMode == RenderMode.Dx9)
+                {
+                    Font = new Font(
+                        Drawing.Direct3DDevice9,
+                        new FontDescription
+                        {
+                            FaceName = "Arial",
+                            Height = 18,
+                            OutputPrecision = FontPrecision.Default,
+                            Quality = FontQuality.Default,
+                            CharacterSet = FontCharacterSet.Default,
+                            MipLevels = 3,
+                            PitchAndFamily = FontPitchAndFamily.Default,
+                            Weight = FontWeight.Black,
+                        });
+                }
+                Drawing.OnEndScene += DrawHeroPosition;
+                Drawing.OnPostReset += DrawingOnPostReset;
+                Drawing.OnPreReset += DrawingOnPreReset;
             }
             LoopEntities();
         }
@@ -179,7 +215,7 @@ namespace VisibleByEnemyPlus
         private static bool IsWard(Entity sender)
         {
             return (sender.ClassId == ClassId.CDOTA_NPC_Observer_Ward ||
-                    sender.ClassId == ClassId.CDOTA_NPC_Observer_Ward_TrueSight);
+                sender.ClassId == ClassId.CDOTA_NPC_Observer_Ward_TrueSight);
         }
 
         private static bool IsMine(Entity sender)
@@ -187,15 +223,61 @@ namespace VisibleByEnemyPlus
             return sender.ClassId == ClassId.CDOTA_NPC_TechiesMines;
         }
 
-        private static bool IsUnit(Unit sender)
+        private static bool IsShrine(Entity sender)
         {
-            return !(sender is Hero) && !(sender is Building) && 
-                ((sender.ClassId != ClassId.CDOTA_BaseNPC_Creep_Lane && sender.ClassId != ClassId.CDOTA_BaseNPC_Creep_Siege) || sender.IsControllable)
-                            && sender.ClassId != ClassId.CDOTA_NPC_TechiesMines
-                            && sender.ClassId != ClassId.CDOTA_NPC_Observer_Ward
-                            && sender.ClassId != ClassId.CDOTA_NPC_Observer_Ward_TrueSight;
+            return sender.ClassId == ClassId.CDOTA_BaseNPC_Healer;
         }
 
+        private static bool IsNeutral(Unit sender)
+        {
+            return sender.ClassId == ClassId.CDOTA_BaseNPC_Creep_Neutral;
+        }
+
+        private static bool IsUnit(Unit sender)
+        {
+            return !(sender is Hero) && !(sender is Building) &&
+                ((sender.ClassId != ClassId.CDOTA_BaseNPC_Creep_Lane
+                && sender.ClassId != ClassId.CDOTA_BaseNPC_Creep_Siege) || sender.IsControllable)
+                && sender.ClassId != ClassId.CDOTA_NPC_TechiesMines
+                && sender.ClassId != ClassId.CDOTA_NPC_Observer_Ward
+                && sender.ClassId != ClassId.CDOTA_NPC_Observer_Ward_TrueSight
+                && sender.ClassId != ClassId.CDOTA_BaseNPC_Building
+                && sender.ClassId != ClassId.CDOTA_BaseNPC_Healer
+                && sender.ClassId != ClassId.CDOTA_BaseNPC_Creep_Neutral;
+
+        }
+        private static void Remover(Vector2 val)
+        {
+            DelayAction.Add(50, () =>
+            {
+                if (Position.Contains(val))
+                {
+                    Position.Remove(val);
+                }
+                else
+                {
+                    Position.Remove(val);
+                }
+            });
+        }
+        static void DrawingOnPostReset(EventArgs args)
+        {
+            Font.OnResetDevice();
+        }
+        static void DrawingOnPreReset(EventArgs args)
+        {
+            Font.OnLostDevice();
+        }
+        internal static void DrawHeroPosition(EventArgs args)
+        {
+            foreach (Vector2 position in Position.ToList())
+                DrawShadowText(Font, "V", (int)position.X + -8, (int)position.Y - 8, Color.Aqua);
+        }
+        private static void DrawShadowText(Font f, string stext, int x, int y, Color color)
+        {
+            f.DrawText(null, stext, x + 2, y + 2, Color.Black);
+            f.DrawText(null, stext, x, y, color);
+        }
         private static void Entity_OnInt32PropertyChange(Entity sender, Int32PropertyChangeEventArgs args)
         {
             var unit = sender as Unit;
@@ -209,6 +291,12 @@ namespace VisibleByEnemyPlus
                 return;
             }
 
+            var newValue = args.NewValue;
+            var oldValue = args.OldValue;
+            if (newValue == oldValue)
+            {
+                return;
+            }
             DelayAction.Add(50, () =>
             {
                 try
@@ -246,8 +334,21 @@ namespace VisibleByEnemyPlus
                         HandleEffect(unit, visible);
                     }
 
+                    // shrines
+                    else if (IsShrine(sender) && Menu.Item("shrines").GetValue<bool>())
+                    {
+                        HandleEffect(unit, visible);
+                        Shrine(unit, visible);
+                    }
+
+                    // neutrals
+                    else if (IsNeutral(unit) && Menu.Item("neutrals").GetValue<bool>())
+                    {
+                        HandleEffect(unit, visible);
+                    }
+
                     // units
-                    else if (Menu.Item("units").GetValue<bool>() && IsUnit(unit))
+                    else if (IsUnit(unit) && Menu.Item("units").GetValue<bool>())
                     {
                         HandleEffect(unit, visible);
                     }
@@ -260,7 +361,7 @@ namespace VisibleByEnemyPlus
                 }
                 catch (Exception)
                 {
-                     // ignored
+                    // ignored
                 }
             });
         }
@@ -268,7 +369,7 @@ namespace VisibleByEnemyPlus
         private static void LoopEntities()
         {
             var player = ObjectManager.LocalPlayer;
-            if (player == null || player.Team == Team.Observer )
+            if (player == null || player.Team == Team.Observer)
             {
                 return;
             }
@@ -294,6 +395,20 @@ namespace VisibleByEnemyPlus
                     HandleEffect(mine, mine.IsVisibleToEnemies);
                 }
             }
+             if (Menu.Item("shrines").GetValue<bool>())
+             {
+                 foreach (var shrine in units.Where(IsShrine).ToList())
+                 {
+                     Shrine(shrine, shrine.IsVisibleToEnemies);
+                 }
+             }
+            if (Menu.Item("neutrals").GetValue<bool>())
+            {
+                foreach (var neutral in units.Where(IsNeutral).ToList())
+                {
+                    HandleEffect(neutral, neutral.IsVisibleToEnemies);
+                }
+            }
             if (Menu.Item("units").GetValue<bool>())
             {
                 foreach (var unit in units.Where(IsUnit).ToList())
@@ -309,7 +424,44 @@ namespace VisibleByEnemyPlus
                 }
             }
         }
-
+        
+        private static void Shrine(Entity sender, bool visible)
+        {
+            if (!sender.IsValid)
+            {
+                return;
+            }
+            var MiniMapPosition = HUDInfo.WorldToMinimap(sender.Position);
+            if (visible && sender.IsAlive && Menu.Item("draw_minimap_shrines").GetValue<bool>())
+            {
+                
+                var position = (MiniMapPosition);
+                if (position == new Vector2(65, 918))
+                {
+                    Position.Add(MiniMapPosition);
+                }
+                else if (position == new Vector2(151, 988))
+                {
+                    Position.Add(MiniMapPosition);
+                }
+                else if (position == new Vector2(214, 970))
+                {
+                    Position.Add(MiniMapPosition);
+                }
+                else if (position == new Vector2(137, 895))
+                {
+                    Position.Add(MiniMapPosition);
+                }
+                else
+                {
+                    return;
+                }
+            }
+            else
+            {                
+                Remover(MiniMapPosition);
+            }
+        }
         private static void HandleEffect(Unit unit, bool visible,int index=-1)
         {
             if (!unit.IsValid)
@@ -322,20 +474,18 @@ namespace VisibleByEnemyPlus
             {
                 ParticleEffect effect;
                 if (!_effects.TryGetValue(unit, out effect))
-                {
-                    
+                {                   
                     effect = unit.AddParticleEffect(Effects[index]);
                     switch (index)
                     {
                         case 0:
-
                             break;
                         default:
                             effect.SetControlPoint(1, new Vector3(red, green, blue));
                             effect.SetControlPoint(2, new Vector3(alpha));
                             break;
                     }
-                    _effects.Add(unit, effect);
+                    _effects.Add(unit, effect);                                       
                 }
             }
             else
@@ -349,7 +499,6 @@ namespace VisibleByEnemyPlus
             }
         }
 
-
         // ReSharper disable once InconsistentNaming
         private static void Item_ValueChanged(object sender, OnValueChangeEventArgs e)
         {
@@ -358,8 +507,7 @@ namespace VisibleByEnemyPlus
             {
                 return;
             }
-
-            bool hero = false, wards = false,  mines = false, units = false, buildings = false;
+            bool hero = false, wards = false,  mines = false, shrines = false, units = false, neutrals = false, buildings = false;
             switch (item.Name)
             {
                 case "heroes":
@@ -370,6 +518,12 @@ namespace VisibleByEnemyPlus
                     break;
                 case "mines":
                     mines = true;
+                    break;
+                case "shrines":
+                    shrines = true;
+                    break;         
+                case "neutrals":
+                    neutrals = true;
                     break;
                 case "units":
                     units = true;
@@ -392,11 +546,11 @@ namespace VisibleByEnemyPlus
             var newDict = new Dictionary<Unit, ParticleEffect>();
             foreach (var effect in _effects)
             {
-                if( hero && effect.Key is Hero )
+                if (hero && effect.Key is Hero)
                 {
                     effect.Value.Dispose();
                 }
-                else if( wards && IsWard(effect.Key) )
+                else if (wards && IsWard(effect.Key))
                 {
                     effect.Value.Dispose();
                 }
@@ -404,10 +558,18 @@ namespace VisibleByEnemyPlus
                 {
                     effect.Value.Dispose();
                 }
-                else if (units && IsUnit(effect.Key))
+                else if (shrines && IsShrine(effect.Key))
                 {
                     effect.Value.Dispose();
                 }
+                else if (neutrals && IsNeutral(effect.Key))
+                {
+                    effect.Value.Dispose();
+                }
+                else if (units && IsUnit(effect.Key))
+                {
+                    effect.Value.Dispose();
+                }                 
                 else if (buildings && effect.Key is Building)
                 {
                     effect.Value.Dispose();
@@ -417,10 +579,8 @@ namespace VisibleByEnemyPlus
                     newDict.Add(effect.Key, effect.Value);
                 }
             }
-            _effects = newDict;
-            
+            _effects = newDict;            
         }
-
         #endregion
     }
 }
