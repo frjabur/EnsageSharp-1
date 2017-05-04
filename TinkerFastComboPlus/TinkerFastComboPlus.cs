@@ -1,4 +1,5 @@
-﻿using Ensage;
+﻿// credits: Air13
+using Ensage;
 using Ensage.Common;
 using Ensage.Common.Extensions;
 using Ensage.Common.Menu;
@@ -7,12 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-
-
-
-namespace Tinker_Air13
+namespace TinkerFastComboPlus
 {
-    class Tinker_Air13
+    class TinkerFastComboPlus
     {
         private const int HIDE_AWAY_RANGE = 130;
 
@@ -26,15 +24,17 @@ namespace Tinker_Air13
 		private static readonly Dictionary<Unit, ParticleEffect> VisibleUnit4 = new Dictionary<Unit, ParticleEffect>();
 
         private static readonly List<ParticleEffect> Effects = new List<ParticleEffect>();
-        private const string EffectPath = @"particles\range_display_blue.vpcf";
-        private const string EffectPanicPath = @"particles\range_display_red.vpcf";
+        private const string EffectPath = @"materials\ensage_ui\particles\other_range_blue.vpcf";        
 
-        private static readonly Menu Menu = new Menu("Tinker Air13", "Tinker Air13", true, "npc_dota_hero_tinker", true);
+        private static readonly Menu Menu = new Menu("TinkerFastComboPlus", "TinkerFastComboPlus", true, "npc_dota_hero_tinker", true).SetFontColor(Color.Aqua);
         private static readonly Menu _skills = new Menu("Skills", "Skills");
         private static readonly Menu _items = new Menu("Items", "Items");
         private static readonly Menu _autopush = new Menu("Auto Push", "Auto Push");
-        private static readonly Menu _panic = new Menu("Panic Mode", "Panic Mode");
         private static readonly Menu _ranges = new Menu("Drawing", "Drawing");
+
+        private static int red => Menu.Item("red").GetValue<Slider>().Value;
+        private static int green => Menu.Item("green").GetValue<Slider>().Value;
+        private static int blue => Menu.Item("blue").GetValue<Slider>().Value;
 
         private static readonly Dictionary<string, bool> Skills = new Dictionary<string, bool>
             {
@@ -89,13 +89,13 @@ namespace Tinker_Air13
 
         static void Main(string[] args)
         {
-			/*
+			
             me = ObjectManager.LocalHero;
             if (me == null)
                 return;
             if (me.ClassId != ClassId.CDOTA_Unit_Hero_Tinker)
                 return;
-			*/
+			
 		
             // Menu Options
             Menu.AddItem(new MenuItem("Combo Key", "Combo Key").SetValue(new KeyBind('D', KeyBindType.Press)));
@@ -106,7 +106,7 @@ namespace Tinker_Air13
             Menu.AddItem(new MenuItem("Chase", "Chase Toggle").SetValue(new KeyBind('F', KeyBindType.Toggle, false)).SetTooltip("Toggle for chasing"));
 
 			
-            Menu.AddItem(new MenuItem("Rocket Spam Key", "Rocket Spam Key").SetValue(new KeyBind('F', KeyBindType.Press)));
+            Menu.AddItem(new MenuItem("Rocket Spam Key", "Rocket Spam Key").SetValue(new KeyBind('W', KeyBindType.Press)));
             Menu.AddItem(new MenuItem("March Spam Key", "March Spam Key").SetValue(new KeyBind('E', KeyBindType.Press)));
 
 			Menu.AddItem(new MenuItem("autoDisable", "Auto disable/counter enemy").SetValue(true));
@@ -116,19 +116,15 @@ namespace Tinker_Air13
             Menu.AddSubMenu(_skills);
             Menu.AddSubMenu(_items);
             Menu.AddSubMenu(_autopush);
-            Menu.AddSubMenu(_panic);
             Menu.AddSubMenu(_ranges);
 
             _skills.AddItem(new MenuItem("Skills: ", "Skills:").SetValue(new AbilityToggler(Skills)));
             _items.AddItem(new MenuItem("Items: ", "Items:").SetValue(new AbilityToggler(Items)));
 
-            _autopush.AddItem(new MenuItem("autoPush", "Enable auto push helper").SetValue(true));
-            _autopush.AddItem(new MenuItem("autoRearm", "Enable auto rearm in fountain when travel boots on cooldown").SetValue(true));
-            _autopush.AddItem(new MenuItem("pushFount", "Use auto push if I have modif Fountain").SetValue(true));
-            _autopush.AddItem(new MenuItem("pushSafe", "Use march only after blinking to a safe spot").SetValue(true));
-
-            _panic.AddItem(new MenuItem("panicMod", "Auto blink and tp to fountain if health <=| and enemy is around").SetValue(true));
-            _panic.AddItem(new MenuItem("health", "Min healh % to escape").SetValue(new Slider(35)));
+            _autopush.AddItem(new MenuItem("autoPush", "Enable auto push helper").SetValue(false));
+            _autopush.AddItem(new MenuItem("autoRearm", "Enable auto rearm in fountain when travel boots on cooldown").SetValue(false));
+            _autopush.AddItem(new MenuItem("pushFount", "Use auto push if I have modif Fountain").SetValue(false));
+            _autopush.AddItem(new MenuItem("pushSafe", "Use march only after blinking to a safe spot").SetValue(false));
 
             _ranges.AddItem(new MenuItem("Blink Range", "Show Blink Dagger Range").SetValue(true));
             _ranges.AddItem(new MenuItem("Blink Range Incoming TP", "Show incoming TP Blink Range").SetValue(true));
@@ -136,10 +132,13 @@ namespace Tinker_Air13
             _ranges.AddItem(new MenuItem("Laser Range", "Show Laser Range").SetValue(true));
             _ranges.AddItem(new MenuItem("Show Direction", "Show Direction Vector on Rearming").SetValue(true));
             _ranges.AddItem(new MenuItem("Show Target Effect", "Show Target Effect").SetValue(true));
+            _ranges.AddItem(new MenuItem("red", "Red").SetValue(new Slider(0, 0, 255)).SetFontColor(Color.Red));
+            _ranges.AddItem(new MenuItem("green", "Green").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Green));
+            _ranges.AddItem(new MenuItem("blue", "Blue").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Blue));
 
-
-			var _settings = new Menu("Settings", "Settings UI");
+            var _settings = new Menu("Settings", "Settings UI");
             Menu.AddSubMenu(_settings);
+
 			_settings.AddItem(new MenuItem("HitCounter", "Enable target hit counter").SetValue(true));
 			_settings.AddItem(new MenuItem("RocketCounter", "Enable target rocket counter").SetValue(true));
 			_settings.AddItem(new MenuItem("TargetCalculator", "Enable target dmg calculator").SetValue(true));
@@ -171,8 +170,8 @@ namespace Tinker_Air13
             Drawing.OnDraw += ParticleDraw;
         }
 		
-		/*
-        private static void Player_OnExecuteAction(Player sender, ExecuteOrderEventArgs args) 
+		
+        /*private static void Player_OnExecuteAction(Player sender, ExecuteOrderEventArgs args) 
 		{
             me = ObjectManager.LocalHero;
             if (me == null)
@@ -180,17 +179,17 @@ namespace Tinker_Air13
             if (me.ClassId != ClassId.CDOTA_Unit_Hero_Tinker)
                 return;
 		
-            switch (args.Order) {
+            switch (args.OrderId) {
 
-                case Order.AbilityTarget:
-                case Order.AbilityLocation:
-                case Order.Ability:
-                case Order.ToggleAbility:
+                case OrderId.AbilityTarget:
+                case OrderId.AbilityLocation:
+                case OrderId.Ability:
+                case OrderId.ToggleAbility:
                     if (!Game.IsKeyDown(16))
                         CastSpell(args);
                     break;
-                case Order.MoveLocation:
-                case Order.MoveTarget:
+                case OrderId.MoveLocation:
+                case OrderId.MoveTarget:
                 default:
                     break;
             }
@@ -218,10 +217,10 @@ namespace Tinker_Air13
 			
 
 
-            switch (args.Order) 
+            switch (args.OrderId) 
 			{
 				
-                case Order.AbilityTarget: 
+                case OrderId.AbilityTarget: 
 				{
                     var target = args.Target as Unit;
                     if (target != null && target.IsAlive) {
@@ -253,7 +252,6 @@ namespace Tinker_Air13
                 }
             }
         }*/
-
 
         public static void ComboEngine(EventArgs args)
         {
@@ -418,24 +416,6 @@ namespace Tinker_Air13
                             }
                         }
 
-                        /*
-                        if (
-                           blink != null
-                           && me.CanCast()
-                           && Menu.Item("panicMod").IsActive()
-                           && !Refresh.IsChanneling
-                           && blink.CanBeCasted()
-                           )
-                        {
-                            if (me.Distance2D(safe) >= 1190
-                                && me.Distance2D(panic) <= 1190
-                                && Utils.SleepCheck("blink"))
-                            {
-                                blink.UseAbility(panic);
-                                Game.ExecuteCommand("dota_player_units_auto_attack_mode 0");
-                                Utils.Sleep(250, "blink");
-                            }
-                        }*/
                     }
 
                     if (soulring != null
@@ -546,7 +526,7 @@ namespace Tinker_Air13
 					&& !me.IsChanneling()  
 					&& Utils.SleepCheck("Rearms") 
 					&& (!me.Modifiers.Any(y => y.Name == "modifier_bloodseeker_rupture") || (me.Distance2D(Game.MousePosition)>1325 && castrange!=0))
-					&& (me.Distance2D(Game.MousePosition) > 650+castrange+ensage_error))
+					&& (me.Distance2D(Game.MousePosition) > 650 + castrange + ensage_error))
 				{
                     var safeRange = 1200 + castrange;
 					var p = Game.MousePosition;
@@ -1190,8 +1170,13 @@ namespace Tinker_Air13
                 {
                     if (!me.IsChanneling() 
 						&& !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase)
-						&& !me.Modifiers.Any(y => y.Name == "modifier_bloodseeker_rupture"))
+						&& !me.Modifiers.Any(y => y.Name == "modifier_bloodseeker_rupture")
+                        && Utils.SleepCheck("MousePosition"))
+                    {
                         me.Move(Game.MousePosition);
+                        Utils.Sleep(150, "MousePosition");
+                    }
+                        
                 }
             }
 			
@@ -2099,39 +2084,24 @@ namespace Tinker_Air13
 
             if (Menu.Item("Show Direction").GetValue<bool>())
 			{
-				/*
-				ParticleEffect effect3;
-						
-				if (me.IsChanneling() && !Prediction.IsTurning(me))
-				{
-					if (VisibleUnit3.TryGetValue(me, out effect3)) return;
-					effect3 = me.AddParticleEffect(@"particles\ui_mouseactions\range_finder_directional_b.vpcf");
-					effect3.SetControlPoint(1, me.Position);
-					effect3.SetControlPoint(2, FindVector(me.Position, me.Rotation, 1200+castrange));
-					VisibleUnit3.Add(me, effect3);
-				}
-				else if (!me.IsChanneling())
-				{
-					if (!VisibleUnit3.TryGetValue(me, out effect3)) return;
-					effect3.Dispose();
-					VisibleUnit3.Remove(me);
-				}*/
-				
-				
-				if (me.IsChanneling())// && !Prediction.IsTurning(me))
+											
+				if (me.IsChanneling())
 				{
 					if (effect3 == null)
-					{
-						//effect3 = new ParticleEffect(@"particles\ui_mouseactions\range_finder_directional_b.vpcf", me);     
-						effect3 = new ParticleEffect(@"particles\ui_mouseactions\range_finder_d_glow.vpcf", me);     
+					{						     
+						effect3 = new ParticleEffect(@"materials\ensage_ui\particles\line.vpcf", me);     
 						
 						effect3.SetControlPoint(1, me.Position);
-						effect3.SetControlPoint(2, FindVector(me.Position, me.Rotation, 1200+castrange + ensage_error));
-					}
+						effect3.SetControlPoint(2, FindVector(me.Position, me.Rotation, 1200 + castrange));
+                        effect3.SetControlPoint(3, new Vector3(100, 70, 10));
+                        effect3.SetControlPoint(4, new Vector3(150, 255, 255));
+                    }
 					else 
 					{
 						effect3.SetControlPoint(1, me.Position);
-						effect3.SetControlPoint(2, FindVector(me.Position, me.Rotation, 1200+castrange + ensage_error));
+						effect3.SetControlPoint(2, FindVector(me.Position, me.Rotation, 1200 + castrange));
+                        effect3.SetControlPoint(3, new Vector3(100, 70, 10));
+                        effect3.SetControlPoint(4, new Vector3(150, 255, 255));
 					} 
 				}
 				else if (effect3 != null)
@@ -2142,74 +2112,50 @@ namespace Tinker_Air13
 				
 			}
 
-			if (Menu.Item("Show Target Effect").GetValue<bool>())
-			{
-				if (target != null && target.IsValid && !target.IsIllusion && target.IsAlive && target.IsVisible && me.Distance2D(target.Position) < 2000)
-				{
-					if (effect4 == null)
-					{
-						effect4 = new ParticleEffect(@"particles\ui_mouseactions\range_finder_tower_aoe.vpcf", target);     
-						effect4.SetControlPoint(2, me.Position);
-						effect4.SetControlPoint(6, new Vector3(1, 0, 0));
-						effect4.SetControlPoint(7, target.Position);
-					}
-					else 
-					{
-						effect4.SetControlPoint(2, me.Position);
-						effect4.SetControlPoint(6, new Vector3(1, 0, 0));
-						effect4.SetControlPoint(7, target.Position);
-					} 
-				}
-				else if (effect4 != null)
-				{
-				   effect4.Dispose();
-				   effect4 = null;
-				}  
-			}
-
-            /*
-			{
-				if (linedisplay == null)
-				{
-					linedisplay = me.AddParticleEffect(@"particles\ui_mouseactions\range_finder_directional_b.vpcf");
-					linedisplay.SetControlPoint(1, me.Position);
-					linedisplay.SetControlPoint(2, FindVector(me.Position, me.Rotation, 1200+castrange));
-				}
-				if (!me.IsChanneling() || Prediction.IsTurning(me)) 
-				{
-					linedisplay.Dispose();
-					linedisplay = me.AddParticleEffect(@"particles\ui_mouseactions\range_finder_directional_b.vpcf");
-					linedisplay.SetControlPoint(1, me.Position);
-					linedisplay.SetControlPoint(2, FindVector(me.Position, me.Rotation, 1200+castrange));
-				}
-			}
-			else if (linedisplay!=null)
-				{
-				linedisplay.Dispose();
-				linedisplay = null;
-				}*/
-
-
+            if (target != null && target.IsValid && !target.IsIllusion && target.IsAlive && target.IsVisible && me.Distance2D(target.Position) < 2000 && Menu.Item("Show Target Effect").GetValue<bool>())
+            {
+                if (effect4 == null)
+                {
+                    effect4 = new ParticleEffect(@"materials\ensage_ui\particles\target.vpcf", target);
+                    effect4.SetControlPoint(2, me.Position);
+                    effect4.SetControlPoint(5, new Vector3(red, green, blue));
+                    effect4.SetControlPoint(6, new Vector3(1, 0, 0));
+                    effect4.SetControlPoint(7, target.Position);
+                }
+                else
+                {
+                    effect4.SetControlPoint(2, me.Position);
+                    effect4.SetControlPoint(5, new Vector3(red, green, blue));
+                    effect4.SetControlPoint(6, new Vector3(1, 0, 0));
+                    effect4.SetControlPoint(7, target.Position);
+                }
+            }
+            else if (effect4 != null)
+            {
+                effect4.Dispose();
+                effect4 = null;
+            }  		
+            
             if (Menu.Item("Blink Range").GetValue<bool>())
 			{
 				if (me.FindItem("item_blink")!=null)
 				{	
 					if(rangedisplay_dagger == null)
 					{
-						rangedisplay_dagger = me.AddParticleEffect(@"particles\ui_mouseactions\drag_selected_ring.vpcf");
-						range_dagger = 1200  + castrange + 130;
-						rangedisplay_dagger.SetControlPoint(1, new Vector3(150, 255, 255));
-						rangedisplay_dagger.SetControlPoint(2, new Vector3(range_dagger, 255, 0));
-					}
-					if (range_dagger != 1200  + castrange + 130)
+						rangedisplay_dagger = me.AddParticleEffect(@"materials\ensage_ui\particles\range_display_mod.vpcf");
+						range_dagger = 1200  + castrange;						
+						rangedisplay_dagger.SetControlPoint(1, new Vector3(range_dagger, 255, 5));
+                        rangedisplay_dagger.SetControlPoint(2, new Vector3(150, 255, 255));
+                    }
+					if (range_dagger != 1200  + castrange)
 					{
-						range_dagger = 1200  + castrange + 130;
+						range_dagger = 1200  + castrange;
 						if(rangedisplay_dagger != null)
 							rangedisplay_dagger.Dispose();
-						rangedisplay_dagger = me.AddParticleEffect(@"particles\ui_mouseactions\drag_selected_ring.vpcf");
-						rangedisplay_dagger.SetControlPoint(1, new Vector3(150, 255, 255));
-						rangedisplay_dagger.SetControlPoint(2, new Vector3(range_dagger, 255, 0));
-					}
+						rangedisplay_dagger = me.AddParticleEffect(@"materials\ensage_ui\particles\range_display_mod.vpcf");
+                        rangedisplay_dagger.SetControlPoint(1, new Vector3(range_dagger, 255, 5));
+                        rangedisplay_dagger.SetControlPoint(2, new Vector3(150, 255, 255));
+                    }
 				}
 				
                 else
@@ -2258,11 +2204,11 @@ namespace Tinker_Air13
 			{
 				if(rangedisplay_rocket == null)
 				{
-				    rangedisplay_rocket = me.AddParticleEffect(@"particles\ui_mouseactions\drag_selected_ring.vpcf");
-				    range_rocket = 2500 + 300;
-				    rangedisplay_rocket.SetControlPoint(1, new Vector3(255, 255, 0));
-				    rangedisplay_rocket.SetControlPoint(2, new Vector3(range_rocket, 255, 0));
-				}
+				    rangedisplay_rocket = me.AddParticleEffect(@"materials\ensage_ui\particles\range_display_mod.vpcf");
+				    range_rocket = 2500;
+				    rangedisplay_rocket.SetControlPoint(1, new Vector3(range_rocket, 255, 5));
+                    rangedisplay_rocket.SetControlPoint(2, new Vector3(255, 255, 0));
+                }
 			}
 			else if (rangedisplay_rocket!=null)
 			{
@@ -2276,21 +2222,20 @@ namespace Tinker_Air13
 			{
 				if(rangedisplay_laser == null)
 				{
-				    rangedisplay_laser = me.AddParticleEffect(@"particles\ui_mouseactions\drag_selected_ring.vpcf");
-				    range_laser = 650 + castrange +130;
-				    //range_laser = (int)me.Spellbook.SpellQ.GetCastRange();
-				    rangedisplay_laser.SetControlPoint(1, new Vector3(0, 150, 255));
-				    rangedisplay_laser.SetControlPoint(2, new Vector3(range_laser, 255, 0));
-				}
-				if (range_laser != 650 + castrange +130)
+				    rangedisplay_laser = me.AddParticleEffect(@"materials\ensage_ui\particles\range_display_mod.vpcf");
+				    range_laser = 650 + castrange;
+				    rangedisplay_laser.SetControlPoint(1, new Vector3(range_laser, 255, 5));
+                    rangedisplay_laser.SetControlPoint(2, new Vector3(0, 150, 255));
+                }
+				if (range_laser != 650 + castrange)
 				{
-					range_laser = 650 + castrange +130;
+					range_laser = 650 + castrange;
 					if(rangedisplay_laser != null)
 						rangedisplay_laser.Dispose();
-					rangedisplay_laser = me.AddParticleEffect(@"particles\ui_mouseactions\drag_selected_ring.vpcf");
-					rangedisplay_laser.SetControlPoint(1, new Vector3(111, 111, 255));
-					rangedisplay_laser.SetControlPoint(2, new Vector3(range_laser, 255, 0));
-				}				
+					rangedisplay_laser = me.AddParticleEffect(@"materials\ensage_ui\particles\range_display_mod.vpcf");
+                    rangedisplay_laser.SetControlPoint(1, new Vector3(range_laser, 255, 5));
+                    rangedisplay_laser.SetControlPoint(2, new Vector3(0, 150, 255));
+                }				
 			}
 			else if (rangedisplay_laser!=null)
 			{
@@ -2310,10 +2255,10 @@ namespace Tinker_Air13
             if (unit.Modifiers.Any(y => y.Name == "modifier_boots_of_travel_incoming") && me.HasModifier("modifier_teleporting"))
             {
                 if (VisibleUnit.TryGetValue(unit, out effect)) return;
-                effect = unit.AddParticleEffect(@"particles\ui_mouseactions\drag_selected_ring.vpcf");
-				range_dagger = 1200 + castrange + 130;
-				effect.SetControlPoint(1, new Vector3(150, 255, 255));
-				effect.SetControlPoint(2, new Vector3(range_dagger, 255, 0));
+                effect = unit.AddParticleEffect(@"materials\ensage_ui\particles\range_display_mod.vpcf");
+				range_dagger = 1200 + castrange;
+				effect.SetControlPoint(1, new Vector3(range_dagger, 255, 5));
+                effect.SetControlPoint(2, new Vector3(150, 255, 255));
                 VisibleUnit.Add(unit, effect);
             }
             else
@@ -2326,54 +2271,31 @@ namespace Tinker_Air13
 		
         private static void HandleEffectD(Unit unit)
         {
-			/*
-            if (unit == null) return;
-            //ParticleEffect effect2;
-
-            me = ObjectManager.LocalHero;
-            if (me == null || me.ClassId != ClassId.CDOTA_Unit_Hero_Tinker)
-                return;
-			var upos = unit.Position;
-					
-            if (unit.Modifiers.Any(y => y.Name == "modifier_boots_of_travel_incoming") && me.HasModifier("modifier_teleporting"))// && !Prediction.IsTurning(me))
-            {
-                if (VisibleUnit2.TryGetValue(unit, out effect2)) return;
-                //effect2 = unit.AddParticleEffect(@"particles\ui_mouseactions\range_finder_d_glow.vpcf");
-				effect2 = unit.AddParticleEffect(@"particles\ui_mouseactions\range_finder_directional_b.vpcf");
-
-				effect2.SetControlPoint(1, upos);
-				effect2.SetControlPoint(2, FindVector(upos, me.Rotation, 1200+castrange + 130));
-                VisibleUnit2.Add(unit, effect2);
-            }
-            else if (!unit.Modifiers.Any(y => y.Name == "modifier_boots_of_travel_incoming") || !me.HasModifier("modifier_teleporting") || !me.IsChanneling())// || Prediction.IsTurning(me))
-            {
-                if (!VisibleUnit2.TryGetValue(unit, out effect2)) return;
-                effect2.Dispose();
-                VisibleUnit2.Remove(unit);
-            }
-			*/
-			
+						
             if (unit == null) return;
             me = ObjectManager.LocalHero;
             if (me == null || me.ClassId != ClassId.CDOTA_Unit_Hero_Tinker)
                 return;
 			
 			
-            if (unit != null && unit.IsValid && unit.IsAlive && unit.Modifiers.Any(y => y.Name == "modifier_boots_of_travel_incoming") && me.HasModifier("modifier_teleporting"))// && !Prediction.IsTurning(me))
+            if (unit != null && unit.IsValid && unit.IsAlive && unit.Modifiers.Any(y => y.Name == "modifier_boots_of_travel_incoming") && me.HasModifier("modifier_teleporting"))
 			{
 				if (effect2 == null)
 				{
-					effect2 = new ParticleEffect(@"particles\ui_mouseactions\range_finder_d_glow.vpcf", unit);     
+					effect2 = new ParticleEffect(@"materials\ensage_ui\particles\line.vpcf", unit);     
 					effect2.SetControlPoint(1, unit.Position);
-					effect2.SetControlPoint(2, FindVector(unit.Position, me.Rotation, 1200+castrange + 130));
-				}
+					effect2.SetControlPoint(2, FindVector(unit.Position, me.Rotation, 1200 + castrange));
+                    effect2.SetControlPoint(3, new Vector3(100, 70, 10));
+                    effect2.SetControlPoint(4, new Vector3(150, 255, 255));
+                }
 				else 
 				{
 					effect2.SetControlPoint(1, unit.Position);
-					effect2.SetControlPoint(2, FindVector(unit.Position, me.Rotation, 1200+castrange + 130));
-				} 
+					effect2.SetControlPoint(2, FindVector(unit.Position, me.Rotation, 1200 + castrange));
+                    effect2.SetControlPoint(3, new Vector3(100, 70, 10));
+                    effect2.SetControlPoint(4, new Vector3(150, 255, 255));
+                } 
 			}
-			//else if (effect2 != null)
 			if (!me.HasModifier("modifier_teleporting") && effect2 != null)
 			{
 			   effect2.Dispose();
@@ -3415,7 +3337,7 @@ namespace Tinker_Air13
             iscreated = true;
         }
 
-        internal class TinkerCords
+        private class TinkerCords
         {
             public static readonly Vector3[]
             SafePos =
