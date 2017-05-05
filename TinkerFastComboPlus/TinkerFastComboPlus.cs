@@ -1,4 +1,4 @@
-﻿// credits: Air13
+﻿// credits: Air13, ObiXah
 using Ensage;
 using Ensage.Common;
 using Ensage.Common.Extensions;
@@ -13,6 +13,8 @@ namespace TinkerFastComboPlus
     class TinkerFastComboPlus
     {
         private const int HIDE_AWAY_RANGE = 130;
+
+        private static bool iscreated;
 
         private static Ability Laser, Rocket, Refresh, March;
         private static Item blink, dagon, sheep, soulring, ethereal, shiva, ghost, cyclone, forcestaff, glimmer, bottle, travel, veil, atos;
@@ -35,6 +37,8 @@ namespace TinkerFastComboPlus
         private static int red => Menu.Item("red").GetValue<Slider>().Value;
         private static int green => Menu.Item("green").GetValue<Slider>().Value;
         private static int blue => Menu.Item("blue").GetValue<Slider>().Value;
+
+        private static bool Block => Menu.Item("Block.rearm").GetValue<bool>();
 
         private static readonly Dictionary<string, bool> Skills = new Dictionary<string, bool>
             {
@@ -111,7 +115,8 @@ namespace TinkerFastComboPlus
 
 			Menu.AddItem(new MenuItem("autoDisable", "Auto disable/counter enemy").SetValue(true));
 			Menu.AddItem(new MenuItem("autoKillsteal", "Auto killsteal enemy").SetValue(true));
-			//Menu.AddItem(new MenuItem("autoSoulring", "Auto SoulRing by manual spell usage").SetValue(true).SetTooltip("Disable it if you have some bugs with rearming or use other auto soulring/items assemblies"));
+            Menu.AddItem(new MenuItem("Block.rearm", "Rearm blocker").SetValue(true)).SetTooltip("It does not allow double-cast rearm");
+            //Menu.AddItem(new MenuItem("autoSoulring", "Auto SoulRing by manual spell usage").SetValue(true).SetTooltip("Disable it if you have some bugs with rearming or use other auto soulring/items assemblies"));
 
             Menu.AddSubMenu(_skills);
             Menu.AddSubMenu(_items);
@@ -155,22 +160,34 @@ namespace TinkerFastComboPlus
             _settings.AddItem(new MenuItem("debug", "Enable debug").SetValue(false));
 
             Menu.AddToMainMenu();
-			
-			Orbwalking.Load();
+
+            Orbwalking.Load();
 
             //Game.OnWndProc += ComboEngine;
             Game.OnUpdate += ComboEngine;
 			Game.OnUpdate += AD;
 
-			
+
             //Player.OnExecuteOrder += Player_OnExecuteAction;
-			
+            Player.OnExecuteOrder += OnExecuteOrder;
+
             Drawing.OnDraw += Information;
 			Drawing.OnDraw += DrawRanges;
             Drawing.OnDraw += ParticleDraw;
+
         }
-		
-		
+
+        private static void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
+        {
+
+            if (!Block) return;
+            if (args.Ability?.Name == "tinker_rearm" && args.OrderId == OrderId.Ability &&
+                (me.IsChanneling() || args.Ability.IsInAbilityPhase))
+            {
+                args.Process = false;
+            }
+        }
+        
         /*private static void Player_OnExecuteAction(Player sender, ExecuteOrderEventArgs args) 
 		{
             me = ObjectManager.LocalHero;
@@ -3315,8 +3332,7 @@ namespace TinkerFastComboPlus
                 closestVector = v;
             return closestVector;
         }
-
-        private static bool iscreated;
+                
         public static void ParticleDraw(EventArgs args)
         {
             //
