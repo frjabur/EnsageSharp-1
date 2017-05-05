@@ -1211,34 +1211,36 @@ namespace TinkerFastComboPlus
                     target = TargetSelector.ClosestToMouse(me, 2000);
                     Utils.Sleep(250, "UpdateTarget");
                 }
-				
+
                 if (target != null && target.IsAlive && !target.IsIllusion && !me.IsChanneling() && !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase))
                 {
-					if (!me.Modifiers.Any(y => y.Name == "modifier_bloodseeker_rupture"))
-					{
-						if (!me.IsChanneling() && me.CanAttack() 
-							&& !target.IsAttackImmune() 
+                    if (!me.Modifiers.Any(y => y.Name == "modifier_bloodseeker_rupture"))
+                    {
+                        if (!me.IsChanneling() && me.CanAttack() 			
+                            && !target.IsAttackImmune() 
 							&& (!target.Modifiers.Any(y => y.Name == "modifier_nyx_assassin_spiked_carapace") || me.IsMagicImmune())
-							&& Utils.SleepCheck("Rearm")
-							)
-							{
-								if (me.Distance2D(target) > me.GetAttackRange()-100 )
-									Orbwalking.Orbwalk(target);
-								else 
-									me.Attack(target);
-							}
-						else
-							me.Move(Game.MousePosition, false);
-					}	
-							
+							&& Utils.SleepCheck("Rearm"))
+                        {
+                            if (me.Distance2D(target) > me.GetAttackRange()-100 )
+                                Orbwalking.Orbwalk(target);
+                            else
+                                me.Attack(target);
+                        }
+                        else
+                            me.Move(Game.MousePosition, false);
+                    }				                   			
                 }
                 else
                 {
-                    if (!me.IsChanneling() 
-						&& !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase)
-						&& !me.Modifiers.Any(y => y.Name == "modifier_bloodseeker_rupture")
-						)
+                    if (!me.IsChanneling() 			
+                        && !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase)					
+                        && !me.Modifiers.Any(y => y.Name == "modifier_bloodseeker_rupture")
+                        && Utils.SleepCheck("SpeedChase"))
+                    {
                         me.Move(Game.MousePosition);
+                        Utils.Sleep(150, "SpeedChase");
+                    }
+                        
                 }
             }
 			
