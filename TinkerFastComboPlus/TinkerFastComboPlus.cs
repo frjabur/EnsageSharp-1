@@ -115,7 +115,7 @@ namespace TinkerFastComboPlus
 
 			Menu.AddItem(new MenuItem("autoDisable", "Auto disable/counter enemy").SetValue(true));
 			Menu.AddItem(new MenuItem("autoKillsteal", "Auto killsteal enemy").SetValue(true));
-            Menu.AddItem(new MenuItem("Block.rearm", "Rearm blocker").SetValue(true)).SetTooltip("It does not allow double-cast rearm");
+            Menu.AddItem(new MenuItem("Block.rearm", "Rearm Blocker").SetValue(true)).SetTooltip("It does not allow double-cast rearm");
             //Menu.AddItem(new MenuItem("autoSoulring", "Auto SoulRing by manual spell usage").SetValue(true).SetTooltip("Disable it if you have some bugs with rearming or use other auto soulring/items assemblies"));
 
             Menu.AddSubMenu(_skills);
