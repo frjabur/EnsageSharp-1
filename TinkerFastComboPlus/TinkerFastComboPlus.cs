@@ -1,21 +1,28 @@
-﻿// credits: Air13, ObiXah
+﻿// credits: Air13, ObiXah, Jumpering, beminee
 using Ensage;
 using Ensage.Common;
 using Ensage.Common.Extensions;
 using Ensage.Common.Menu;
+using Ensage.Common.Threading;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TinkerFastComboPlus
 {
     class TinkerFastComboPlus
     {
+        private static CancellationTokenSource tks;        
+        private static Task RearmBlink;
+        private static readonly int[] RearmTime = { 3010, 1510, 760 };
+        private static int time;
+        private static int GetRearmTime(Ability s) => RearmTime[s.Level - 1];
+
         private const int HIDE_AWAY_RANGE = 130;
-
         private static bool iscreated;
-
         private static Ability Laser, Rocket, Refresh, March;
         private static Item blink, dagon, sheep, soulring, ethereal, shiva, ghost, cyclone, forcestaff, glimmer, bottle, travel, veil, atos;
         private static Hero me, target;
@@ -31,14 +38,16 @@ namespace TinkerFastComboPlus
         private static readonly Menu Menu = new Menu("TinkerFastComboPlus", "TinkerFastComboPlus", true, "npc_dota_hero_tinker", true).SetFontColor(Color.Aqua);
         private static readonly Menu _skills = new Menu("Skills", "Skills");
         private static readonly Menu _items = new Menu("Items", "Items");
-        private static readonly Menu _autopush = new Menu("Auto Push", "Auto Push");
-        private static readonly Menu _ranges = new Menu("Drawing", "Drawing");
 
         private static int red => Menu.Item("red").GetValue<Slider>().Value;
         private static int green => Menu.Item("green").GetValue<Slider>().Value;
         private static int blue => Menu.Item("blue").GetValue<Slider>().Value;
 
-        private static bool Block => Menu.Item("Block.rearm").GetValue<bool>();
+        private static bool BlockRearm => Menu.Item("BlockRearm").GetValue<bool>();
+        private static bool NoBlockRearmFountain => Menu.Item("NoBlockRearmFountain").GetValue<bool>();
+        private static bool NoBlockRearmTeleporting => Menu.Item("NoBlockRearmTeleporting").GetValue<bool>();
+
+        private static bool FastRearmBlink => Menu.Item("FastRearmBlink").GetValue<KeyBind>().Active;
 
         private static readonly Dictionary<string, bool> Skills = new Dictionary<string, bool>
             {
@@ -87,6 +96,7 @@ namespace TinkerFastComboPlus
 		
         private static ParticleEffect rangedisplay_dagger, rangedisplay_rocket, rangedisplay_laser;
 		private static ParticleEffect effect2, effect3, effect4;
+        private static ParticleEffect blinkeffect;
 
         private static int range_dagger, range_rocket, range_laser;
 			
@@ -99,38 +109,23 @@ namespace TinkerFastComboPlus
                 return;
             if (me.ClassId != ClassId.CDOTA_Unit_Hero_Tinker)
                 return;
-			
-		
-            // Menu Options
-            Menu.AddItem(new MenuItem("Combo Key", "Combo Key").SetValue(new KeyBind('D', KeyBindType.Press)));
-            Menu.AddItem(new MenuItem("ComboMode", "Combo Mode"))
-                .SetValue(new StringList(new[] { "Fast", "MpSaving"}));
-            Menu.AddItem(new MenuItem("TargetLock", "Target Lock"))
-                .SetValue(new StringList(new[] { "Free", "Lock" }));
-            Menu.AddItem(new MenuItem("Chase", "Chase Toggle").SetValue(new KeyBind('F', KeyBindType.Toggle, false)).SetTooltip("Toggle for chasing"));
 
-			
-            Menu.AddItem(new MenuItem("Rocket Spam Key", "Rocket Spam Key").SetValue(new KeyBind('W', KeyBindType.Press)));
-            Menu.AddItem(new MenuItem("March Spam Key", "March Spam Key").SetValue(new KeyBind('E', KeyBindType.Press)));
-
-			Menu.AddItem(new MenuItem("autoDisable", "Auto disable/counter enemy").SetValue(true));
-			Menu.AddItem(new MenuItem("autoKillsteal", "Auto killsteal enemy").SetValue(true));
-            Menu.AddItem(new MenuItem("Block.rearm", "Rearm Blocker").SetValue(true)).SetTooltip("It does not allow double-cast rearm");
-            //Menu.AddItem(new MenuItem("autoSoulring", "Auto SoulRing by manual spell usage").SetValue(true).SetTooltip("Disable it if you have some bugs with rearming or use other auto soulring/items assemblies"));
-
-            Menu.AddSubMenu(_skills);
-            Menu.AddSubMenu(_items);
-            Menu.AddSubMenu(_autopush);
-            Menu.AddSubMenu(_ranges);
-
+            // Menu Options	                                                          
             _skills.AddItem(new MenuItem("Skills: ", "Skills:").SetValue(new AbilityToggler(Skills)));
-            _items.AddItem(new MenuItem("Items: ", "Items:").SetValue(new AbilityToggler(Items)));
+            Menu.AddSubMenu(_skills);
 
+            _items.AddItem(new MenuItem("Items: ", "Items:").SetValue(new AbilityToggler(Items)));
+            Menu.AddSubMenu(_items);
+
+
+            var _autopush = new Menu("Auto Push", "Auto Push");            
             _autopush.AddItem(new MenuItem("autoPush", "Enable auto push helper").SetValue(false));
             _autopush.AddItem(new MenuItem("autoRearm", "Enable auto rearm in fountain when travel boots on cooldown").SetValue(false));
             _autopush.AddItem(new MenuItem("pushFount", "Use auto push if I have modif Fountain").SetValue(false));
             _autopush.AddItem(new MenuItem("pushSafe", "Use march only after blinking to a safe spot").SetValue(false));
+            Menu.AddSubMenu(_autopush);
 
+            var _ranges = new Menu("Drawing", "Drawing");            
             _ranges.AddItem(new MenuItem("Blink Range", "Show Blink Dagger Range").SetValue(true));
             _ranges.AddItem(new MenuItem("Blink Range Incoming TP", "Show incoming TP Blink Range").SetValue(true));
             _ranges.AddItem(new MenuItem("Rocket Range", "Show Rocket Range").SetValue(true));
@@ -140,24 +135,41 @@ namespace TinkerFastComboPlus
             _ranges.AddItem(new MenuItem("red", "Red").SetValue(new Slider(0, 0, 255)).SetFontColor(Color.Red));
             _ranges.AddItem(new MenuItem("green", "Green").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Green));
             _ranges.AddItem(new MenuItem("blue", "Blue").SetValue(new Slider(255, 0, 255)).SetFontColor(Color.Blue));
+            Menu.AddSubMenu(_ranges);
+
+            var _blockrearm = new Menu("Blocker Rearm", "Blocker Rearm");
+            Menu.AddSubMenu(_blockrearm);
+            _blockrearm.AddItem(new MenuItem("BlockRearm", "Block Rearm").SetValue(true)).SetTooltip("It does not allow double-cast rearm");
+            _blockrearm.AddItem(new MenuItem("NoBlockRearmFountain", "No Block Rearm in Fountain").SetValue(true));
+            _blockrearm.AddItem(new MenuItem("NoBlockRearmTeleporting", "No Block Rearm with Teleporting").SetValue(true));
 
             var _settings = new Menu("Settings", "Settings UI");
-            Menu.AddSubMenu(_settings);
-
-			_settings.AddItem(new MenuItem("HitCounter", "Enable target hit counter").SetValue(true));
+            _settings.AddItem(new MenuItem("HitCounter", "Enable target hit counter").SetValue(true));
 			_settings.AddItem(new MenuItem("RocketCounter", "Enable target rocket counter").SetValue(true));
-			_settings.AddItem(new MenuItem("TargetCalculator", "Enable target dmg calculator").SetValue(true));
-			
+			_settings.AddItem(new MenuItem("TargetCalculator", "Enable target dmg calculator").SetValue(true));			
 			_settings.AddItem(new MenuItem("Calculator", "Enable UI calculator").SetValue(true));
             _settings.AddItem(new MenuItem("BarPosX", "UI Calculator Position X").SetValue(new Slider(600, -1500, 1500)));
-            _settings.AddItem(new MenuItem("BarPosY", "UI Calculator Position Y").SetValue(new Slider(0, -1500, 1500)));
-			
+            _settings.AddItem(new MenuItem("BarPosY", "UI Calculator Position Y").SetValue(new Slider(0, -1500, 1500)));		
 			_settings.AddItem(new MenuItem("CalculatorRkt", "Enable Rocket calculator").SetValue(true));
             _settings.AddItem(new MenuItem("BarPosXr", "Rocket Calc Position X").SetValue(new Slider(950, -1500, 1500)));
             _settings.AddItem(new MenuItem("BarPosYr", "Rocket Calc Position Y").SetValue(new Slider(-300, -1500, 1500)));
-
             _settings.AddItem(new MenuItem("ComboModeDrawing", "Enable Combo Mode drawing").SetValue(true));
             _settings.AddItem(new MenuItem("debug", "Enable debug").SetValue(false));
+            Menu.AddSubMenu(_settings);
+            
+            Menu.AddItem(new MenuItem("Combo Key", "Combo Key").SetValue(new KeyBind('D', KeyBindType.Press)));
+            Menu.AddItem(new MenuItem("ComboMode", "Combo Mode")).SetValue(new StringList(new[] { "Fast", "MpSaving" }));
+            Menu.AddItem(new MenuItem("TargetLock", "Target Lock")).SetValue(new StringList(new[] { "Free", "Lock" }));
+            Menu.AddItem(new MenuItem("Chase", "Chase Toggle").SetValue(new KeyBind('F', KeyBindType.Toggle, false)).SetTooltip("Toggle for chasing"));
+
+            Menu.AddItem(new MenuItem("Rocket Spam Key", "Rocket Spam Key").SetValue(new KeyBind('W', KeyBindType.Press)));
+            Menu.AddItem(new MenuItem("March Spam Key", "March Spam Key").SetValue(new KeyBind('E', KeyBindType.Press)));
+            Menu.AddItem(new MenuItem("FastRearmBlink", "Fast Rearm Blink").SetValue(new KeyBind(32, KeyBindType.Press)));
+
+            Menu.AddItem(new MenuItem("autoDisable", "Auto disable/counter enemy").SetValue(true));
+            Menu.AddItem(new MenuItem("autoKillsteal", "Auto killsteal enemy").SetValue(true));
+            //Menu.AddItem(new MenuItem("autoSoulring", "Auto SoulRing by manual spell usage").SetValue(true).SetTooltip("Disable it if you have some bugs with rearming or use other auto soulring/items assemblies"));
+            
 
             Menu.AddToMainMenu();
 
@@ -167,6 +179,7 @@ namespace TinkerFastComboPlus
             Game.OnUpdate += ComboEngine;
 			Game.OnUpdate += AD;
 
+            GameDispatcher.OnUpdate += OnUpdate;
 
             //Player.OnExecuteOrder += Player_OnExecuteAction;
             Player.OnExecuteOrder += OnExecuteOrder;
@@ -174,18 +187,128 @@ namespace TinkerFastComboPlus
             Drawing.OnDraw += Information;
 			Drawing.OnDraw += DrawRanges;
             Drawing.OnDraw += ParticleDraw;
-
         }
+        
+        public static async void OnUpdate(EventArgs args)
+        {
+            if (FastRearmBlink && Utils.SleepCheck("updateAdd"))
+            {
+                var safeRange = 1200 + castrange;
+                var blinkparticlerange = Game.MousePosition;
 
+                if (me.Distance2D(Game.MousePosition) > safeRange + ensage_error)
+                {
+                    var tpos = me.Position;
+                    var a = tpos.ToVector2().FindAngleBetween(Game.MousePosition.ToVector2(), true);
+
+                    safeRange -= (int)me.HullRadius;
+                    blinkparticlerange = new Vector3(
+                        tpos.X + safeRange * (float)Math.Cos(a),
+                        tpos.Y + safeRange * (float)Math.Sin(a),100);
+                }
+                blinkeffect?.Dispose();
+                blinkeffect = new ParticleEffect("materials/ensage_ui/particles/tinker_blink.vpcf", blinkparticlerange);
+                blinkeffect.SetControlPoint(1, new Vector3(0, 255, 255));
+                blinkeffect.SetControlPoint(2, new Vector3(255));
+                Effects.Add(blinkeffect);
+                Utils.Sleep(2000, "updateAdd");
+            }
+            else if (FastRearmBlink && Utils.SleepCheck("updateRemover"))
+            {
+                DelayAction.Add(time, () =>
+                {
+                    blinkeffect?.Dispose();                
+                });
+                Utils.Sleep(2000, "updateRemover");
+            }
+            if (RearmBlink != null && !RearmBlink.IsCompleted)
+            {
+                return;
+            }
+            if (FastRearmBlink)
+            {
+                tks = new CancellationTokenSource();
+                RearmBlink = Action(tks.Token);
+                try
+                {
+                    await RearmBlink;
+                    RearmBlink = null;
+                }
+                catch (OperationCanceledException)
+                {
+                    RearmBlink = null;
+                }
+            }
+        }
+        
+        private static async Task Action(CancellationToken cancellationToken)
+        {
+            var blinkrange = 1200 + castrange;
+            var sss = Game.MousePosition;
+            var rearm = me.Spellbook().SpellR;
+            var blink = me.FindItem("item_blink");
+            if (Utils.SleepCheck("FASTBLINK"))
+            {
+                var safeRange = 130;
+                var turnrate = Game.MousePosition;
+
+                if (me.Distance2D(Game.MousePosition) > safeRange + ensage_error)
+                {
+                    var tpos = me.Position;
+                    var a = tpos.ToVector2().FindAngleBetween(Game.MousePosition.ToVector2(), true);
+                    safeRange -= (int)me.HullRadius;
+                    turnrate = new Vector3(
+                        tpos.X + safeRange * (float)Math.Cos(a),
+                        tpos.Y + safeRange * (float)Math.Sin(a),100);
+                }
+                me.Move(turnrate);
+                Utils.Sleep(100, "FASTBLINK");
+            }
+            if (rearm.CanBeCasted())
+            {             
+                DelayAction.Add(200, () =>      
+                {                   
+                    if (me.Distance2D(Game.MousePosition) > blinkrange + ensage_error)
+                    {
+                        var tpos = me.Position;
+                        var a = tpos.ToVector2().FindAngleBetween(Game.MousePosition.ToVector2(), true);
+
+                        blinkrange -= (int)me.HullRadius;
+                        sss = new Vector3(
+                            tpos.X + blinkrange * (float)Math.Cos(a),
+                            tpos.Y + blinkrange * (float)Math.Sin(a),
+                            100);
+                    }
+                    rearm.UseAbility();
+                });
+                time = (int)(GetRearmTime(rearm) + Game.Ping + 200 + rearm.FindCastPoint() * 1000);
+                await Task.Delay(time, cancellationToken);                
+            }            
+                blink.UseAbility(sss);
+                await Task.Delay(0, cancellationToken);
+
+                blink.UseAbility(sss);
+                await Task.Delay(50, cancellationToken);
+
+                blink.UseAbility(sss);
+                await Task.Delay(100, cancellationToken);
+
+                blink.UseAbility(sss);
+                await Task.Delay(150, cancellationToken);                      
+        }
         private static void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
         {
-
-            if (!Block) return;
-            if (args.Ability?.Name == "tinker_rearm" && args.OrderId == OrderId.Ability &&
-                (me.IsChanneling() || args.Ability.IsInAbilityPhase))
+            if (!BlockRearm) return;
             {
-                args.Process = false;
-            }
+                if ((!me.HasModifier("modifier_fountain_aura_buff") || !NoBlockRearmFountain) && (!me.HasModifier("modifier_teleporting") || !NoBlockRearmTeleporting))
+                {
+                    if (args.Ability?.Name == "tinker_rearm" && args.OrderId == OrderId.Ability &&             
+                        (me.IsChanneling() || args.Ability.IsInAbilityPhase))
+                    {
+                        args.Process = false;
+                    }
+                }                
+            }            
         }
         
         /*private static void Player_OnExecuteAction(Player sender, ExecuteOrderEventArgs args) 
