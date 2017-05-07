@@ -98,10 +98,10 @@ namespace VisibleByEnemyPlus
 
                 PrintSuccess(">>>>>> VisibleByEnemyPlus Loaded!");
 
-                var sList = new StringList()
-                {
-                    SList = EffectsName, SelectedIndex = 0
-                };
+                 var sList = new StringList(EffectsName)
+                 {
+                     SList = EffectsName, SelectedIndex = 0
+                 };
 
                 var effectType = new MenuItem("type", "Effect Type").SetValue(sList);
                 effectType.ValueChanged += Item_ValueChanged;
