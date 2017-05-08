@@ -359,7 +359,7 @@ namespace BeAwarePlus
             minimapsettingMenu.AddItem(new MenuItem("mini_map_size_name", "Mini Map Size Name").SetValue(new Slider(0, -40, 40))).ValueChanged += DrawingMiniMap.OnValueChanged;
             minimapsettingMenu.AddItem(new MenuItem("recalibrate_x", "Recalibrate Name X").SetValue(new Slider(0, -30, 30)));
             minimapsettingMenu.AddItem(new MenuItem("recalibrate_y", "Recalibrate Name Y").SetValue(new Slider(0, -30, 30)));
-            var xList = new StringList(DrawingMiniMap.DrawMinimap) { SList = DrawingMiniMap.DrawMinimap, SelectedIndex = 0 };
+            var xList = new StringList(DrawingMiniMap.DrawMinimap) {SelectedIndex = 0 };
             var DrawMinimapType = new MenuItem("drawminimap_type", "Minimap Icon Type").SetValue(xList);
             minimapsettingMenu.AddItem(DrawMinimapType);
             minimapsettingMenu.AddItem(new MenuItem("text1", "Item Color:").SetFontColor(Color.Red));
@@ -370,7 +370,7 @@ namespace BeAwarePlus
             Menu.AddItem(new MenuItem("enable_msg", "Enable Information Message").SetValue(true));
             Menu.AddItem(new MenuItem("enable_sound", "Enable Sound").SetValue(true));
             Menu.AddItem(new MenuItem("enable_default_sound", "Enable Default Sound").SetValue(false)).SetTooltip("All Sounds Becomes Default");
-            var sList = new StringList(BeAwarePlus.LangName) { SList = BeAwarePlus.LangName, SelectedIndex = 0 };
+            var sList = new StringList(BeAwarePlus.LangName) {SelectedIndex = 0 };
             var language = new MenuItem("lang", "Language").SetValue(sList);
             Menu.AddItem(language);           
             Menu.AddToMainMenu();                                  

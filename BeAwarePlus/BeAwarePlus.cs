@@ -14,14 +14,13 @@ namespace BeAwarePlus
 {
     public static class BeAwarePlus
     {
+        private static bool IgnorAllyTP = true;
         private static bool FurionFix;
-        private static Player player;
+        internal static Player player;
         private static Vector3 TPID;
-        internal static int HeroID;
+        internal static string HeroColor;
         private static bool Team;
         internal static Vector2 MiniMapPosition;
-        internal static string RealName;
-        internal static float HeroNameLength;
         private static bool Roshan_Dead;
         private static int Roshan_Respawn_Min_Time;
         private static int Roshan_Respawn_Max_Time;
@@ -85,9 +84,8 @@ namespace BeAwarePlus
                 if (MenuManager.Menu.Item("invoker_sun_strike_minimap").GetValue<bool>())
                 {
                     MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
-                    Helper.Color = "npc_dota_hero_invoker";
+                    HeroColor = "npc_dota_hero_invoker";
                     Helper.Hero();
-
                 }                                               
             }
 
@@ -105,7 +103,7 @@ namespace BeAwarePlus
                 if (MenuManager.Menu.Item("kunkka_torrent_minimap").GetValue<bool>())
                 {
                     MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
-                    Helper.Color = "npc_dota_hero_kunkka";
+                    HeroColor = "npc_dota_hero_kunkka";
                     Helper.Hero();
                 }                                                
             }
@@ -124,7 +122,7 @@ namespace BeAwarePlus
                 if (MenuManager.Menu.Item("monkey_king_primal_spring_minimap").GetValue<bool>())
                 {
                     MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
-                    Helper.Color = "npc_dota_hero_monkey_king";
+                    HeroColor = "npc_dota_hero_monkey_king";
                     Helper.Hero();
                 }         
             }
@@ -143,8 +141,7 @@ namespace BeAwarePlus
                 if (MenuManager.Menu.Item("radar_scan_minimap").GetValue<bool>())
                 {
                     MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
-                    DrawingMiniMap.Position_Item.Add(MiniMapPosition);
-                    DrawingMiniMap.Remover(MiniMapPosition);
+                    Helper.Item();
                 }          
             }
 
@@ -155,6 +152,11 @@ namespace BeAwarePlus
             string index;
             if (sender.Team == me.Team)
             {
+                //Ignor Ally TP
+                if (args.Modifier.Name.Contains("modifier_teleporting"))
+                {
+                    IgnorAllyTP = false;
+                }
 
                 //Spirit Breaker Charge of Darkness
                 if (args.Modifier.Name.Contains("modifier_spirit_breaker_charge_of_darkness_vision") && MenuManager.Menu.Item("spirit_breaker_charge_of_darkness").GetValue<bool>())
@@ -170,7 +172,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("spirit_breaker_charge_of_darkness_minimap_end").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
-                        Helper.Color = "npc_dota_hero_spirit_breaker";
+                        HeroColor = "npc_dota_hero_spirit_breaker";
                         Helper.Hero();
                     }       
                 }
@@ -203,7 +205,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("sniper_assassinate_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
-                        Helper.Color = "npc_dota_hero_sniper";
+                        HeroColor = "npc_dota_hero_sniper";
                         Helper.Hero();
                     }              
                 }
@@ -249,7 +251,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("bloodseeker_thirst_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
-                        Helper.Color = "npc_dota_hero_bloodseeker";
+                        HeroColor = "npc_dota_hero_bloodseeker";
                         Helper.Hero();
                     }                                       
                     Utils.Sleep(10000, "bloodseeker_thirst");
@@ -348,11 +350,9 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("invis_sword_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
-                        DrawingMiniMap.Position_Item.Add(MiniMapPosition);
-                        DrawingMiniMap.Remover(MiniMapPosition);
+                        Helper.Item();
                     }                                       
                     Utils.Sleep(3000, "invis_sword");
-                    Helper.Item();
                 }
 
                 //Shadow Amulet
@@ -370,11 +370,9 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("shadow_amulet_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
-                        DrawingMiniMap.Position_Item.Add(MiniMapPosition);
-                        DrawingMiniMap.Remover(MiniMapPosition);
+                        Helper.Item();
                     }                                   
-                    Utils.Sleep(3000, "shadow_amulet");
-                    Helper.Item();
+                    Utils.Sleep(3000, "shadow_amulet");                    
                 }
 
                 //Glimmer Cape
@@ -390,14 +388,11 @@ namespace BeAwarePlus
                         Sound.PlaySound("glimmer_cape_" + Addition[GetLangId] + ".wav");
                     }
                     if (MenuManager.Menu.Item("glimmer_cape_minimap").GetValue<bool>())
-                    {
+                    {                        
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
-                        DrawingMiniMap.Position_Item.Add(MiniMapPosition);
-                        DrawingMiniMap.Remover(MiniMapPosition);
-
+                        Helper.Item();
                     }                                                           
                     Utils.Sleep(3000, "glimmer_cape");
-                    Helper.Item();
                 }
 
                 //Silver Edge
@@ -415,11 +410,9 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("silver_edge_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
-                        DrawingMiniMap.Position_Item.Add(MiniMapPosition);
-                        DrawingMiniMap.Remover(MiniMapPosition);
+                        Helper.Item();
                     }                                                           
                     Utils.Sleep(3000, "silver_edge");
-                    Helper.Item();
                 }
 
                 //Gem of True Sight
@@ -459,7 +452,7 @@ namespace BeAwarePlus
         {
 
             //Smoke of Deceit  
-            if (args.Name.Contains("smoke_of_deceit") && MenuManager.Menu.Item("smoke_of_deceit").GetValue<bool>())
+            if (args.Name.Contains("smoke_of_deceit") && Utils.SleepCheck("smoke_of_deceit") && MenuManager.Menu.Item("smoke_of_deceit").GetValue<bool>())
             {
                 DelayAction.Add(50, () =>
                 {
@@ -478,11 +471,9 @@ namespace BeAwarePlus
                         if (MenuManager.Menu.Item("smoke_of_deceit_minimap").GetValue<bool>())
                         {
                             MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                            DrawingMiniMap.Position_Item.Add(MiniMapPosition);
-                            DrawingMiniMap.Remover(MiniMapPosition);
                             Helper.Item();
                         }
-
+                        Utils.Sleep(5000, "smoke_of_deceit");
                     }
                 });
             }
@@ -503,7 +494,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("ancient_apparition_ice_blast_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_ancient_apparation";
+                        HeroColor = "npc_dota_hero_ancient_apparation";
                         Helper.Hero();
                     }
                 });
@@ -525,7 +516,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("mirana_invis_minimap_mirana").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_mirana";
+                        HeroColor = "npc_dota_hero_mirana";
                         Helper.Hero();
                     }
                 });
@@ -539,7 +530,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("mirana_invis_minimap_all_heroes").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_mirana";
+                        HeroColor = "npc_dota_hero_mirana";
                         Helper.Hero();
                     }
                 });
@@ -561,7 +552,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("sandking_epicenter_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_sand_king";
+                        HeroColor = "npc_dota_hero_sand_king";
                         Helper.Hero();
                     }
                 });
@@ -583,10 +574,8 @@ namespace BeAwarePlus
                 {
                     if (MenuManager.Menu.Item("furion_teleportation_minimap_start").GetValue<bool>())
                     {
-                        
-                        //Console.WriteLine(FurionFix);
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_furion";
+                        HeroColor = ("npc_dota_hero_furion");                        
                         Helper.Hero();
                         FurionFix = false;
                     }
@@ -601,7 +590,12 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("furion_teleportation_minimap_end").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(1));
-                        Helper.Color = "npc_dota_hero_furion";
+                        HeroColor = "npc_dota_hero_furion";
+                        DrawingMiniMap.NamePositionSpell.Add(MiniMapPosition);
+                        DrawingMiniMap.HeroNameSpell = ("Nature's Prophet");
+                        DrawingMiniMap.HeroNamePosSpell = (int)(("Nature's Prophet").Length * 3.84f);
+                        DrawingMiniMap.HeroNameColorSpell = Color.Red;
+                        DrawingMiniMap.Remover2(MiniMapPosition);
                         Helper.Hero();
                     }
                 });
@@ -623,7 +617,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("furion_wrath_of_nature_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_furion";
+                        HeroColor = "npc_dota_hero_furion";
                         Helper.Hero();
                     }
                 });
@@ -645,7 +639,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("alchemist_unstable_concoction_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_alchemist";
+                        HeroColor = "npc_dota_hero_alchemist";
                         Helper.Hero();
                     }
                 });
@@ -667,7 +661,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("bounty_hunter_wind_walk_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_bounty_hunter";
+                        HeroColor = "npc_dota_hero_bounty_hunter";
                         Helper.Hero();
                     }
                 });
@@ -689,7 +683,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("clinkz_wind_walk_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_clinkz";
+                        HeroColor = "npc_dota_hero_clinkz";
                         Helper.Hero();
                     }
                 });
@@ -711,7 +705,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("nyx_assassin_vendetta_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_nyx_assassin";
+                        HeroColor = "npc_dota_hero_nyx_assassin";
                         Helper.Hero();
                     }
                 });
@@ -733,7 +727,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("wisp_relocate_minimap_start").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_wisp";
+                        HeroColor = "npc_dota_hero_wisp";
                         Helper.Hero();
                     }
                 });
@@ -747,7 +741,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("wisp_relocate_minimap_end").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_wisp";
+                        HeroColor = "npc_dota_hero_wisp";
                         Helper.Hero();
                     }
                 });
@@ -769,7 +763,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("morphling_replicate_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_wisp";
+                        HeroColor = "npc_dota_hero_wisp";
                         Helper.Hero();
                     }
                 });
@@ -791,7 +785,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("troll_warlord_battle_trance_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_troll_warlord";
+                        HeroColor = "npc_dota_hero_troll_warlord";
                         Helper.Hero();
                     }
                 });
@@ -813,7 +807,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("ursa_enrage_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_ursa";
+                        HeroColor = "npc_dota_hero_ursa";
                         Helper.Hero();
                     }
                 });
@@ -827,7 +821,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("spirit_breaker_charge_of_darkness_minimap_start").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.Color = "npc_dota_hero_spirit_breaker";
+                        HeroColor = "npc_dota_hero_spirit_breaker";
                         Helper.Hero();
                     }
                 });
@@ -849,7 +843,7 @@ namespace BeAwarePlus
                     if (MenuManager.Menu.Item("monkey_king_tree_dance_minimap").GetValue<bool>())
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(1));
-                        Helper.Color = "npc_dota_hero_monkey_king";
+                        HeroColor = "npc_dota_hero_monkey_king";
                         Helper.Hero();
                     }
                 });
@@ -874,9 +868,6 @@ namespace BeAwarePlus
                     //TP Ally
                     if (!Team && MenuManager.Menu.Item("tpscroll_teleport_ally").GetValue<bool>())
                     {
-                        HeroID = player.Id;
-                        RealName = player.Hero.GetRealName();
-                        HeroNameLength = RealName.Length;
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         Helper.TPTeleportEnd();
                         if (MenuManager.Menu.Item("tpscroll_teleport_ally_msg").GetValue<bool>())
@@ -892,9 +883,6 @@ namespace BeAwarePlus
                     //TP Enemy                       
                     if (Team && MenuManager.Menu.Item("tpscroll_teleport_enemy").GetValue<bool>())
                     {
-                        HeroID = player.Id;
-                        RealName = player.Hero.GetRealName();
-                        HeroNameLength = RealName.Length;
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         Helper.TPTeleportEnd();
                         if (MenuManager.Menu.Item("tpscroll_teleport_enemy_msg").GetValue<bool>())
@@ -919,14 +907,12 @@ namespace BeAwarePlus
                         //TP Ally
                         if (!Team && MenuManager.Menu.Item("tpscroll_teleport_ally").GetValue<bool>())
                         {
-                            HeroID = player.Id;
                             MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                             Helper.TPTeleportStart();
                         }
                         //TP Enemy                       
                         if (Team && MenuManager.Menu.Item("tpscroll_teleport_enemy").GetValue<bool>())
                         {
-                            HeroID = player.Id;
                             MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                             Helper.TPTeleportStart();
                         }
@@ -943,16 +929,15 @@ namespace BeAwarePlus
             //===========================================================================================//  
                                                                                  
             //TP Start
-            if (args.Name.Contains("teleport_start") 
-                    && MenuManager.Menu.Item("bt_teleport_enemy").GetValue<bool>()
-                    && !MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
+            if (args.Name.Contains("teleport_start")                  
+                && MenuManager.Menu.Item("bt_teleport_enemy").GetValue<bool>()          
+                && !MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
             {
-                if (new Vector3(TPID.X, TPID.Y, TPID.Z) == (new Vector3(0, 0, 0)))
-                {
-                    DelayAction.Add(50, () =>
+                DelayAction.Add(60, () =>
+                {                    
+                    if (new Vector3(TPID.X, TPID.Y, TPID.Z) == (new Vector3(0, 0, 0)))
                     {
-                        var AllyTeam = Heroes.GetByTeam(me.Team).Any(x => x.HasModifier("modifier_teleporting"));
-                        if (!AllyTeam)
+                        if (IgnorAllyTP)
                         {
                             MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                             Helper.BTTeleportStartEnemy();
@@ -965,28 +950,30 @@ namespace BeAwarePlus
                                 Sound.PlaySound("default_" + Addition[GetLangId] + ".wav");
                             }
                         }
-                    });
-                }
-            }
-                    
+                        DelayAction.Add(50, () =>
+                        {
+                            IgnorAllyTP = true;
+                        });                       
+                    }
+                });            
+            }                    
 
             //TP End                           
             if ((args.Name.Contains("teleport_end") && !FurionFix)              
                 && MenuManager.Menu.Item("bt_teleport_enemy").GetValue<bool>()    
                 && !MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
             {
-                if (new Vector3(TPID.X, TPID.Y, TPID.Z) == (new Vector3(0, 0, 0)))
+                DelayAction.Add(60, () =>
                 {
-                    DelayAction.Add(30, () =>
+                    if (new Vector3(TPID.X, TPID.Y, TPID.Z) == (new Vector3(0, 0, 0)))
                     {
-                        var AllyTeam = Heroes.GetByTeam(me.Team).Any(x => x.HasModifier("modifier_teleporting"));
-                        if (!AllyTeam)
+                        if (IgnorAllyTP)
                         {
                             MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                             Helper.BTTeleportStartEnemy();
                         }
-                    });
-                }                    
+                    }
+                });                                
             }
 
             //TP All
@@ -995,45 +982,54 @@ namespace BeAwarePlus
             //TP Start
             if (args.Name.Contains("teleport_start") && MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
             {
-                DelayAction.Add(30, () =>
+                DelayAction.Add(60, () =>
                 {
-                    var AllyTeam = Heroes.GetByTeam(me.Team).Any(x => x.HasModifier("modifier_teleporting"));
-                    if (!AllyTeam)
+                    if (new Vector3(TPID.X, TPID.Y, TPID.Z) == (new Vector3(0, 0, 0)))
                     {
-                        MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.BTTeleportStartEnemy();
-                    }                    
-                    if (!AllyTeam && MenuManager.Menu.Item("bt_teleport_enemy_msg").GetValue<bool>())
-                    {
-                        MessageCreator.MessageItemCreator("default2", "travel_boots");
+                        if (IgnorAllyTP)
+                        {
+                            MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                            Helper.BTTeleportStartEnemy();
+                        }
+                        if (IgnorAllyTP && MenuManager.Menu.Item("bt_teleport_enemy_msg").GetValue<bool>())
+                        {
+                            MessageCreator.MessageItemCreator("default2", "travel_boots");
+                        }
+                        if (IgnorAllyTP && MenuManager.Menu.Item("bt_teleport_enemy_sound").GetValue<bool>())
+                        {
+                            Sound.PlaySound("default_" + Addition[GetLangId] + ".wav");
+                        }
+                        if (!IgnorAllyTP)
+                        {
+                            MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                            Helper.BTTeleportStartAlly();
+                        }
                     }
-                    if (!AllyTeam && MenuManager.Menu.Item("bt_teleport_enemy_sound").GetValue<bool>())
+                    DelayAction.Add(50, () =>
                     {
-                        Sound.PlaySound("default_" + Addition[GetLangId] + ".wav");
-                    }
-                    if (AllyTeam)
-                    {
-                        MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.BTTeleportStartAlly();
-                    }
-                });
+                        IgnorAllyTP = true;
+                    });
+                });                             
             }
 
             //TP End
             if (args.Name.Contains("teleport_end") && MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
             {
-                DelayAction.Add(30, () =>
+                DelayAction.Add(60, () =>
                 {
-                    var AllyTeam = Heroes.GetByTeam(me.Team).Any(x => x.HasModifier("modifier_teleporting"));
-                    if (!AllyTeam)
+                    if (new Vector3(TPID.X, TPID.Y, TPID.Z) == (new Vector3(0, 0, 0)))
                     {
-                        MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.BTTeleportStartEnemy();
-                    }
-                    if (AllyTeam)
-                    {
-                        MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.BTTeleportStartAlly();
+
+                        if (IgnorAllyTP)
+                        {
+                            MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                            Helper.BTTeleportStartEnemy();
+                        }
+                        if (!IgnorAllyTP)
+                        {
+                            MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
+                            Helper.BTTeleportStartAlly();
+                        }
                     }
                 });
             }
@@ -1068,7 +1064,7 @@ namespace BeAwarePlus
             if (me == null || me.Hero == null) return;
 
             //Check Rune
-            if (((Math.Round(Game.GameTime) + MenuManager.Menu.Item("check_rune_sec").GetValue<Slider>().Value) % 120) == 0 && Utils.SleepCheck("check_rune") && MenuManager.Menu.Item("check_rune").GetValue<bool>())
+            if (((Math.Round(Game.GameTime) + MenuManager.Menu.Item("check_rune_sec").GetValue<Slider>().Value) % 120) == 0 && MenuManager.Menu.Item("check_rune").GetValue<bool>() && Utils.SleepCheck("check_rune"))
             {
                 if (MenuManager.Menu.Item("check_rune_msg").GetValue<bool>())
                 {
@@ -1083,7 +1079,7 @@ namespace BeAwarePlus
 
             //Hand of Midas
             var Midas = me.Hero.FindItem("item_hand_of_midas");
-            if (Midas != null && Math.Round(Midas.Cooldown) == MenuManager.Menu.Item("midas_sec").GetValue<Slider>().Value && Utils.SleepCheck("use_midas") && MenuManager.Menu.Item("use_midas").GetValue<bool>())
+            if (Midas != null && Math.Round(Midas.Cooldown) == MenuManager.Menu.Item("use_midas_sec").GetValue<Slider>().Value && MenuManager.Menu.Item("use_midas").GetValue<bool>() && Utils.SleepCheck("use_midas"))
             {
                 if (MenuManager.Menu.Item("use_midas_msg").GetValue<bool>())
                 {

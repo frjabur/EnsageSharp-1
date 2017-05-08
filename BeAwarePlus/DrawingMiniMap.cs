@@ -35,10 +35,11 @@ namespace BeAwarePlus
         internal static ColorBGRA HeroNameColor_7;
         internal static ColorBGRA HeroNameColor_8;
         internal static ColorBGRA HeroNameColor_9;
+        internal static ColorBGRA HeroNameColorSpell;
 
 
 
-        
+
         internal static List<Vector2> Position_0 = new List<Vector2>();
         internal static List<Vector2> Position_1 = new List<Vector2>();
         internal static List<Vector2> Position_2 = new List<Vector2>();
@@ -64,7 +65,8 @@ namespace BeAwarePlus
         internal static List<Vector2> NamePosition_7 = new List<Vector2>();
         internal static List<Vector2> NamePosition_8 = new List<Vector2>();
         internal static List<Vector2> NamePosition_9 = new List<Vector2>();
-        
+        internal static List<Vector2> NamePositionSpell = new List<Vector2>();
+
         internal static string HeroName_0;
         internal static string HeroName_1;
         internal static string HeroName_2;
@@ -75,6 +77,7 @@ namespace BeAwarePlus
         internal static string HeroName_7;
         internal static string HeroName_8;
         internal static string HeroName_9;
+        internal static string HeroNameSpell;
 
         internal static int HeroNamePos_0;       
         internal static int HeroNamePos_1;
@@ -86,6 +89,7 @@ namespace BeAwarePlus
         internal static int HeroNamePos_7;
         internal static int HeroNamePos_8;
         internal static int HeroNamePos_9;
+        internal static int HeroNamePosSpell;
 
         private static int x;
         private static int y;
@@ -98,6 +102,7 @@ namespace BeAwarePlus
 
         public static void Init()
         {
+            Drawing.OnEndScene += DrawPosition;
             Drawing.OnEndScene += DrawHeroNamePosition;
             Drawing.OnEndScene += DrawHeroPosition;
             Drawing.OnPostReset += DrawingOnPostReset;
@@ -414,29 +419,30 @@ namespace BeAwarePlus
                     DrawShadowText(HeroNameFont, HeroName_9, 
                         (int)HeroNamePosition_9.X - 9 - HeroNamePos_9 + Recalibrate_X, 
                         (int)HeroNamePosition_9.Y + Recalibrate_Y, HeroNameColor_9);
-            }
-
+            }           
+        }
+        internal static void DrawPosition(EventArgs args)
+        {
             //Item
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
                 foreach (Vector2 HeroPosition_Item in Position_Item.ToList())
-                    DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]), 
-                        (int)HeroPosition_Item.X - 12 - MiniMapSizeIcon / 6 - x, 
-                        (int)HeroPosition_Item.Y - 23 - MiniMapSizeIcon / 3 - y, 
+                    DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]),
+                        (int)HeroPosition_Item.X - 12 - MiniMapSizeIcon / 6 - x,
+                        (int)HeroPosition_Item.Y - 23 - MiniMapSizeIcon / 3 - y,
                         ColorSelectItem[MenuManager.Menu.Item("coloritem").GetValue<StringList>().SelectedValue]);
-
             }
 
             //BT Teleport Enemy
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPosition_BT_Enemy in Position_BT_Enemy.ToList())                  
-                DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]), 
-                    (int)HeroPosition_BT_Enemy.X - 12 - MiniMapSizeIcon / 6 - x, 
-                    (int)HeroPosition_BT_Enemy.Y - 23 - MiniMapSizeIcon / 3 - y, 
-                    ColorSelectBT[MenuManager.Menu.Item("colorbt").GetValue<StringList>().SelectedValue]);
-                
+                foreach (Vector2 HeroPosition_BT_Enemy in Position_BT_Enemy.ToList())
+                    DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]),
+                        (int)HeroPosition_BT_Enemy.X - 12 - MiniMapSizeIcon / 6 - x,
+                        (int)HeroPosition_BT_Enemy.Y - 23 - MiniMapSizeIcon / 3 - y,
+                        ColorSelectBT[MenuManager.Menu.Item("colorbt").GetValue<StringList>().SelectedValue]);
             }
+
             //BT Teleport Ally
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
@@ -444,7 +450,15 @@ namespace BeAwarePlus
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]),
                         (int)HeroPosition_BT_Ally.X - 12 - MiniMapSizeIcon / 6 - x,
                         (int)HeroPosition_BT_Ally.Y - 23 - MiniMapSizeIcon / 3 - y, Color.White);
+            }
 
+            //Furion
+            if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
+            {
+                foreach (Vector2 HeroNamePositionSpell in NamePositionSpell.ToList())
+                    DrawShadowText(HeroNameFont, HeroNameSpell,
+                        (int)HeroNamePositionSpell.X - 9 - HeroNamePosSpell + Recalibrate_X,
+                        (int)HeroNamePositionSpell.Y + Recalibrate_Y, HeroNameColorSpell);
             }
         }
         internal static void Remover(Vector2 val)
@@ -493,25 +507,7 @@ namespace BeAwarePlus
                 {
                     Position_9.Remove(val);
                 }
-
-                //PositionItem
-                if (Position_Item.Contains(val))
-                {
-                    Position_Item.Remove(val);
-                }
-
-                //PositionBT Enemy
-                if (Position_BT_Enemy.Contains(val))
-                {
-                    Position_BT_Enemy.Remove(val);
-                }
-
-                //PositionBT Ally
-                if (Position_BT_Ally.Contains(val))
-                {
-                    Position_BT_Ally.Remove(val);
-                }
-
+               
                 //NamePosition
                 if (NamePosition_0.Contains(val))
                 {
@@ -554,7 +550,36 @@ namespace BeAwarePlus
                     NamePosition_9.Remove(val);
                 }
             });
-        }        
+        }
+        internal static void Remover2(Vector2 val)
+        {
+            DelayAction.Add(Timer * 1000, () =>
+            {
+                //PositionItem
+                if (Position_Item.Contains(val))
+                {
+                    Position_Item.Remove(val);
+                }
+
+                //PositionBT Enemy
+                if (Position_BT_Enemy.Contains(val))
+                {
+                    Position_BT_Enemy.Remove(val);
+                }
+
+                //PositionBT Ally
+                if (Position_BT_Ally.Contains(val))
+                {
+                    Position_BT_Ally.Remove(val);
+                }
+
+                //Furion
+                if (NamePositionSpell.Contains(val))
+                {
+                    NamePositionSpell.Remove(val);
+                }
+            });
+        }
         static void DrawingOnPostReset(EventArgs args)
         {
             Font.OnResetDevice();
