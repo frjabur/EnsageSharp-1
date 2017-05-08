@@ -48,11 +48,11 @@ namespace LoneDruidSharpRewrite.Features.Orbwalk
         public Orbwalker(Unit unit)
             : base(unit)
         {
-            hero = unit.Equals(ObjectManager.LocalHero);
-            attackSleeper = new Sleeper();
-            moveSleeper = new Sleeper();
-            attackSleeper2 = new Sleeper();
-            attacker = new Attacker(unit);
+            this.hero = unit.Equals(ObjectManager.LocalHero);
+            this.attackSleeper = new Sleeper();
+            this.moveSleeper = new Sleeper();
+            this.attackSleeper2 = new Sleeper();
+            this.attacker = new Attacker(unit);
         }
 
         #endregion
@@ -70,7 +70,7 @@ namespace LoneDruidSharpRewrite.Features.Orbwalk
         /// </param>
         public void Attack(Unit target, bool useModifier)
         {
-            attacker.Attack(target, useModifier);
+            this.attacker.Attack(target, useModifier);
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace LoneDruidSharpRewrite.Features.Orbwalk
             bool attackmodifiers = true,
             bool followTarget = false)
         {
-            OrbwalkOn(target, Game.MousePosition, bonusWindupMs, bonusRange, attackmodifiers, followTarget);
+            this.OrbwalkOn(target, Game.MousePosition, bonusWindupMs, bonusRange, attackmodifiers, followTarget);
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace LoneDruidSharpRewrite.Features.Orbwalk
             bool attackmodifiers = true,
             bool followTarget = false)
         {
-            if (Unit == null || !Unit.IsValid)
+            if (this.Unit == null || !this.Unit.IsValid)
             {
                 return;
             }
@@ -145,73 +145,73 @@ namespace LoneDruidSharpRewrite.Features.Orbwalk
             if (target != null)
             {
                 var pos = Prediction.InFront(
-                    Unit,
-                    (float)((Game.Ping / 1000) + (Unit.GetTurnTime(target.Position) * Unit.MovementSpeed)));
-                distance = pos.Distance2D(target) - Unit.Distance2D(target);
+                    this.Unit,
+                    (float)((Game.Ping / 1000) + (this.Unit.GetTurnTime(target.Position) * this.Unit.MovementSpeed)));
+                distance = pos.Distance2D(target) - this.Unit.Distance2D(target);
             }
 
             var isValid = target != null && target.IsValid && target.IsAlive && target.IsVisible && !target.IsInvul()
                           && !target.HasModifiers(
                               new[] { "modifier_ghost_state", "modifier_item_ethereal_blade_slow" },
                               false)
-                          && target.Distance2D(Unit)
-                          <= Unit.GetAttackRange() + Unit.HullRadius + 50 + targetHull + bonusRange
+                          && target.Distance2D(this.Unit)
+                          <= this.Unit.GetAttackRange() + this.Unit.HullRadius + 50 + targetHull + bonusRange
                           + Math.Max(distance, 0);
-            if (isValid || (target != null && Unit.IsAttacking() && Unit.GetTurnTime(target.Position) < 0.1))
+            if (isValid || (target != null && this.Unit.IsAttacking() && this.Unit.GetTurnTime(target.Position) < 0.1))
             {
-                var canAttack = CanAttack(target, bonusWindupMs) && !target.IsAttackImmune() && !target.IsInvul()
-                                && Unit.CanAttack();
-                if (canAttack && !attackSleeper.Sleeping && (!hero || Utils.SleepCheck("Orbwalk.Attack")))
+                var canAttack = this.CanAttack(target, bonusWindupMs) && !target.IsAttackImmune() && !target.IsInvul()
+                                && this.Unit.CanAttack();
+                if (canAttack && !this.attackSleeper.Sleeping && (!this.hero || Utils.SleepCheck("Orbwalk.Attack")))
                 {
-                    attacker.Attack(target, attackmodifiers);
-                    attackSleeper.Sleep(
+                    this.attacker.Attack(target, attackmodifiers);
+                    this.attackSleeper.Sleep(
                         (float)
-                        ((UnitDatabase.GetAttackPoint(Unit) * 1000) + (Unit.GetTurnTime(target) * 1000)
+                        ((UnitDatabase.GetAttackPoint(this.Unit) * 1000) + (this.Unit.GetTurnTime(target) * 1000)
                          + Game.Ping + 100));
-                    moveSleeper.Sleep(
+                    this.moveSleeper.Sleep(
                         (float)
-                        ((UnitDatabase.GetAttackPoint(Unit) * 1000) + (Unit.GetTurnTime(target) * 1000) + 50));
-                    if (!hero)
+                        ((UnitDatabase.GetAttackPoint(this.Unit) * 1000) + (this.Unit.GetTurnTime(target) * 1000) + 50));
+                    if (!this.hero)
                     {
                         return;
                     }
 
                     Utils.Sleep(
-                        (UnitDatabase.GetAttackPoint(Unit) * 1000) + (Unit.GetTurnTime(target) * 1000)
+                        (UnitDatabase.GetAttackPoint(this.Unit) * 1000) + (this.Unit.GetTurnTime(target) * 1000)
                         + Game.Ping + 100,
                         "Orbwalk.Attack");
                     Utils.Sleep(
-                        (UnitDatabase.GetAttackPoint(Unit) * 1000) + (Unit.GetTurnTime(target) * 1000) + 50,
+                        (UnitDatabase.GetAttackPoint(this.Unit) * 1000) + (this.Unit.GetTurnTime(target) * 1000) + 50,
                         "Orbwalk.Move");
                     return;
                 }
 
-                if (canAttack && !attackSleeper2.Sleeping)
+                if (canAttack && !this.attackSleeper2.Sleeping)
                 {
-                    attacker.Attack(target, attackmodifiers);
-                    attackSleeper2.Sleep(100);
+                    this.attacker.Attack(target, attackmodifiers);
+                    this.attackSleeper2.Sleep(100);
                     return;
                 }
             }
 
-            var canCancel = (CanCancelAttack() && !CanAttack(target, bonusWindupMs))
-                            || (!isValid && !Unit.IsAttacking() && CanCancelAttack());
-            if (!canCancel || moveSleeper.Sleeping || attackSleeper.Sleeping
-                || (hero && (!Utils.SleepCheck("Orbwalk.Move") || !Utils.SleepCheck("Orbwalk.Attack"))))
+            var canCancel = (this.CanCancelAttack() && !this.CanAttack(target, bonusWindupMs))
+                            || (!isValid && !this.Unit.IsAttacking() && this.CanCancelAttack());
+            if (!canCancel || this.moveSleeper.Sleeping || this.attackSleeper.Sleeping
+                || (this.hero && (!Utils.SleepCheck("Orbwalk.Move") || !Utils.SleepCheck("Orbwalk.Attack"))))
             {
                 return;
             }
 
             if (followTarget)
             {
-                Unit.Follow(target);
+                this.Unit.Follow(target);
             }
             else
             {
-                Unit.Move(movePosition);
+                this.Unit.Move(movePosition);
             }
 
-            moveSleeper.Sleep(100);
+            this.moveSleeper.Sleep(100);
         }
 
         #endregion

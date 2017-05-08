@@ -1,6 +1,6 @@
 ﻿using Ensage;
-using LoneDruidSharpRewrite.Abilities;
-using LoneDruidSharpRewrite.Utilities;
+using global::LoneDruidSharpRewrite.Abilities;
+using global::LoneDruidSharpRewrite.Utilities;
 using System;
 
 namespace LoneDruidSharpRewrite

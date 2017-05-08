@@ -16,7 +16,7 @@ namespace LoneDruidSharpRewrite.Utilities
 
         public DrawText()
         {
-            sleeper = new Sleeper();
+            this.sleeper = new Sleeper();
         }
 
         public Color Color { get; set; }
@@ -33,19 +33,19 @@ namespace LoneDruidSharpRewrite.Utilities
         {
             get
             {
-                return text;
+                return this.text;
             }
 
             set
             {
-                text = value;
-                if (sleeper.Sleeping)
+                this.text = value;
+                if (this.sleeper.Sleeping)
                 {
                     return;
                 }
 
-                Size = Drawing.MeasureText(text, "Arial", textSize, FontFlags);
-                sleeper.Sleep(2000);
+                this.Size = Drawing.MeasureText(this.text, "Arial", this.textSize, this.FontFlags);
+                this.sleeper.Sleep(2000);
             }
         }
 
@@ -53,75 +53,75 @@ namespace LoneDruidSharpRewrite.Utilities
         {
             get
             {
-                return textSize;
+                return this.textSize;
             }
 
             set
             {
-                textSize = value;
-                Size = Drawing.MeasureText(text, "Arial", textSize, FontFlags);
-                sleeper.Sleep(2000);
+                this.textSize = value;
+                this.Size = Drawing.MeasureText(this.text, "Arial", this.textSize, this.FontFlags);
+                this.sleeper.Sleep(2000);
             }
         }
 
         public void Draw()
         {
-            Drawing.DrawText(text, Position, textSize, Color, FontFlags);
+            Drawing.DrawText(this.text, this.Position, this.textSize, this.Color, this.FontFlags);
         }
 
         public void DrawTextAutoIronTalonText(bool on)
         {
             var startPos = new Vector2(Convert.ToSingle(Drawing.Width) - 200, Convert.ToSingle(Drawing.Height * 0.50));
-            text = "IronTalon" + " [" + Utils.KeyToText(Variable.MenuManager.AutoTalonMenu.GetValue<KeyBind>().Key) + "] " + (on ? "ON" : "OFF");
-            Position = startPos;
-            textSize = new Vector2(20);
-            Color = on ? Color.Yellow : Color.Red;
-            FontFlags = FontFlags.AntiAlias | FontFlags.DropShadow | FontFlags.Additive | FontFlags.Custom | FontFlags.StrikeOut;
-            Draw();
+            this.text = "IronTalon" + " [" + Utils.KeyToText(Variable.MenuManager.AutoTalonMenu.GetValue<KeyBind>().Key) + "] " + (on ? "ON" : "OFF");
+            this.Position = startPos;
+            this.textSize = new Vector2(20);
+            this.Color = on ? Color.Yellow : Color.Red;
+            this.FontFlags = FontFlags.AntiAlias | FontFlags.DropShadow | FontFlags.Additive | FontFlags.Custom | FontFlags.StrikeOut;
+            this.Draw();
         }
 
         public void DrawTextAutoMidasText(bool on)
         {
             var startPos = new Vector2(Convert.ToSingle(Drawing.Width) - 200, Convert.ToSingle(Drawing.Height * 0.54));
-            text = "Midas" + " [" + Utils.KeyToText(Variable.MenuManager.AutoMidasMenu.GetValue<KeyBind>().Key) + "] " + (on ? "ON" : "OFF");
-            Position = startPos;
-            textSize = new Vector2(20);
-            Color = on ? Color.Yellow : Color.Red;
-            FontFlags = FontFlags.AntiAlias | FontFlags.DropShadow | FontFlags.Additive | FontFlags.Custom | FontFlags.StrikeOut;
-            Draw();
+            this.text = "Midas" + " [" + Utils.KeyToText(Variable.MenuManager.AutoMidasMenu.GetValue<KeyBind>().Key) + "] " + (on ? "ON" : "OFF");
+            this.Position = startPos;
+            this.textSize = new Vector2(20);
+            this.Color = on ? Color.Yellow : Color.Red;
+            this.FontFlags = FontFlags.AntiAlias | FontFlags.DropShadow | FontFlags.Additive | FontFlags.Custom | FontFlags.StrikeOut;
+            this.Draw();
         }
 
         public void DrawTextOnlyBearLastHitText(bool on)
         {
             var startPos = new Vector2(Convert.ToSingle(Drawing.Width) - 200, Convert.ToSingle(Drawing.Height * 0.58));
-            text = "Bear Last Hit" + " [" + Utils.KeyToText(Variable.MenuManager.OnlyBearLastHitMenu.GetValue<KeyBind>().Key) + "] " + (on? "ON" : "OFF");
-            Position = startPos;
-            textSize = new Vector2(20);
-            Color = on? Color.Yellow : Color.Red;
-            FontFlags = FontFlags.AntiAlias | FontFlags.DropShadow | FontFlags.Additive | FontFlags.Custom | FontFlags.StrikeOut;
-            Draw();
+            this.text = "Bear Last Hit" + " [" + Utils.KeyToText(Variable.MenuManager.OnlyBearLastHitMenu.GetValue<KeyBind>().Key) + "] " + (on? "ON" : "OFF");
+            this.Position = startPos;
+            this.textSize = new Vector2(20);
+            this.Color = on? Color.Yellow : Color.Red;
+            this.FontFlags = FontFlags.AntiAlias | FontFlags.DropShadow | FontFlags.Additive | FontFlags.Custom | FontFlags.StrikeOut;
+            this.Draw();
         }
 
         public void DrawTextCombinedLastHitText(bool on)
         {
             var startPos = new Vector2(Convert.ToSingle(Drawing.Width) - 200, Convert.ToSingle(Drawing.Height * 0.66));
-            text = "Combined Last Hit" + " [" + Utils.KeyToText(Variable.MenuManager.CombinedLastHitMenu.GetValue<KeyBind>().Key) + "] " + (on ? "ON" : "OFF");
-            Position = startPos;
-            textSize = new Vector2(20);
-            Color = on ? Color.Yellow : Color.Red;
-            FontFlags = FontFlags.AntiAlias | FontFlags.DropShadow | FontFlags.Additive | FontFlags.Custom | FontFlags.StrikeOut;
-            Draw();
+            this.text = "Combined Last Hit" + " [" + Utils.KeyToText(Variable.MenuManager.CombinedLastHitMenu.GetValue<KeyBind>().Key) + "] " + (on ? "ON" : "OFF");
+            this.Position = startPos;
+            this.textSize = new Vector2(20);
+            this.Color = on ? Color.Yellow : Color.Red;
+            this.FontFlags = FontFlags.AntiAlias | FontFlags.DropShadow | FontFlags.Additive | FontFlags.Custom | FontFlags.StrikeOut;
+            this.Draw();
         }
 
         public void DrawTextBearChaseText(bool on)
         {
             var startPos = new Vector2(Convert.ToSingle(Drawing.Width) - 200, Convert.ToSingle(Drawing.Height * 0.62));
-            text = "Bear Chasing!" + " [" + Utils.KeyToText(Variable.MenuManager.BearChaseMenu.GetValue<KeyBind>().Key) + "] ";
-            Position = startPos;
-            textSize = new Vector2(20);
-            Color = on? Color.HotPink : Color.Red;
-            FontFlags = FontFlags.AntiAlias | FontFlags.DropShadow | FontFlags.Additive | FontFlags.Custom | FontFlags.StrikeOut;
-            Draw();
+            this.text = "Bear Chasing!" + " [" + Utils.KeyToText(Variable.MenuManager.BearChaseMenu.GetValue<KeyBind>().Key) + "] ";
+            this.Position = startPos;
+            this.textSize = new Vector2(20);
+            this.Color = on? Color.HotPink : Color.Red;
+            this.FontFlags = FontFlags.AntiAlias | FontFlags.DropShadow | FontFlags.Additive | FontFlags.Custom | FontFlags.StrikeOut;
+            this.Draw();
         }
 
 

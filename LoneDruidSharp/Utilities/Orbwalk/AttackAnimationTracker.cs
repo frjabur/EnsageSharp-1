@@ -15,8 +15,8 @@ namespace LoneDruidSharpRewrite.Features.Orbwalk
 
         protected AttackAnimationTracker(Unit unit)
         {
-            Unit = unit;
-            Events.OnUpdate += Track;
+            this.Unit = unit;
+            Events.OnUpdate += this.Track;
         }
 
         public Unit Unit { get; set; }
@@ -24,7 +24,7 @@ namespace LoneDruidSharpRewrite.Features.Orbwalk
 
         public bool CanAttack(Entity target = null, float bonusWindupMs = 0)
         {
-            if (Unit == null || !Unit.IsValid)
+            if (this.Unit == null || !this.Unit.IsValid)
             {
                 return false;
             }
@@ -32,31 +32,31 @@ namespace LoneDruidSharpRewrite.Features.Orbwalk
             var turnTime = 0d;
             if (target != null)
             {
-                turnTime = Unit.GetTurnTime(target)
-                           + (Math.Max(Unit.Distance2D(target) - Unit.GetAttackRange() - 100, 0)
-                              / Unit.MovementSpeed);
+                turnTime = this.Unit.GetTurnTime(target)
+                           + (Math.Max(this.Unit.Distance2D(target) - this.Unit.GetAttackRange() - 100, 0)
+                              / this.Unit.MovementSpeed);
             }
 
-            return nextUnitAttackEnd - Game.Ping - (turnTime * 1000) - 75 + bonusWindupMs < Utils.TickCount;
+            return this.nextUnitAttackEnd - Game.Ping - (turnTime * 1000) - 75 + bonusWindupMs < Utils.TickCount;
         }
 
         public bool CanCancelAttack(float delay = 0f)
         {
-            if (Unit == null || !Unit.IsValid)
+            if (this.Unit == null || !this.Unit.IsValid)
             {
                 return true;
             }
 
             var time = Utils.TickCount;
-            var cancelTime = nextUnitAttackRelease - Game.Ping - delay + 50;
+            var cancelTime = this.nextUnitAttackRelease - Game.Ping - delay + 50;
             return time >= cancelTime;
         }
 
         private void Track(EventArgs args)
         {
-            if (Unit == null || !Unit.IsValid)
+            if (this.Unit == null || !this.Unit.IsValid)
             {
-                Events.OnUpdate -= Track;
+                Events.OnUpdate -= this.Track;
                 return;
             }
 
@@ -65,27 +65,27 @@ namespace LoneDruidSharpRewrite.Features.Orbwalk
                 return;
             }
 
-            if (Unit.NetworkActivity == lastUnitActivity)
+            if (this.Unit.NetworkActivity == this.lastUnitActivity)
             {
                 return;
             }
 
-            lastUnitActivity = Unit.NetworkActivity;
-            if (!Unit.IsAttacking())
+            this.lastUnitActivity = this.Unit.NetworkActivity;
+            if (!this.Unit.IsAttacking())
             {
-                if (CanCancelAttack())
+                if (this.CanCancelAttack())
                 {
                     return;
                 }
 
-                lastUnitActivity = 0;
-                nextUnitAttackEnd = 0;
-                nextUnitAttackRelease = 0;
+                this.lastUnitActivity = 0;
+                this.nextUnitAttackEnd = 0;
+                this.nextUnitAttackRelease = 0;
                 return;
             }
 
-            nextUnitAttackEnd = (float)(Utils.TickCount + (UnitDatabase.GetAttackRate(Unit) * 1000));
-            nextUnitAttackRelease = (float)(Utils.TickCount + (UnitDatabase.GetAttackPoint(Unit) * 1000));
+            this.nextUnitAttackEnd = (float)(Utils.TickCount + (UnitDatabase.GetAttackRate(this.Unit) * 1000));
+            this.nextUnitAttackRelease = (float)(Utils.TickCount + (UnitDatabase.GetAttackPoint(this.Unit) * 1000));
 
         }
     }

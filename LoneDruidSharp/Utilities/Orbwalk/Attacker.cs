@@ -30,130 +30,130 @@ namespace LoneDruidSharpRewrite.Features.Orbwalk
         /// </param>
         public Attacker(Unit unit)
         {
-            Unit = unit;
+            this.Unit = unit;
             switch (unit.ClassId)
             {
                 case ClassId.CDOTA_Unit_Hero_Clinkz:
-                    AttackModifier = unit.Spellbook.Spell2;
-                    attack = (target) =>
+                    this.AttackModifier = unit.Spellbook.Spell2;
+                    this.attack = (target) =>
                     {
-                        if (useModifier && Unit.CanCast() && AttackModifier.Level > 0
-                            && unit.Mana > AttackModifier.ManaCost)
+                        if (this.useModifier && this.Unit.CanCast() && this.AttackModifier.Level > 0
+                            && unit.Mana > this.AttackModifier.ManaCost)
                         {
-                            AttackModifier.UseAbility(target);
+                            this.AttackModifier.UseAbility(target);
                             return;
                         }
 
-                        Unit.Attack(target);
+                        this.Unit.Attack(target);
                     };
                     break;
                 case ClassId.CDOTA_Unit_Hero_DrowRanger:
-                    AttackModifier = unit.Spellbook.Spell1;
-                    attack = (target) =>
+                    this.AttackModifier = unit.Spellbook.Spell1;
+                    this.attack = (target) =>
                     {
-                        if (useModifier && Unit.CanCast() && AttackModifier.Level > 0
-                            && unit.Mana > AttackModifier.ManaCost)
+                        if (this.useModifier && this.Unit.CanCast() && this.AttackModifier.Level > 0
+                            && unit.Mana > this.AttackModifier.ManaCost)
                         {
-                            AttackModifier.UseAbility(target);
+                            this.AttackModifier.UseAbility(target);
                             return;
                         }
 
-                        Unit.Attack(target);
+                        this.Unit.Attack(target);
                     };
                     break;
                 case ClassId.CDOTA_Unit_Hero_Viper:
-                    AttackModifier = unit.Spellbook.SpellQ;
-                    attack = (target) =>
+                    this.AttackModifier = unit.Spellbook.SpellQ;
+                    this.attack = (target) =>
                     {
-                        if (useModifier && Unit.CanCast() && AttackModifier.Level > 0
-                            && unit.Mana > AttackModifier.ManaCost)
+                        if (this.useModifier && this.Unit.CanCast() && this.AttackModifier.Level > 0
+                            && unit.Mana > this.AttackModifier.ManaCost)
                         {
-                            AttackModifier.UseAbility(target);
+                            this.AttackModifier.UseAbility(target);
                             return;
                         }
 
-                        Unit.Attack(target);
+                        this.Unit.Attack(target);
                     };
                     break;
                 case ClassId.CDOTA_Unit_Hero_Huskar:
-                    AttackModifier = unit.Spellbook.Spell2;
-                    attack = (target) =>
+                    this.AttackModifier = unit.Spellbook.Spell2;
+                    this.attack = (target) =>
                     {
-                        if (useModifier && Unit.CanCast() && AttackModifier.Level > 0
-                            && Unit.Health > Unit.MaximumHealth * 0.35)
+                        if (this.useModifier && this.Unit.CanCast() && this.AttackModifier.Level > 0
+                            && this.Unit.Health > this.Unit.MaximumHealth * 0.35)
                         {
-                            AttackModifier.UseAbility(target);
+                            this.AttackModifier.UseAbility(target);
                             return;
                         }
 
-                        Unit.Attack(target);
+                        this.Unit.Attack(target);
                     };
                     break;
                 case ClassId.CDOTA_Unit_Hero_Silencer:
-                    AttackModifier = unit.Spellbook.Spell2;
-                    attack = (target) =>
+                    this.AttackModifier = unit.Spellbook.Spell2;
+                    this.attack = (target) =>
                     {
-                        if (useModifier && Unit.CanCast() && AttackModifier.Level > 0
-                            && Unit.Mana > AttackModifier.ManaCost)
+                        if (this.useModifier && this.Unit.CanCast() && this.AttackModifier.Level > 0
+                            && this.Unit.Mana > this.AttackModifier.ManaCost)
                         {
-                            AttackModifier.UseAbility(target);
+                            this.AttackModifier.UseAbility(target);
                             return;
                         }
 
-                        Unit.Attack(target);
+                        this.Unit.Attack(target);
                     };
                     break;
                 case ClassId.CDOTA_Unit_Hero_Jakiro:
-                    AttackModifier = unit.Spellbook.Spell3;
-                    attack = (target) =>
+                    this.AttackModifier = unit.Spellbook.Spell3;
+                    this.attack = (target) =>
                     {
-                        if (useModifier && Unit.CanCast() && AttackModifier.Level > 0
-                            && AttackModifier.CanBeCasted())
+                        if (this.useModifier && this.Unit.CanCast() && this.AttackModifier.Level > 0
+                            && this.AttackModifier.CanBeCasted())
                         {
-                            AttackModifier.UseAbility(target);
+                            this.AttackModifier.UseAbility(target);
                             return;
                         }
 
-                        Unit.Attack(target);
+                        this.Unit.Attack(target);
                     };
                     break;
                 case ClassId.CDOTA_Unit_Hero_Obsidian_Destroyer:
-                    AttackModifier = unit.Spellbook.Spell1;
-                    attack = (target) =>
+                    this.AttackModifier = unit.Spellbook.Spell1;
+                    this.attack = (target) =>
                     {
-                        if (useModifier && Unit.CanCast() && AttackModifier.Level > 0
-                            && Unit.Mana > AttackModifier.ManaCost)
+                        if (this.useModifier && this.Unit.CanCast() && this.AttackModifier.Level > 0
+                            && this.Unit.Mana > this.AttackModifier.ManaCost)
                         {
-                            AttackModifier.UseAbility(target);
+                            this.AttackModifier.UseAbility(target);
                             return;
                         }
 
-                        Unit.Attack(target);
+                        this.Unit.Attack(target);
                     };
                     break;
                 case ClassId.CDOTA_Unit_Hero_Enchantress:
-                    AttackModifier = unit.Spellbook.Spell4;
-                    attack = (target) =>
+                    this.AttackModifier = unit.Spellbook.Spell4;
+                    this.attack = (target) =>
                     {
-                        if (useModifier && Unit.CanCast() && AttackModifier.Level > 0
-                            && Unit.Mana > AttackModifier.ManaCost)
+                        if (this.useModifier && this.Unit.CanCast() && this.AttackModifier.Level > 0
+                            && this.Unit.Mana > this.AttackModifier.ManaCost)
                         {
-                            AttackModifier.UseAbility(target);
+                            this.AttackModifier.UseAbility(target);
                             return;
                         }
 
-                        Unit.Attack(target);
+                        this.Unit.Attack(target);
                     };
                     break;
                 default:
-                    attack = (target) =>
+                    this.attack = (target) =>
                     {
                         if (target == null)
                         {
                             return;
                         }
 
-                        Unit.Attack(target);
+                        this.Unit.Attack(target);
                     };
                     break;
             }
@@ -189,7 +189,7 @@ namespace LoneDruidSharpRewrite.Features.Orbwalk
         public void Attack(Unit target, bool useModifier = true)
         {
             this.useModifier = useModifier;
-            attack.Invoke(target);
+            this.attack.Invoke(target);
         }
 
         #endregion

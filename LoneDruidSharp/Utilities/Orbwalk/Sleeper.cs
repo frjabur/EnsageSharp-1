@@ -20,7 +20,7 @@ namespace LoneDruidSharpRewrite.Features.Orbwalk
         /// </summary>
         public Sleeper()
         {
-            lastSleepTickCount = 0;
+            this.lastSleepTickCount = 0;
         }
 
         #endregion
@@ -34,7 +34,7 @@ namespace LoneDruidSharpRewrite.Features.Orbwalk
         {
             get
             {
-                return Utils.TickCount < lastSleepTickCount;
+                return Utils.TickCount < this.lastSleepTickCount;
             }
         }
 
@@ -50,7 +50,7 @@ namespace LoneDruidSharpRewrite.Features.Orbwalk
         /// </param>
         public void Sleep(float duration)
         {
-            lastSleepTickCount = Utils.TickCount + duration;
+            this.lastSleepTickCount = Utils.TickCount + duration;
         }
 
         #endregion

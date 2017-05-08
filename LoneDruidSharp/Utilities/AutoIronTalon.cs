@@ -29,10 +29,10 @@ namespace LoneDruidSharpRewrite.Utilities
 
         public AutoIronTalon()
         {
-            //FindItems();
-            //getIronTalonUnit();
-            //ObjectManager.OnAddEntity += ObjectManager_OnAddEntity;
-            //ObjectManager.OnRemoveEntity += ObjectManager_OnRemoveEntity;
+            //this.FindItems();
+            //this.getIronTalonUnit();
+            //ObjectManager.OnAddEntity += this.ObjectManager_OnAddEntity;
+            //ObjectManager.OnRemoveEntity += this.ObjectManager_OnRemoveEntity;
         }
 
         public bool HasIronTalonOn(Unit unit)
@@ -44,11 +44,11 @@ namespace LoneDruidSharpRewrite.Utilities
         {
             if (HasIronTalonOn(unit))
             {
-                ironTalon = unit.FindItem("item_iron_talon");
+                this.ironTalon = unit.FindItem("item_iron_talon");
             }
             else
             {
-                ironTalon = null;
+                this.ironTalon = null;
             }
         }
 
@@ -57,7 +57,7 @@ namespace LoneDruidSharpRewrite.Utilities
             if (src == null) return;
             if (!HasIronTalonOn(src)) return;
             FindIronTalon(src);
-            if (ironTalon == null) return;
+            if (this.ironTalon == null) return;
             // get the highest current hp unit
             var Target = ObjectManager.GetEntities<Unit>().Where(x =>
                                        !x.IsMagicImmune() && x.Team != Variable.Hero.Team &&
@@ -68,11 +68,11 @@ namespace LoneDruidSharpRewrite.Utilities
                                        .OrderByDescending(x => 0.4 * x.Health / x.MaximumHealth).FirstOrDefault();
             if(Target == null)
             {
-                ironTalonTarget = null;
+                this.ironTalonTarget = null;
             }
             else
             {
-                ironTalonTarget = Target;
+                this.ironTalonTarget = Target;
             }
 
         }
@@ -97,13 +97,13 @@ namespace LoneDruidSharpRewrite.Utilities
             {
                 FindIronTalon(me);
                 FindIronTalonTarget(me);
-                Use(ironTalon, me, ironTalonTarget);
+                Use(this.ironTalon, me, this.ironTalonTarget);
             }
             if (HasIronTalonOn(bear))
             {
                 FindIronTalon(bear);
                 FindIronTalonTarget(bear);
-                Use(ironTalon, bear, ironTalonTarget);
+                Use(this.ironTalon, bear, this.ironTalonTarget);
             }
         }
 

@@ -11,28 +11,28 @@ namespace LoneDruidSharpRewrite.Utilities
 
         public Move(Unit unit)
         {
-            sleeper = new Sleeper();
+            this.sleeper = new Sleeper();
             this.unit = unit;
         }
 
         public void Pause(float duration)
         {
-            sleeper.Sleep(duration);
+            this.sleeper.Sleep(duration);
         }
 
         public void ToPosition(Vector3 position)
         {
-            Execute(position);
+            this.Execute(position);
         }
 
         private void Execute(Vector3 position)
         {
-            if (sleeper.Sleeping)
+            if (this.sleeper.Sleeping)
             {
                 return;
             }
-            unit.Move(position);
-            sleeper.Sleep(200);
+            this.unit.Move(position);
+            this.sleeper.Sleep(200);
         }
 
     }

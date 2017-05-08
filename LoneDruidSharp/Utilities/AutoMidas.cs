@@ -40,7 +40,7 @@ namespace LoneDruidSharpRewrite.Utilities
         {
             if (HasMidasOn(unit))
             {
-                midas = unit.FindItem("item_hand_of_midas");         
+                this.midas = unit.FindItem("item_hand_of_midas");         
             }
         }
 
@@ -60,7 +60,7 @@ namespace LoneDruidSharpRewrite.Utilities
 
             if(midasTarget == null)
             {
-                midasTarget = null;
+                this.midasTarget = null;
                 return;
             }
             this.midasTarget = midasTarget;
@@ -86,13 +86,13 @@ namespace LoneDruidSharpRewrite.Utilities
             {
                 FindMidasOn(me);
                 getMidasCreeps(me);
-                Use(midas, me, midasTarget);
+                Use(this.midas, me, this.midasTarget);
             }
             if (HasMidasOn(bear))
             {
                 FindMidasOn(bear);
                 getMidasCreeps(bear);
-                Use(midas, bear, midasTarget);
+                Use(this.midas, bear, this.midasTarget);
             }
         }
     }

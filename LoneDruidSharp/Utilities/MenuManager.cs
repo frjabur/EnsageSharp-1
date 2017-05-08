@@ -19,24 +19,24 @@ namespace LoneDruidSharpRewrite.Utilities
 
         public MenuManager(string heroName)
         {
-            Menu = new Menu("LoneDruidSharp", "LoneDruidSharp", true, "npc_dota_hero_lone_druid", true);
-            OnlyBearLastHitMenu = new MenuItem("OnlyBearLastHitMenu", "OnlyBearLastHitMenu").SetValue(new KeyBind('W', KeyBindType.Press)).SetTooltip("only bear will go last hit");
-            CombinedLastHitMenu = new MenuItem("CombinedLastHitMenu", "CombinedLastHitMenu").SetValue(new KeyBind('X', KeyBindType.Press)).SetTooltip("both hero and bear last hit");
-            AutoTalonMenu = new MenuItem("Auto Iron Talon", "Auto Iron Talon").SetValue(new KeyBind('Z', KeyBindType.Toggle));
-            AutoMidasMenu = new MenuItem("Auto Midas", "Auto Midas").SetValue(new KeyBind('Z', KeyBindType.Toggle));
-            BearChaseMenu = new MenuItem("BearChaseMenu", "BearChaseMenu").SetValue(new KeyBind('D', KeyBindType.Press)).SetTooltip("press it and rightclick enemy, bear will keep chasing until you control bear again");
-            Menu.AddItem(AutoMidasMenu);
-            Menu.AddItem(OnlyBearLastHitMenu);
-            Menu.AddItem(CombinedLastHitMenu);
-            Menu.AddItem(AutoTalonMenu);
-            Menu.AddItem(BearChaseMenu);
+            this.Menu = new Menu("LoneDruidSharp", "LoneDruidSharp", true, "npc_dota_hero_lone_druid", true);
+            this.OnlyBearLastHitMenu = new MenuItem("OnlyBearLastHitMenu", "OnlyBearLastHitMenu").SetValue(new KeyBind('W', KeyBindType.Press)).SetTooltip("only bear will go last hit");
+            this.CombinedLastHitMenu = new MenuItem("CombinedLastHitMenu", "CombinedLastHitMenu").SetValue(new KeyBind('X', KeyBindType.Press)).SetTooltip("both hero and bear last hit");
+            this.AutoTalonMenu = new MenuItem("Auto Iron Talon", "Auto Iron Talon").SetValue(new KeyBind('Z', KeyBindType.Toggle));
+            this.AutoMidasMenu = new MenuItem("Auto Midas", "Auto Midas").SetValue(new KeyBind('Z', KeyBindType.Toggle));
+            this.BearChaseMenu = new MenuItem("BearChaseMenu", "BearChaseMenu").SetValue(new KeyBind('D', KeyBindType.Press)).SetTooltip("press it and rightclick enemy, bear will keep chasing until you control bear again");
+            this.Menu.AddItem(this.AutoMidasMenu);
+            this.Menu.AddItem(this.OnlyBearLastHitMenu);
+            this.Menu.AddItem(this.CombinedLastHitMenu);
+            this.Menu.AddItem(this.AutoTalonMenu);
+            this.Menu.AddItem(this.BearChaseMenu);
         }
 
         public bool AutoTalonActive
         {
             get
             {
-                return AutoTalonMenu.GetValue<KeyBind>().Active;
+                return this.AutoTalonMenu.GetValue<KeyBind>().Active;
             }
         }
 
@@ -44,7 +44,7 @@ namespace LoneDruidSharpRewrite.Utilities
         {
             get
             {
-                return OnlyBearLastHitMenu.GetValue<KeyBind>().Active;
+                return this.OnlyBearLastHitMenu.GetValue<KeyBind>().Active;
             }
         }
 
@@ -52,7 +52,7 @@ namespace LoneDruidSharpRewrite.Utilities
         {
             get
             {
-                return CombinedLastHitMenu.GetValue<KeyBind>().Active;
+                return this.CombinedLastHitMenu.GetValue<KeyBind>().Active;
             }
         }
 
@@ -60,7 +60,7 @@ namespace LoneDruidSharpRewrite.Utilities
         {
             get
             {
-                return AutoMidasMenu.GetValue<KeyBind>().Active; ;
+                return this.AutoMidasMenu.GetValue<KeyBind>().Active; ;
             }
         }
 
@@ -68,7 +68,7 @@ namespace LoneDruidSharpRewrite.Utilities
         {
             get
             {
-                return BearChaseMenu.GetValue<KeyBind>().Active;
+                return this.BearChaseMenu.GetValue<KeyBind>().Active;
             }
         }
 

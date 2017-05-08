@@ -31,22 +31,22 @@ namespace LoneDruidSharpRewrite.Utilities
         public Lasthit()
         {
             
-            autoAttackMode = 2;
+            this.autoAttackMode = 2;
             
-            //onlyBear = Variable.OnlyBearLastHitActive;
+            //this.onlyBear = Variable.OnlyBearLastHitActive;
             
             
-            myAttackSleeper = new Sleeper();
-            bearAttackSleeper = new Sleeper();
+            this.myAttackSleeper = new Sleeper();
+            this.bearAttackSleeper = new Sleeper();
         }
 
         public void Update()
         {
-            Bear = Variable.Bear;
-            Me = Variable.Hero;
-            onlyBear = Variable.OnlyBearLastHitActive;
-            myMove = new Move(Me);
-            bearMove = new Move(Bear);
+            this.Bear = Variable.Bear;
+            this.Me = Variable.Hero;
+            this.onlyBear = Variable.OnlyBearLastHitActive;
+            this.myMove = new Move(Me);
+            this.bearMove = new Move(Bear);
 
         }
 
@@ -70,7 +70,7 @@ namespace LoneDruidSharpRewrite.Utilities
                         .DefaultIfEmpty(null)
                         .FirstOrDefault();
             //Console.WriteLine("lowestHp creep is " + lowestHp.Name);
-            _LowestHpCreep = lowestHp;
+            this._LowestHpCreep = lowestHp;
         }
 
         public void getKillableCreep(Unit creep, bool onlyBear)
@@ -82,11 +82,11 @@ namespace LoneDruidSharpRewrite.Utilities
                 (percent < 75 || creep.Health < dmgThreshold)
                 )
             {
-                _creepTarget = creep;
+                this._creepTarget = creep;
             }
             else
             {
-                _creepTarget = null;
+                this._creepTarget = null;
             }
         }
 
@@ -141,23 +141,23 @@ namespace LoneDruidSharpRewrite.Utilities
 
         public void OnlyBearLastHitExecute()
         {
-            Update();
-            setAutoAttackMode();
+            this.Update();
+            this.setAutoAttackMode();
             if (!Variable.OnlyBearLastHitActive)
             {
                 return;
             }
-            if (!anyCreepsAround(Bear))
+            if (!this.anyCreepsAround(this.Bear))
             {
                 return;
             }
             //Hero Control
             
-            if(Bear.Distance2D(Me) > 1100)
+            if(this.Bear.Distance2D(this.Me) > 1100)
             {
                 if (Utils.SleepCheck("Move"))
                 {
-                    Me.Move(Bear.Position);
+                    this.Me.Move(this.Bear.Position);
                     Utils.Sleep(100, "Move");
                 }
             }
@@ -165,20 +165,20 @@ namespace LoneDruidSharpRewrite.Utilities
             {
                 if (Utils.SleepCheck("Hold"))
                 {
-                    Me.Hold();
+                    this.Me.Hold();
                     Utils.Sleep(100, "Hold");
                 }
             }           
             //Bear Control       
-            getLowestHpCreep(Bear, 1000);
-            if (_LowestHpCreep == null) return;
-            getKillableCreep(_LowestHpCreep, true);
-            if (_creepTarget == null) return;
+            this.getLowestHpCreep(Bear, 1000);
+            if (this._LowestHpCreep == null) return;
+            this.getKillableCreep(this._LowestHpCreep, true);
+            if (this._creepTarget == null) return;
 
 
-            if (_creepTarget.IsValid && _creepTarget.IsVisible && _creepTarget.IsAlive)
+            if (this._creepTarget.IsValid && this._creepTarget.IsVisible && this._creepTarget.IsAlive)
             {
-                var damageThreshold = GetDamangeOnUnit(Bear, _creepTarget, 0);
+                var damageThreshold = GetDamangeOnUnit(this.Bear, _creepTarget, 0);
                 var numOfMeleeOnKillable = MeleeCreepsAttackKillableTarget(_creepTarget);
                 var numOfRangedOnKillable = RangedCreepsAttackKillableTarget(_creepTarget);
                 if (numOfMeleeOnKillable + numOfRangedOnKillable != 0)
@@ -214,7 +214,7 @@ namespace LoneDruidSharpRewrite.Utilities
                     if (Bear.CanAttack() && _creepTarget.Health <= 1.5 * damageThreshold)
                     {
                         Bear.Attack(_creepTarget);
-                        bearAttackSleeper.Sleep(100);
+                        this.bearAttackSleeper.Sleep(100);
                     }
                 }
             }
@@ -222,13 +222,13 @@ namespace LoneDruidSharpRewrite.Utilities
 
         public void CombinedLastHitExecute()
         {
-            Update();
-            setAutoAttackMode();
+            this.Update();
+            this.setAutoAttackMode();
             if (!Variable.CombinedLastHitActive)
             {
                 return;
             }
-            if (!anyCreepsAround(Me))
+            if (!this.anyCreepsAround(this.Me))
             {
                 return;
             }
@@ -236,10 +236,10 @@ namespace LoneDruidSharpRewrite.Utilities
             double rangeddmg;
             int rangedCreepProjectilesInAir;
 
-            getLowestHpCreep(Bear, 1000);
-            if (_LowestHpCreep == null) return;
-            getKillableCreep(_LowestHpCreep, false);
-            if (_creepTarget == null) return;
+            this.getLowestHpCreep(Bear, 1000);
+            if (this._LowestHpCreep == null) return;
+            this.getKillableCreep(this._LowestHpCreep, false);
+            if (this._creepTarget == null) return;
             var MeleeCreep = ObjectManager.GetEntities<Unit>().Where(_x => _x.ClassId == ClassId.CDOTA_BaseNPC_Creep_Lane
                                                                                         && _x.Distance2D(Me) <= 1000
                                                                                         && _x.Name.Equals("npc_dota_creep_badguys_melee")).FirstOrDefault();
@@ -273,10 +273,10 @@ namespace LoneDruidSharpRewrite.Utilities
             {
                 rangedCreepProjectilesInAir = RangedCreepProjectilesToKillableCreeps.Count();
             }
-            if (_creepTarget.IsValid && _creepTarget.IsVisible && _creepTarget.IsAlive)
+            if (this._creepTarget.IsValid && this._creepTarget.IsVisible && this._creepTarget.IsAlive)
             {
                 var getDamageFromBear = GetDamangeOnUnit(Bear, _creepTarget, 0);
-                var getDamageFromMe = GetDamangeOnUnit(Me, _creepTarget, 0);
+                var getDamageFromMe = GetDamangeOnUnit(this.Me, _creepTarget, 0);
                 //Console.WriteLine("bear Dmg " + getDamageFromBear);
                 //Console.WriteLine("my dmg " + getDamageFromMe);
                 var numOfMeleeOnKillable = MeleeCreepsAttackKillableTarget(_creepTarget);
@@ -320,7 +320,7 @@ namespace LoneDruidSharpRewrite.Utilities
                         {
                             if (Utils.SleepCheck("Follow"))
                             {
-                                Bear.Move(_LowestHpCreep.Position);
+                                Bear.Move(this._LowestHpCreep.Position);
                                 Utils.Sleep(100, "Follow");
                             }
                         }
@@ -336,19 +336,19 @@ namespace LoneDruidSharpRewrite.Utilities
 
         public void setAutoAttackMode()
         {
-            if ((Variable.OnlyBearLastHitActive || Variable.CombinedLastHitActive) && autoAttackMode == 2)
+            if ((Variable.OnlyBearLastHitActive || Variable.CombinedLastHitActive) && this.autoAttackMode == 2)
             {
-                autoAttackMode = 0;
-                Game.ExecuteCommand("dota_player_units_auto_attack_mode " + autoAttackMode);
+                this.autoAttackMode = 0;
+                Game.ExecuteCommand("dota_player_units_auto_attack_mode " + this.autoAttackMode);
             }
         }
 
         public void resetAutoAttackMode()
         {
-            if (autoAttackMode == 0)
+            if (this.autoAttackMode == 0)
             {
-                autoAttackMode = 2;
-                Game.ExecuteCommand("dota_player_units_auto_attack_mode " + autoAttackMode);
+                this.autoAttackMode = 2;
+                Game.ExecuteCommand("dota_player_units_auto_attack_mode " + this.autoAttackMode);
             }
         }
 

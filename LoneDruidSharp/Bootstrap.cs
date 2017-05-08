@@ -10,58 +10,58 @@ namespace LoneDruidSharpRewrite
 
         public Bootstrap()
         {
-            lonedruidsharp = new LoneDruidSharp();
+            this.lonedruidsharp = new LoneDruidSharp();
         }
 
         public void SubscribeEvents()
         {
-            Events.OnLoad += Events_Onload;
-            Events.OnUpdate += Events_OnUpdate;
-            Events.OnClose += Events_OnClose;
-            Game.OnUpdate += Game_OnUpdate;
-            //Game.OnWndProc += Game_OnWndProc;
-            Drawing.OnDraw += Drawing_OnDraw;
-            Player.OnExecuteOrder += Player_OnExecuteOrder;
+            Events.OnLoad += this.Events_Onload;
+            Events.OnUpdate += this.Events_OnUpdate;
+            Events.OnClose += this.Events_OnClose;
+            Game.OnUpdate += this.Game_OnUpdate;
+            //Game.OnWndProc += this.Game_OnWndProc;
+            Drawing.OnDraw += this.Drawing_OnDraw;
+            Player.OnExecuteOrder += this.Player_OnExecuteOrder;
         }
 
         private void Drawing_OnDraw(EventArgs args)
         {
-            lonedruidsharp.OnDraw();
+            this.lonedruidsharp.OnDraw();
         }
 
         private void Events_Onload(object sender, EventArgs e)
         {
-            lonedruidsharp.OnLoad();
+            this.lonedruidsharp.OnLoad();
         }
 
         private void Events_OnClose(object sender, EventArgs e)
         {
-            lonedruidsharp.OnClose();
+            this.lonedruidsharp.OnClose();
         }
 
         private void Game_OnUpdate(EventArgs args)
         {
-            lonedruidsharp.OnUpdate_IronTalon();
-            lonedruidsharp.OnUpdate_AutoMidas();
-            lonedruidsharp.OnUpdate_LastHit();
-            lonedruidsharp.OnUpdate_bearChase();
+            this.lonedruidsharp.OnUpdate_IronTalon();
+            this.lonedruidsharp.OnUpdate_AutoMidas();
+            this.lonedruidsharp.OnUpdate_LastHit();
+            this.lonedruidsharp.OnUpdate_bearChase();
         }
 
         private void Events_OnUpdate(EventArgs args)
         {
-            lonedruidsharp.Events_OnUpdate();
+            this.lonedruidsharp.Events_OnUpdate();
         }
 
         private void Game_OnWndProc(WndEventArgs args)
         {
-            lonedruidsharp.OnWndProc(args);
+            this.lonedruidsharp.OnWndProc(args);
         }
 
         private void Player_OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
         {
             if (sender.Equals(ObjectManager.LocalPlayer))
             {
-                lonedruidsharp.Player_OnExecuteOrder(args);
+                this.lonedruidsharp.Player_OnExecuteOrder(args);
             }
         }
 

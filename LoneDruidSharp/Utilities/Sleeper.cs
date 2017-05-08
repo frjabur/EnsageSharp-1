@@ -6,20 +6,20 @@
 
         public Sleeper()
         {
-            lastSleepTickCount = 0;
+            this.lastSleepTickCount = 0;
         }
 
         public bool Sleeping
         {
             get
             {
-                return Variable.TickCount < lastSleepTickCount;
+                return Variable.TickCount < this.lastSleepTickCount;
             }
         }
 
         public void Sleep(float duration)
         {
-            lastSleepTickCount = Variable.TickCount + duration;
+            this.lastSleepTickCount = Variable.TickCount + duration;
         }
 
 

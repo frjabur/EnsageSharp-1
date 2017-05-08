@@ -2,8 +2,8 @@
 using Ensage.Common;
 using Ensage.Common.Extensions;
 using Ensage.Common.Menu;
-using LoneDruidSharpRewrite.Abilities;
-using LoneDruidSharpRewrite.Utilities;
+using global::LoneDruidSharpRewrite.Abilities;
+using global::LoneDruidSharpRewrite.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,13 +16,13 @@ namespace LoneDruidSharpRewrite
 
         private AutoMidas autoMidas;
 
-        //private SummonSpiritBear summonSpiritBear;
+        private SummonSpiritBear summonSpiritBear;
 
         private static Dictionary<float, Features.Orbwalk.Orbwalker> orbwalkerDictionary = new Dictionary<float, Features.Orbwalk.Orbwalker>();
 
         private Lasthit lasthit;
 
-        //private Rabid rabid;
+        private Rabid rabid;
 
         private Move move;
 
@@ -34,10 +34,10 @@ namespace LoneDruidSharpRewrite
 
         public LoneDruidSharp()
         {
-            autoIronTalon = new AutoIronTalon();
-            autoMidas = new AutoMidas();
-            lasthit = new Lasthit();
-            drawText = new DrawText();
+            this.autoIronTalon = new AutoIronTalon();
+            this.autoMidas = new AutoMidas();
+            this.lasthit = new Lasthit();
+            this.drawText = new DrawText();
         }
 
         private static Hero Me
@@ -60,7 +60,7 @@ namespace LoneDruidSharpRewrite
         {
             get
             {
-                return targetFind.Target;
+                return this.targetFind.Target;
             }
         }
 
@@ -82,7 +82,7 @@ namespace LoneDruidSharpRewrite
 
         public void OnClose()
         {
-            pause = true;
+            this.pause = true;
         }
 
         public void OnDraw()
@@ -101,7 +101,7 @@ namespace LoneDruidSharpRewrite
             drawText.DrawTextBearChaseText(Variable.BearChaseModeOn);
             if (Variable.BearChaseModeOn)
             {
-                targetFind.DrawTarget();
+                this.targetFind.DrawTarget();
             }
             
 
@@ -111,8 +111,8 @@ namespace LoneDruidSharpRewrite
         public void OnLoad()
         {
             Variable.Hero = ObjectManager.LocalHero;
-            pause = Variable.Hero.ClassId != ClassId.CDOTA_Unit_Hero_LoneDruid;
-            if (pause)
+            this.pause = Variable.Hero.ClassId != ClassId.CDOTA_Unit_Hero_LoneDruid;
+            if (this.pause)
             {
                 return;
             }
@@ -122,12 +122,12 @@ namespace LoneDruidSharpRewrite
             Variable.MenuManager.Menu.AddToMainMenu();
             Variable.SummonSpiritBear = new SummonSpiritBear(Me.Spellbook.Spell1);
             Variable.Rabid = new Rabid(Me.Spellbook.Spell2); 
-            targetFind = new TargetFind();
-            move = new Move(Me);
-            autoMidas = new AutoMidas();
-            lasthit = new Lasthit();
-            autoIronTalon = new AutoIronTalon();
-            //lasthit = new Lasthit();
+            this.targetFind = new TargetFind();
+            this.move = new Move(Me);
+            this.autoMidas = new AutoMidas();
+            this.lasthit = new Lasthit();
+            this.autoIronTalon = new AutoIronTalon();
+            //this.lasthit = new Lasthit();
 
 
             Game.PrintMessage(
@@ -137,15 +137,15 @@ namespace LoneDruidSharpRewrite
         #region auto iron talon
         public void OnUpdate_IronTalon()
         {
-            if (!pause)
+            if (!this.pause)
             {
-                pause = Game.IsPaused;
+                this.pause = Game.IsPaused;
             }
             Variable.Bear = ObjectManager.GetEntities<Unit>().Where(unit => unit.ClassId.Equals(ClassId.CDOTA_Unit_SpiritBear)).FirstOrDefault();
 
-            if (pause || Variable.Hero == null || !Variable.Hero.IsValid || !Variable.Hero.IsAlive)
+            if (this.pause || Variable.Hero == null || !Variable.Hero.IsValid || !Variable.Hero.IsAlive)
             {
-                pause = Game.IsPaused;
+                this.pause = Game.IsPaused;
                 return;
             }
             var CanIronTalon = Variable.MenuManager.AutoTalonActive && !Variable.BearChaseModeOn;
@@ -160,11 +160,11 @@ namespace LoneDruidSharpRewrite
         #region automidas, defaulted
         public void OnUpdate_AutoMidas()
         {
-            if (pause || Variable.Hero == null || !Variable.Hero.IsValid || !Variable.Hero.IsAlive)
+            if (this.pause || Variable.Hero == null || !Variable.Hero.IsValid || !Variable.Hero.IsAlive)
             {
                 return;
             }
-            if (pause || Variable.Bear == null || !Variable.Bear.IsValid || !Variable.Bear.IsAlive)
+            if (this.pause || Variable.Bear == null || !Variable.Bear.IsValid || !Variable.Bear.IsAlive)
             {
                 return;
             }
@@ -179,17 +179,17 @@ namespace LoneDruidSharpRewrite
         #region lasthit
         public void OnUpdate_LastHit()
         {
-            if (!pause)
+            if (!this.pause)
             {
-                pause = Game.IsPaused;
+                this.pause = Game.IsPaused;
             }
-            if (pause || Variable.Hero == null || !Variable.Hero.IsValid || !Variable.Hero.IsAlive)
+            if (this.pause || Variable.Hero == null || !Variable.Hero.IsValid || !Variable.Hero.IsAlive)
             {
                 return;
             }
-            if (pause || Variable.Bear == null || !Variable.Bear.IsValid || !Variable.Bear.IsAlive)
+            if (this.pause || Variable.Bear == null || !Variable.Bear.IsValid || !Variable.Bear.IsAlive)
             {
-                pause = Game.IsPaused;
+                this.pause = Game.IsPaused;
                 return;
             }
 
@@ -226,14 +226,14 @@ namespace LoneDruidSharpRewrite
         #region bear chase
         public void OnUpdate_bearChase()
         {
-            if (!pause)
+            if (!this.pause)
             {
-                pause = Game.IsPaused;
+                this.pause = Game.IsPaused;
             }
             
-            if (pause || Variable.Bear == null || !Variable.Bear.IsValid || !Variable.Bear.IsAlive)
+            if (this.pause || Variable.Bear == null || !Variable.Bear.IsValid || !Variable.Bear.IsAlive)
             {
-                pause = Game.IsPaused;
+                this.pause = Game.IsPaused;
                 return;
             }
             //re openup Auto Midas and Auto IronTalon if no enemy is nearby me and Bear
@@ -256,21 +256,21 @@ namespace LoneDruidSharpRewrite
             }
             if (Bear == null) return;
             if (!Variable.BearChaseModeOn) return;
-            targetFind.Find();
-            if (Target == null) return;                              
+            this.targetFind.Find();
+            if (this.Target == null) return;                              
             */
-            //UnitOrbwalk.Orbwalk(Bear, Target);
+            //UnitOrbwalk.Orbwalk(Bear, this.Target);
         }
         #endregion
 
         public void OnWndProc(WndEventArgs args)
         {
-            if (pause || Variable.Hero == null || !Variable.Hero.IsValid || !Variable.Hero.IsAlive)
+            if (this.pause || Variable.Hero == null || !Variable.Hero.IsValid || !Variable.Hero.IsAlive)
             {
                 return;
             }
             
-            if (Target == null || !Target.IsValid)
+            if (this.Target == null || !this.Target.IsValid)
             {
                 return;
             }
@@ -279,7 +279,7 @@ namespace LoneDruidSharpRewrite
 
         public void Events_OnUpdate()
         {
-            if (pause || Variable.Hero == null || !Variable.Hero.IsValid || !Variable.Hero.IsAlive)
+            if (this.pause || Variable.Hero == null || !Variable.Hero.IsValid || !Variable.Hero.IsAlive)
             {
                 return;
             }
@@ -287,23 +287,23 @@ namespace LoneDruidSharpRewrite
             
             if (!Variable.BearChaseModeOn) return;
             if (Bear == null) return;
-            targetFind.Find();
-            if (Target == null || !Target.IsValid)
+            this.targetFind.Find();
+            if (this.Target == null || !this.Target.IsValid)
             {
                 return;
             }
-            targetFind.LockTarget();
-            if (Target == null || !Target.IsValid) return;
+            this.targetFind.LockTarget();
+            if (this.Target == null || !this.Target.IsValid) return;
             Features.Orbwalk.Orbwalker orbwalker = new Features.Orbwalk.Orbwalker(Bear);
             if (!orbwalkerDictionary.TryGetValue(Bear.Handle, out orbwalker))
             {
                 orbwalker = new Features.Orbwalk.Orbwalker(Bear);
                 orbwalkerDictionary.Add(Bear.Handle, orbwalker);
             }
-            orbwalker.OrbwalkOn(Target, 0, 0, false, true);
+            orbwalker.OrbwalkOn(this.Target, 0, 0, false, true);
             if (Me.IsRanged)
             {
-                Orbwalking.Orbwalk(Target, 0, 0, false, true);
+                Orbwalking.Orbwalk(this.Target, 0, 0, false, true);
             }
             else
             {
@@ -325,25 +325,25 @@ namespace LoneDruidSharpRewrite
                 }
             }
             if (Utils.SleepCheck("attack")) {
-                Bear.Attack(Target);
+                Bear.Attack(this.Target);
                 Utils.Sleep(300, "attack");
             }
         }
 
         public void Player_OnExecuteOrder(ExecuteOrderEventArgs args)
         {
-            if (pause || Variable.Hero == null || !Variable.Hero.IsValid || !Variable.Hero.IsAlive)
+            if (this.pause || Variable.Hero == null || !Variable.Hero.IsValid || !Variable.Hero.IsAlive)
             {
                 return;
             }
             lasthit.resetAutoAttackMode();
             if (args.OrderId == OrderId.AttackTarget)
             {
-                targetFind.UnlockTarget();
-                targetFind.Find();
+                this.targetFind.UnlockTarget();
+                this.targetFind.Find();
             }
             else {
-                targetFind.UnlockTarget();
+                this.targetFind.UnlockTarget();
             }
             // re lock target
             if (Variable.BearChaseModeOn)
@@ -357,8 +357,8 @@ namespace LoneDruidSharpRewrite
                 {
                     Variable.MenuManager.AutoMidasMenu.SetValue(new KeyBind(Variable.MenuManager.AutoMidasMenu.GetValue<KeyBind>().Key, KeyBindType.Toggle, false));
                 }
-                //targetFind.UnlockTarget();
-                //targetFind.Find();
+                //this.targetFind.UnlockTarget();
+                //this.targetFind.Find();
                 //
             }
         }
