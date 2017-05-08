@@ -100,7 +100,6 @@ namespace TinkerFastComboPlus
 
         private static int range_dagger, range_rocket, range_laser;
 			
-
         static void Main(string[] args)
         {
 			
@@ -169,11 +168,13 @@ namespace TinkerFastComboPlus
             Menu.AddItem(new MenuItem("autoDisable", "Auto disable/counter enemy").SetValue(true));
             Menu.AddItem(new MenuItem("autoKillsteal", "Auto killsteal enemy").SetValue(true));
             //Menu.AddItem(new MenuItem("autoSoulring", "Auto SoulRing by manual spell usage").SetValue(true).SetTooltip("Disable it if you have some bugs with rearming or use other auto soulring/items assemblies"));
-            
 
             Menu.AddToMainMenu();
 
+            Game.ExecuteCommand("dota_player_units_auto_attack_mode 0");
+
             Orbwalking.Load();
+
 
             //Game.OnWndProc += ComboEngine;
             Game.OnUpdate += ComboEngine;
@@ -188,9 +189,8 @@ namespace TinkerFastComboPlus
 			Drawing.OnDraw += DrawRanges;
             Drawing.OnDraw += ParticleDraw;
         }
-        
         public static async void OnUpdate(EventArgs args)
-        {
+        {           
             if (FastRearmBlink && Utils.SleepCheck("updateAdd"))
             {
                 var safeRange = 1200 + castrange;
