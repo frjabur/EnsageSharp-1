@@ -243,30 +243,29 @@ namespace TinkerFastComboPlus
         
         private static async Task Action(CancellationToken cancellationToken)
         {
-            var blinkrange = 1200 + castrange;
-            var sss = Game.MousePosition;
             var rearm = me.Spellbook().SpellR;
             var blink = me.FindItem("item_blink");
             if (Utils.SleepCheck("FASTBLINK"))
             {
-                var safeRange = 130;
+                var safeRange = 100 + Game.Ping;
                 var turnrate = Game.MousePosition;
-
                 if (me.Distance2D(Game.MousePosition) > safeRange + ensage_error)
                 {
-                    var tpos = me.Position;
-                    var a = tpos.ToVector2().FindAngleBetween(Game.MousePosition.ToVector2(), true);
+                    var ttpos = me.Position;
+                    var aa = ttpos.ToVector2().FindAngleBetween(Game.MousePosition.ToVector2(), true);
                     safeRange -= (int)me.HullRadius;
                     turnrate = new Vector3(
-                        tpos.X + safeRange * (float)Math.Cos(a),
-                        tpos.Y + safeRange * (float)Math.Sin(a),100);
+                        ttpos.X + safeRange * (float)Math.Cos(aa),
+                        ttpos.Y + safeRange * (float)Math.Sin(aa),100);
                 }
                 me.Move(turnrate);
                 Utils.Sleep(100, "FASTBLINK");
-            }
+            }           
+            var blinkrange = 1200 + castrange;
+            var fastblink = Game.MousePosition;
             if (rearm.CanBeCasted())
             {             
-                DelayAction.Add(200, () =>      
+                DelayAction.Add(50, () =>      
                 {                   
                     if (me.Distance2D(Game.MousePosition) > blinkrange + ensage_error)
                     {
@@ -274,27 +273,31 @@ namespace TinkerFastComboPlus
                         var a = tpos.ToVector2().FindAngleBetween(Game.MousePosition.ToVector2(), true);
 
                         blinkrange -= (int)me.HullRadius;
-                        sss = new Vector3(
+                        fastblink = new Vector3(
                             tpos.X + blinkrange * (float)Math.Cos(a),
                             tpos.Y + blinkrange * (float)Math.Sin(a),
                             100);
                     }
                     rearm.UseAbility();
                 });
-                time = (int)(GetRearmTime(rearm) + Game.Ping + 200 + rearm.FindCastPoint() * 1000);
+                time = (int)(GetRearmTime(rearm) + Game.Ping + 50 + rearm.FindCastPoint() * 1000);
+                Console.WriteLine(Game.Ping);
                 await Task.Delay(time, cancellationToken);                
-            }            
-                blink.UseAbility(sss);
-                await Task.Delay(0, cancellationToken);
+            }
+            blink.UseAbility(fastblink);
+            await Task.Delay(0, cancellationToken);
 
-                blink.UseAbility(sss);
-                await Task.Delay(50, cancellationToken);
+            blink.UseAbility(fastblink);
+            await Task.Delay(10, cancellationToken);
 
-                blink.UseAbility(sss);
-                await Task.Delay(100, cancellationToken);
+            blink.UseAbility(fastblink);
+            await Task.Delay(20, cancellationToken);
 
-                blink.UseAbility(sss);
-                await Task.Delay(150, cancellationToken);                      
+            blink.UseAbility(fastblink);
+            await Task.Delay(30, cancellationToken);
+
+            blink.UseAbility(fastblink);
+            await Task.Delay(50, cancellationToken);                   
         }
         private static void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
         {
