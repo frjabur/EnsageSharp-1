@@ -171,8 +171,6 @@ namespace TinkerFastComboPlus
 
             Menu.AddToMainMenu();
 
-            Game.ExecuteCommand("dota_player_units_auto_attack_mode 0");
-
             Orbwalking.Load();
 
 
@@ -260,7 +258,7 @@ namespace TinkerFastComboPlus
                 }
                 me.Move(turnrate);
                 Utils.Sleep(100, "FASTBLINK");
-            }           
+            }
             var blinkrange = 1200 + castrange;
             var fastblink = Game.MousePosition;
             if (rearm.CanBeCasted())
@@ -808,9 +806,8 @@ namespace TinkerFastComboPlus
             //March Spam Mode
 			if (Game.IsKeyDown(Menu.Item("March Spam Key").GetValue<KeyBind>().Key) && Utils.SleepCheck("MarchSpam") && !Game.IsChatOpen)
             {
-				FindItems();
-				
-				if (blink != null && blink.CanBeCasted() 
+				FindItems();                
+                if (blink != null && blink.CanBeCasted() 
 					&& Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(blink.Name) 
 					&& !me.IsChanneling()  
 					&& Utils.SleepCheck("Rearms") 
@@ -832,9 +829,9 @@ namespace TinkerFastComboPlus
 							tpos.Y + safeRange * (float)Math.Sin(a),
 							100);
 					}
-					else p = Game.MousePosition;				
-				
-					blink.UseAbility(p);
+					else p = Game.MousePosition;
+
+                    blink.UseAbility(p);
                     Utils.Sleep(250, "Blinks");
 				}
 				
@@ -889,7 +886,12 @@ namespace TinkerFastComboPlus
 					if (Refresh.Level == 3)
 						Utils.Sleep(760, "Rearms");
 				}
-				Utils.Sleep(150, "MarchSpam");
+                if (Utils.SleepCheck("autoattack"))
+                {
+                    Game.ExecuteCommand("dota_player_units_auto_attack_mode 0");
+                    Utils.Sleep(5000, "autoattack");
+                }                
+                Utils.Sleep(150, "MarchSpam");
 			}
 				
             //Combo Mode
