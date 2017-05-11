@@ -36,8 +36,9 @@ namespace TinkerFastComboPlus
         private const string EffectPath = @"materials\ensage_ui\particles\other_range_blue.vpcf";        
 
         private static readonly Menu Menu = new Menu("TinkerFastComboPlus", "TinkerFastComboPlus", true, "npc_dota_hero_tinker", true).SetFontColor(Color.Aqua);
-        private static readonly Menu _skills = new Menu("Skills", "Skills");
-        private static readonly Menu _items = new Menu("Items", "Items");
+        private static readonly Menu _Combo = new Menu("Combo", "Combo");
+        private static readonly Menu _RocketSpam = new Menu("Rocket Spam", "Rocket Spam");
+        private static readonly Menu _MarchSpam = new Menu("March Spam", "March Spam");
 
         private static int red => Menu.Item("red").GetValue<Slider>().Value;
         private static int green => Menu.Item("green").GetValue<Slider>().Value;
@@ -49,28 +50,59 @@ namespace TinkerFastComboPlus
 
         private static bool FastRearmBlink => Menu.Item("FastRearmBlink").GetValue<KeyBind>().Active;
 
-        private static readonly Dictionary<string, bool> Skills = new Dictionary<string, bool>
+        private static readonly Dictionary<string, bool> ComboSkills = new Dictionary<string, bool>
             {
 				{"tinker_rearm",true},
                 {"tinker_march_of_the_machines",true},
                 {"tinker_heat_seeking_missile",true},
                 {"tinker_laser",true}
             };
-        private static readonly Dictionary<string, bool> Items = new Dictionary<string, bool>
+        private static readonly Dictionary<string, bool> ComboItems = new Dictionary<string, bool>
             {
                 {"item_blink",true},
-                {"item_force_staff",true},
                 {"item_glimmer_cape",true},
-                {"item_cyclone",true},
                 {"item_shivas_guard",true},
                 {"item_bottle",true},
                 {"item_soul_ring",true},
                 {"item_veil_of_discord",true},
+                {"item_rod_of_atos",true},
                 {"item_sheepstick",true},
                 {"item_ghost",true},
                 {"item_ethereal_blade",true},
                 {"item_dagon",true}
             };
+
+        private static readonly Dictionary<string, bool> LinkenBreaker = new Dictionary<string, bool>
+        {
+            {"item_force_staff",true},
+            {"item_cyclone",true},
+            {"tinker_laser",true}
+        };
+            
+        private static readonly Dictionary<string, bool> RocketSpamSkills = new Dictionary<string, bool>
+        {
+            {"tinker_rearm",true},
+            {"tinker_heat_seeking_missile",true},
+        };
+
+        private static readonly Dictionary<string, bool> RocketSpamItems = new Dictionary<string, bool>
+        {
+            {"item_blink",false},
+            {"item_glimmer_cape",true},
+            {"item_bottle",true},
+            {"item_soul_ring",true},
+            {"item_ghost",true},
+            {"item_ethereal_blade",false},
+        };
+
+        private static readonly Dictionary<string, bool> MarchSpamItems = new Dictionary<string, bool>
+        {
+            {"item_blink",false},
+            {"item_glimmer_cape",false},
+            {"item_bottle",true},
+            {"item_soul_ring",true},
+            {"item_ghost",false}
+        };
 
         private static readonly string[] SoulringSpells = 
 			{
@@ -110,11 +142,17 @@ namespace TinkerFastComboPlus
                 return;
 
             // Menu Options	                                                          
-            _skills.AddItem(new MenuItem("Skills: ", "Skills:").SetValue(new AbilityToggler(Skills)));
-            Menu.AddSubMenu(_skills);
+            _Combo.AddItem(new MenuItem("ComboSkills: ", "Skills:").SetValue(new AbilityToggler(ComboSkills)));
+            _Combo.AddItem(new MenuItem("ComboItems: ", "Items:").SetValue(new AbilityToggler(ComboItems)));
+            _Combo.AddItem(new MenuItem("LinkenBreaker: ", "Linken Breaker:").SetValue(new AbilityToggler(LinkenBreaker)));
+            Menu.AddSubMenu(_Combo);
 
-            _items.AddItem(new MenuItem("Items: ", "Items:").SetValue(new AbilityToggler(Items)));
-            Menu.AddSubMenu(_items);
+            _RocketSpam.AddItem(new MenuItem("RocketSpamSkills: ", "Skills:").SetValue(new AbilityToggler(RocketSpamSkills)));
+            _RocketSpam.AddItem(new MenuItem("RocketSpamItems: ", "Items:").SetValue(new AbilityToggler(RocketSpamItems)));
+            Menu.AddSubMenu(_RocketSpam);
+
+            _MarchSpam.AddItem(new MenuItem("MarchSpamItems: ", "Items:").SetValue(new AbilityToggler(MarchSpamItems)));
+            Menu.AddSubMenu(_MarchSpam);
 
 
             var _autopush = new Menu("Auto Push", "Auto Push");            
@@ -241,61 +279,62 @@ namespace TinkerFastComboPlus
         
         private static async Task Action(CancellationToken cancellationToken)
         {
-            var rearm = me.Spellbook().SpellR;
-            var blink = me.FindItem("item_blink");
-            if (Utils.SleepCheck("FASTBLINK"))
             {
-                var safeRange = 100 + Game.Ping;
-                var turnrate = Game.MousePosition;
-                if (me.Distance2D(Game.MousePosition) > safeRange + ensage_error)
+                var rearm = me.Spellbook().SpellR;
+                var blink = me.FindItem("item_blink");
+                if (Utils.SleepCheck("FASTBLINK"))
                 {
-                    var ttpos = me.Position;
-                    var aa = ttpos.ToVector2().FindAngleBetween(Game.MousePosition.ToVector2(), true);
-                    safeRange -= (int)me.HullRadius;
-                    turnrate = new Vector3(
-                        ttpos.X + safeRange * (float)Math.Cos(aa),
-                        ttpos.Y + safeRange * (float)Math.Sin(aa),100);
-                }
-                me.Move(turnrate);
-                Utils.Sleep(100, "FASTBLINK");
-            }
-            var blinkrange = 1200 + castrange;
-            var fastblink = Game.MousePosition;
-            if (rearm.CanBeCasted())
-            {             
-                DelayAction.Add(50, () =>      
-                {                   
-                    if (me.Distance2D(Game.MousePosition) > blinkrange + ensage_error)
+                    var safeRange = 100 + Game.Ping;
+                    var turnrate = Game.MousePosition;
+                    if (me.Distance2D(Game.MousePosition) > safeRange + ensage_error)
                     {
-                        var tpos = me.Position;
-                        var a = tpos.ToVector2().FindAngleBetween(Game.MousePosition.ToVector2(), true);
-
-                        blinkrange -= (int)me.HullRadius;
-                        fastblink = new Vector3(
-                            tpos.X + blinkrange * (float)Math.Cos(a),
-                            tpos.Y + blinkrange * (float)Math.Sin(a),
-                            100);
+                        var ttpos = me.Position;
+                        var aa = ttpos.ToVector2().FindAngleBetween(Game.MousePosition.ToVector2(), true);
+                        safeRange -= (int)me.HullRadius;
+                        turnrate = new Vector3(
+                            ttpos.X + safeRange * (float)Math.Cos(aa),
+                            ttpos.Y + safeRange * (float)Math.Sin(aa), 100);
                     }
-                    rearm.UseAbility();
-                });
-                time = (int)(GetRearmTime(rearm) + Game.Ping + 50 + rearm.FindCastPoint() * 1000);
-                Console.WriteLine(Game.Ping);
-                await Task.Delay(time, cancellationToken);                
-            }
-            blink.UseAbility(fastblink);
-            await Task.Delay(0, cancellationToken);
+                    me.Move(turnrate);
+                    Utils.Sleep(100, "FASTBLINK");
+                }
+                var blinkrange = 1200 + castrange;
+                var fastblink = Game.MousePosition;
+                if (rearm.CanBeCasted())
+                {
+                    DelayAction.Add(50, () =>
+                    {
+                        if (me.Distance2D(Game.MousePosition) > blinkrange + ensage_error)
+                        {
+                            var tpos = me.Position;
+                            var a = tpos.ToVector2().FindAngleBetween(Game.MousePosition.ToVector2(), true);
 
-            blink.UseAbility(fastblink);
-            await Task.Delay(10, cancellationToken);
+                            blinkrange -= (int)me.HullRadius;
+                            fastblink = new Vector3(
+                                tpos.X + blinkrange * (float)Math.Cos(a),
+                                tpos.Y + blinkrange * (float)Math.Sin(a),
+                                100);
+                        }
+                        rearm?.UseAbility();
+                    });
+                    time = (int)(GetRearmTime(rearm) + Game.Ping + 50 + rearm.FindCastPoint() * 1000);
+                    await Task.Delay(time, cancellationToken);
+                }
+                blink?.UseAbility(fastblink);
+                await Task.Delay(0, cancellationToken);
 
-            blink.UseAbility(fastblink);
-            await Task.Delay(20, cancellationToken);
+                blink?.UseAbility(fastblink);
+                await Task.Delay(10, cancellationToken);
 
-            blink.UseAbility(fastblink);
-            await Task.Delay(30, cancellationToken);
+                blink?.UseAbility(fastblink);
+                await Task.Delay(20, cancellationToken);
 
-            blink.UseAbility(fastblink);
-            await Task.Delay(50, cancellationToken);                   
+                blink?.UseAbility(fastblink);
+                await Task.Delay(30, cancellationToken);
+
+                blink?.UseAbility(fastblink);
+                await Task.Delay(50, cancellationToken);
+            }                                   
         }
         private static void OnExecuteOrder(Player sender, ExecuteOrderEventArgs args)
         {
@@ -345,7 +384,7 @@ namespace TinkerFastComboPlus
             var soulring = me.FindItem("item_soul_ring");
             var bottle = me.FindItem("item_bottle");
 			
-            //if (!Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name))
+            //if (!Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name))
             //    return;
 				
             if (soulring == null)
@@ -372,16 +411,16 @@ namespace TinkerFastComboPlus
                 case Order.AbilityLocation: 
 				{
 			
-					if (soulring != null && soulring.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)) 
+					if (soulring != null && soulring.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)) 
 						soulring.UseAbility();		
-					if (bottle != null && bottle.CanBeCasted() && !me.Modifiers.Any(x => x.Name == "modifier_bottle_regeneration") && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(bottle.Name) )
+					if (bottle != null && bottle.CanBeCasted() && !me.Modifiers.Any(x => x.Name == "modifier_bottle_regeneration") && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(bottle.Name) )
 						bottle.UseAbility();
                     spell.UseAbility(Game.MousePosition);
                     break;
                 }
                 case Order.Ability: 
 				{
-					if (soulring != null && soulring.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)) 
+					if (soulring != null && soulring.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)) 
 						 soulring.UseAbility();				
                     spell.UseAbility();
                     break;
@@ -663,11 +702,12 @@ namespace TinkerFastComboPlus
             {
 				FindItems();
 
-				if (blink != null && blink.CanBeCasted() 
-					&& !me.IsChanneling()  
+				if (blink != null && blink.CanBeCasted() && Menu.Item("RocketSpamItems: ").GetValue<AbilityToggler>().IsEnabled(blink.Name)
+                    && !me.IsChanneling()  
 					&& Utils.SleepCheck("Rearms") 
 					&& (!me.Modifiers.Any(y => y.Name == "modifier_bloodseeker_rupture") || (me.Distance2D(Game.MousePosition)>1325 && castrange!=0))
-					&& (me.Distance2D(Game.MousePosition) > 650 + castrange + ensage_error))
+					&& (me.Distance2D(Game.MousePosition) > 650 + castrange + ensage_error)
+                    && Utils.SleepCheck("Blinks"))
 				{
                     var safeRange = 1200 + castrange;
 					var p = Game.MousePosition;
@@ -688,26 +728,26 @@ namespace TinkerFastComboPlus
 					blink.UseAbility(p);
                     Utils.Sleep(50, "Blinks");
 				}
-						
+               						
 				/*
-				if (soulring != null && soulring.CanBeCasted() && !me.IsChanneling() && (blink!=null && me.Distance2D(Game.MousePosition) > 650+ castrange  + ensage_error) && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name) && Utils.SleepCheck("Rearms"))
+				if (soulring != null && soulring.CanBeCasted() && !me.IsChanneling() && (blink!=null && me.Distance2D(Game.MousePosition) > 650+ castrange  + ensage_error) && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name) && Utils.SleepCheck("Rearms"))
 				{
 					soulring.UseAbility();
 				}
 				*/
-				if (bottle != null 
+                if (bottle != null 
                     && bottle.CanBeCasted() 
                     && !me.IsChanneling() 
                     && (blink==null || (blink!=null && me.Distance2D(Game.MousePosition) <= 650+ castrange  + ensage_error)) 
                     && !me.Modifiers.Any(x => x.Name == "modifier_bottle_regeneration") 
-                    && (me.MaximumMana-me.Mana)>60 && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(bottle.Name) 
+                    && (me.MaximumMana-me.Mana)>60 && Menu.Item("RocketSpamItems: ").GetValue<AbilityToggler>().IsEnabled(bottle.Name) 
                     && Utils.SleepCheck("Rearms"))
 				{
 					bottle.UseAbility();
 				}
 				
 				/*
-				if (ghost != null && ghost.CanBeCasted() && !me.IsChanneling() && Menu.Item("Items2: ").GetValue<AbilityToggler>().IsEnabled(ghost.Name) && Utils.SleepCheck("Rearms"))
+				if (ghost != null && ghost.CanBeCasted() && !me.IsChanneling() && Menu.Item("RocketSpamItems: ").GetValue<AbilityToggler>().IsEnabled(ghost.Name) && Utils.SleepCheck("Rearms"))
 				{
 					ghost.UseAbility(false);
 				}
@@ -716,82 +756,115 @@ namespace TinkerFastComboPlus
 				var enemies = ObjectManager.GetEntities<Hero>().Where(x => x.IsVisible && x.IsAlive && x.Team == me.GetEnemyTeam() && !x.IsIllusion);
 				foreach (var e in enemies)
 				{
-					if (Rocket != null && Rocket.CanBeCasted() 
-						&&  me.Distance2D(e) < 2500 
-						&& (blink == null || !blink.CanBeCasted() || me.Distance2D(Game.MousePosition) <= 650+ castrange + ensage_error || (me.Modifiers.Any(y => y.Name == "modifier_bloodseeker_rupture") && (me.Distance2D(Game.MousePosition)<=1325 || castrange==0)))
+					if ((Rocket != null && Rocket.CanBeCasted() || (soulring.CanBeCasted() && Menu.Item("RocketSpamItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name))
+                        || !Menu.Item("RocketSpamSkills: ").GetValue<AbilityToggler>().IsEnabled(Rocket.Name))
+                        &&  me.Distance2D(e) < 2500 
+						//&& (blink == null || !blink.CanBeCasted() || me.Distance2D(Game.MousePosition) <= 650+ castrange + ensage_error || (me.Modifiers.Any(y => y.Name == "modifier_bloodseeker_rupture") && (me.Distance2D(Game.MousePosition)<=1325 || castrange==0)))                       
 						&& !me.IsChanneling() 
-						&& !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase) 
-						&& Menu.Item("Skills: ").GetValue<AbilityToggler>().IsEnabled(Rocket.Name) 
+						&& !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase)  
 						&& Utils.SleepCheck("Rearms")
 						//&& me.Mana >= Rocket.ManaCost + 75 
 						)
-					{	
-						
-						if (soulring != null 
+					{
+                        if (soulring != null
                             && soulring.CanBeCasted() 
                             && !me.IsChanneling() 
-                            && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name) 
+                            && Menu.Item("RocketSpamItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)
+                            && (soulring.CanBeCasted() || Menu.Item("RocketSpamSkills: ").GetValue<AbilityToggler>().IsEnabled(Refresh.Name))
                             && Utils.SleepCheck("Rearms"))
 						{
 							soulring.UseAbility();
 						}
-						
-						Rocket.UseAbility();
+
+                        if (ghost != null && ghost.CanBeCasted()              
+                            && Menu.Item("RocketSpamItems: ").GetValue<AbilityToggler>().IsEnabled(ghost.Name)
+                            && (ghost.CanBeCasted() || Menu.Item("RocketSpamSkills: ").GetValue<AbilityToggler>().IsEnabled(Refresh.Name))
+                            && Utils.SleepCheck("Rearms"))
+                        {
+                            ghost.UseAbility();
+                        }
+
+                        if (ethereal != null && ghost == null && ethereal.CanBeCasted()               
+                            && Menu.Item("RocketSpamItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name)
+                            && (ethereal.CanBeCasted() || Menu.Item("RocketSpamSkills: ").GetValue<AbilityToggler>().IsEnabled(Refresh.Name))
+                            && !me.Modifiers.Any(y => y.Name == "modifier_item_ethereal_blade_ethereal")
+                            && Utils.SleepCheck("Rearms"))
+                        {
+                            ethereal.UseAbility(me);
+                        }
+
+                        if (glimmer != null && glimmer.CanBeCasted() 
+                            && Menu.Item("RocketSpamItems: ").GetValue<AbilityToggler>().IsEnabled(glimmer.Name)
+                            && (glimmer.CanBeCasted() || Menu.Item("RocketSpamSkills: ").GetValue<AbilityToggler>().IsEnabled(Refresh.Name))
+                            && !me.Modifiers.Any(y => y.Name == "modifier_invisible")
+                            && Utils.SleepCheck("Rearms"))
+                        {
+                            glimmer.UseAbility(me);
+                        }  
+                        else                       
+                         if (Menu.Item("RocketSpamSkills: ").GetValue<AbilityToggler>().IsEnabled(Rocket.Name)
+                            && (Rocket.CanBeCasted() || Menu.Item("RocketSpamSkills: ").GetValue<AbilityToggler>().IsEnabled(Refresh.Name)))
+                        {
+                            Rocket.UseAbility();
+                        }                      
 					}
-					
-						
-					if ((soulring == null || !soulring.CanBeCasted() || !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)) 
+                   
+                    if ((soulring == null || !soulring.CanBeCasted() || !Menu.Item("RocketSpamItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)) 
+                         
                         && me.Distance2D(e) <= 2500 
-                        && (!Rocket.CanBeCasted() || Rocket.Level <= 0 || !Menu.Item("Skills: ").GetValue<AbilityToggler>().IsEnabled(Rocket.Name)) 
-                        && (blink == null || !blink.CanBeCasted() || me.Distance2D(Game.MousePosition) <= 650+ castrange  + ensage_error) 
+                        && (!Rocket.CanBeCasted() || Rocket.Level <= 0 || !Menu.Item("RocketSpamSkills: ").GetValue<AbilityToggler>().IsEnabled(Rocket.Name))  
+                        //&& (blink == null || !blink.CanBeCasted() || me.Distance2D(Game.MousePosition) <= 650+ castrange  + ensage_error) 
                         && (Refresh.Level >= 0 && Refresh.CanBeCasted()) 
-                        && !me.IsChanneling() 
+                        && !me.IsChanneling()
                         && !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase) 
                         && Utils.SleepCheck("Rearms") 
                         && Utils.SleepCheck("Blinks"))
 					{
-
-						Refresh.UseAbility();
-						if (Refresh.Level == 1)
-							Utils.Sleep(3010, "Rearms");
-						if (Refresh.Level == 2)
-							Utils.Sleep(1510, "Rearms");
-						if (Refresh.Level == 3)
-							Utils.Sleep(760, "Rearms");
-
-					}
+                        if (Menu.Item("RocketSpamSkills: ").GetValue<AbilityToggler>().IsEnabled(Refresh.Name))
+                        {
+                            Refresh.UseAbility();
+                            if (Refresh.Level == 1)
+                                Utils.Sleep(3010, "Rearms");
+                            if (Refresh.Level == 2)
+                                Utils.Sleep(1510, "Rearms");
+                            if (Refresh.Level == 3)
+                                Utils.Sleep(760, "Rearms");
+                        }
+                                                                       
+					}                                      
                 }
-				
-                //if ((soulring == null || !soulring.CanBeCasted() || !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)) && (blink != null && me.Distance2D(Game.MousePosition) > 650+ castrange + ensage_error) && (Refresh.Level >= 0 && Refresh.CanBeCasted()) && !me.IsChanneling() && !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase) && Utils.SleepCheck("Rearms") && Utils.SleepCheck("Blinks"))
-                if ((blink != null 
-					&& me.Distance2D(Game.MousePosition) > 650+ castrange + ensage_error) 
-					&& (Refresh.Level >= 0 && Refresh.CanBeCasted()) 
-					&& !me.IsChanneling() 
-					&& !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase) 
-					&& Utils.SleepCheck("Rearms") 
-					&& Utils.SleepCheck("Blinks"))
-				{
-					if (soulring != null 
-                        && soulring.CanBeCasted() 
-                        && !me.IsChanneling() 
-                        && (blink!=null && me.Distance2D(Game.MousePosition) > 650+ castrange  + ensage_error) 
-                        && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name) 
+
+                //if ((soulring == null || !soulring.CanBeCasted() || !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)) && (blink != null && me.Distance2D(Game.MousePosition) > 650+ castrange + ensage_error) && (Refresh.Level >= 0 && Refresh.CanBeCasted()) && !me.IsChanneling() && !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase) && Utils.SleepCheck("Rearms") && Utils.SleepCheck("Blinks"))           
+                if ((blink != null && Menu.Item("RocketSpamItems: ").GetValue<AbilityToggler>().IsEnabled(blink.Name)                  
+                    && me.Distance2D(Game.MousePosition) > 650 + castrange + ensage_error)
+                    && (Refresh.Level >= 0 && Refresh.CanBeCasted())
+                    && (!me.Modifiers.Any(y => y.Name == "modifier_bloodseeker_rupture") || (me.Distance2D(Game.MousePosition) > 1325 && castrange != 0))
+                    && !me.IsChanneling()
+                    && !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase)
+                    && Utils.SleepCheck("Rearms")
+                    && Utils.SleepCheck("Blinks"))
+                {
+                    if (soulring != null                 
+                        && soulring.CanBeCasted()          
+                        && !me.IsChanneling()     
+                        && (blink != null && me.Distance2D(Game.MousePosition) > 650 + castrange + ensage_error) 
+                        && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)       
                         && Utils.SleepCheck("Rearms"))
                     {
                         soulring.UseAbility();
                     }
-						
-					Refresh.UseAbility();
-					if (Refresh.Level == 1)
-						Utils.Sleep(3010, "Rearms");
-					if (Refresh.Level == 2)
-						Utils.Sleep(1510, "Rearms");
-					if (Refresh.Level == 3)
-						Utils.Sleep(760, "Rearms");
 
-				}
-				
-				if ((blink==null || (blink!=null && me.Distance2D(Game.MousePosition) <= 650+ castrange  + ensage_error)) 
+                    Refresh.UseAbility();
+                    if (Refresh.Level == 1)
+                        Utils.Sleep(3010, "Rearms");
+                    if (Refresh.Level == 2)
+                        Utils.Sleep(1510, "Rearms");
+                    if (Refresh.Level == 3)
+                        Utils.Sleep(760, "Rearms");
+                }
+                
+                				
+				if ((blink==null || (blink!=null && me.Distance2D(Game.MousePosition) <= 650+ castrange  + ensage_error) && Menu.Item("RocketSpamItems: ").GetValue<AbilityToggler>().IsEnabled(blink.Name)) 
 				&& !me.IsChanneling() 
 				&& !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase)
 				&& !me.Modifiers.Any(y => y.Name == "modifier_bloodseeker_rupture")
@@ -799,8 +872,22 @@ namespace TinkerFastComboPlus
 				{
 					me.Move(Game.MousePosition);
 				}
-				
-				Utils.Sleep(120, "RocketSpam");
+
+                if (blink!=null
+                    && !me.IsChanneling()
+                    && !Menu.Item("RocketSpamItems: ").GetValue<AbilityToggler>().IsEnabled(blink.Name)            
+                    && !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase)            
+                    && !me.Modifiers.Any(y => y.Name == "modifier_bloodseeker_rupture")              
+                    && Utils.SleepCheck("Rearms"))
+                {
+                    me.Move(Game.MousePosition);
+                }
+                if (Utils.SleepCheck("Autoattack"))
+                {
+                    Game.ExecuteCommand("dota_player_units_auto_attack_mode 0");
+                    Utils.Sleep(10000, "Autoattack");
+                }           
+                Utils.Sleep(120, "RocketSpam");
 			}
 			
             //March Spam Mode
@@ -808,7 +895,7 @@ namespace TinkerFastComboPlus
             {
 				FindItems();                
                 if (blink != null && blink.CanBeCasted() 
-					&& Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(blink.Name) 
+					&& Menu.Item("MarchSpamItems: ").GetValue<AbilityToggler>().IsEnabled(blink.Name) 
 					&& !me.IsChanneling()  
 					&& Utils.SleepCheck("Rearms") 
 					&& (!me.Modifiers.Any(y => y.Name == "modifier_bloodseeker_rupture") || (me.Distance2D(Game.MousePosition)>1325 && castrange!=0))
@@ -837,7 +924,7 @@ namespace TinkerFastComboPlus
 				
 				
 				/*
-				if (ghost != null && ghost.CanBeCasted() && !me.IsChanneling() && Menu.Item("Items2: ").GetValue<AbilityToggler>().IsEnabled(ghost.Name) && Utils.SleepCheck("Rearms"))
+				if (ghost != null && ghost.CanBeCasted() && !me.IsChanneling() && Menu.Item("RocketSpamItems: ").GetValue<AbilityToggler>().IsEnabled(ghost.Name) && Utils.SleepCheck("Rearms"))
 				{
 					ghost.UseAbility(false);
 				}
@@ -845,17 +932,26 @@ namespace TinkerFastComboPlus
 				if (soulring != null 
                     && soulring.CanBeCasted() 
                     && !me.IsChanneling() 
-                    && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name) 
+                    && Menu.Item("MarchSpamItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name) 
                     && Utils.SleepCheck("Rearms"))
 				{
 					soulring.UseAbility();
 				}
 
-				if (bottle != null 
+                if (ghost != null
+                    && ghost.CanBeCasted()
+                    && !me.IsChanneling()
+                    && Menu.Item("MarchSpamItems: ").GetValue<AbilityToggler>().IsEnabled(ghost.Name)
+                    && Utils.SleepCheck("Rearms"))
+                {
+                    ghost.UseAbility();
+                }
+
+                if (bottle != null
                     && bottle.CanBeCasted() 
                     && !me.IsChanneling() 
                     && !me.Modifiers.Any(x => x.Name == "modifier_bottle_regeneration") 
-                    && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(bottle.Name) 
+                    && Menu.Item("MarchSpamItems: ").GetValue<AbilityToggler>().IsEnabled(bottle.Name) 
                     && Utils.SleepCheck("Rearms"))
 				{
 					bottle.UseAbility();
@@ -863,19 +959,17 @@ namespace TinkerFastComboPlus
 
 				if (March != null 
                     && March.CanBeCasted() 
-                    && (blink == null || !blink.CanBeCasted() || me.Distance2D(Game.MousePosition) <= 650+ castrange + ensage_error || !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled("item_blink")) 
-                    && !me.IsChanneling() 
-                    && Menu.Item("Skills: ").GetValue<AbilityToggler>().IsEnabled(March.Name) 
+                    && (blink == null || !blink.CanBeCasted() || me.Distance2D(Game.MousePosition) <= 650+ castrange + ensage_error || !Menu.Item("MarchSpamItems: ").GetValue<AbilityToggler>().IsEnabled("item_blink")) 
+                    && !me.IsChanneling()                      
                     && Utils.SleepCheck("Rearms")) //&& me.Mana >= March.ManaCost + 75 
 				{
 					March.UseAbility(Game.MousePosition);
-				}
-			
-				if ((soulring == null || !soulring.CanBeCasted() || !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)) 
-                    && (blink == null || !blink.CanBeCasted() || me.Distance2D(Game.MousePosition) <= 650+ castrange + ensage_error || !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled("item_blink")) 
-                    && (!March.CanBeCasted()  || March.Level <= 0 || !Menu.Item("Skills: ").GetValue<AbilityToggler>().IsEnabled(March.Name)) 
+				}                
+                if ((soulring == null || !soulring.CanBeCasted() || !Menu.Item("MarchSpamItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)) 
+                    && (blink == null || !blink.CanBeCasted() || me.Distance2D(Game.MousePosition) <= 650+ castrange + ensage_error || !Menu.Item("MarchSpamItems: ").GetValue<AbilityToggler>().IsEnabled("item_blink"))
+                    && (!March.CanBeCasted()  || March.Level <= 0)
                     && (Refresh.Level >= 0 && Refresh.CanBeCasted()) 
-                    && !me.IsChanneling()&& Menu.Item("Skills: ").GetValue<AbilityToggler>().IsEnabled(Refresh.Name) 
+                    && !me.IsChanneling() 
                     && Utils.SleepCheck("Rearms"))
 				{
 					Refresh.UseAbility();
@@ -886,11 +980,15 @@ namespace TinkerFastComboPlus
 					if (Refresh.Level == 3)
 						Utils.Sleep(760, "Rearms");
 				}
-                if (Utils.SleepCheck("autoattack"))
+                if (Utils.SleepCheck("Autoattack"))
                 {
                     Game.ExecuteCommand("dota_player_units_auto_attack_mode 0");
-                    Utils.Sleep(5000, "autoattack");
-                }                
+                    Utils.Sleep(10000, "Autoattack");
+                } 
+                /*else if ()
+                {
+                    me.Move(Game.MousePosition);
+                }  */             
                 Utils.Sleep(150, "MarchSpam");
 			}
 				
@@ -931,7 +1029,7 @@ namespace TinkerFastComboPlus
 
 						if (soulring != null && soulring.CanBeCasted() 
 							&& target.NetworkPosition.Distance2D(me) <= 2500
-							&& Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)  )
+							&& Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)  )
 						{
 							soulring.UseAbility();
 						}
@@ -940,7 +1038,7 @@ namespace TinkerFastComboPlus
                             elsecount += 1;	
                         }
 													
-						if (glimmer != null && glimmer.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(glimmer.Name) )
+						if (glimmer != null && glimmer.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(glimmer.Name) )
 						{
 							glimmer.UseAbility(me);
 						}
@@ -950,11 +1048,11 @@ namespace TinkerFastComboPlus
                         }
 							
 						/*
-                        if (blink != null && blink.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(blink.Name) && !me.IsChanneling())
+                        if (blink != null && blink.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(blink.Name) && !me.IsChanneling())
                         {
                             blink.UseAbility(Game.MousePosition);
                         }*/
-						if (blink != null && blink.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(blink.Name) 
+						if (blink != null && blink.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(blink.Name) 
 							&& !me.IsChanneling() && !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase)
 							&& (me.Distance2D(Game.MousePosition) > 650+castrange + ensage_error)  
 							&& (!me.Modifiers.Any(y => y.Name == "modifier_bloodseeker_rupture") || (me.Distance2D(Game.MousePosition)>1325 && castrange!=0))
@@ -984,7 +1082,7 @@ namespace TinkerFastComboPlus
 						}
 
 						/*
-						if (blink != null && blink.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(blink.Name) && !me.IsChanneling()  &&  me.NetworkPosition.Distance2D(target.NetworkPosition) > 600+castrange)// && Utils.SleepCheck("Rearms"))
+						if (blink != null && blink.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(blink.Name) && !me.IsChanneling()  &&  me.NetworkPosition.Distance2D(target.NetworkPosition) > 600+castrange)// && Utils.SleepCheck("Rearms"))
 						{
 							var safeRange = me.FindItem("item_aether_lens") == null ? 1200 : 1420;
 							var closeRange = me.FindItem("item_aether_lens") == null ? 600 : 820;
@@ -1045,11 +1143,11 @@ namespace TinkerFastComboPlus
 						if (target.IsLinkensProtected() 
                             && Utils.SleepCheck("combo2"))
 						{
-							if (forcestaff != null && forcestaff.CanBeCasted() )
-								forcestaff.UseAbility(target);	
-							else if (cyclone != null && cyclone.CanBeCasted() )
+							if (forcestaff != null && forcestaff.CanBeCasted() && Menu.Item("LinkenBreaker: ").GetValue<AbilityToggler>().IsEnabled(forcestaff.Name)) 
+                                forcestaff.UseAbility(target);	
+							else if (cyclone != null && cyclone.CanBeCasted() && Menu.Item("LinkenBreaker: ").GetValue<AbilityToggler>().IsEnabled(cyclone.Name))
 								cyclone.UseAbility(target);
-							else if (Laser.Level >= 1 && Laser.CanBeCasted() )
+							else if (Laser.Level >= 1 && Laser.CanBeCasted() && Menu.Item("LinkenBreaker: ").GetValue<AbilityToggler>().IsEnabled(Laser.Name))
 								Laser.UseAbility(target);
 								
 							Utils.Sleep(200, "combo2");
@@ -1057,31 +1155,39 @@ namespace TinkerFastComboPlus
 						}
 						else
 						{
-							
-							
-							/*
-							if (sheep != null && sheep.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(sheep.Name) && magicimune   )
+
+
+                            /*
+							if (sheep != null && sheep.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(sheep.Name) && magicimune   )
 							{
 								sheep.UseAbility(target);
 							}
 							else
 								elsecount += 1;
 							*/
-							
+                            if (atos != null && atos.CanBeCasted()
 
-							
-							if (sheep != null && sheep.CanBeCasted() 
+                                && magicimune
+                                && target.NetworkPosition.Distance2D(me) <= 1150 + castrange + ensage_error
+                                && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(atos.Name)
+                                && Utils.SleepCheck("Blinks"))
+                                atos.UseAbility(target);
+                            else
+                                elsecount += 1;
+                            
+
+                            if (sheep != null && sheep.CanBeCasted() 
 								//&& !target.UnitState.HasFlag(UnitState.Hexed) 
 								//&& !target.UnitState.HasFlag(UnitState.Stunned) 
 								&& magicimune 
 								//&& ((target.FindItem("item_manta") != null && target.FindItem("item_manta").CanBeCasted()) || (target.FindItem("item_black_king_bar") != null && target.FindItem("item_black_king_bar").CanBeCasted()))
 								&& target.NetworkPosition.Distance2D(me) <= 800+castrange + ensage_error
-								&& Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(sheep.Name)
+								&& Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(sheep.Name)
 								&& Utils.SleepCheck("Blinks"))
 								sheep.UseAbility(target);
 							else
 								elsecount += 1;								/*
-							if(veil != null && veil.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name) )
+							if(veil != null && veil.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name) )
 							{
 								veil.UseAbility(target.Position);
 							}
@@ -1089,13 +1195,12 @@ namespace TinkerFastComboPlus
 								elsecount += 1;		*/
 							if (veil != null && veil.CanBeCasted() 
 								&& magicimune
-								&& Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)
+								&& Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)
 								&& target.NetworkPosition.Distance2D(me) <= 1600+castrange + ensage_error
 								//&& !OneHitLeft(target)
 								&& !(target.Modifiers.Any(y => y.Name == "modifier_teleporting") && IsEulhexFind())
 								&& !target.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff")
-								&& Utils.SleepCheck("Blinks")
-								)
+								&& Utils.SleepCheck("Blinks"))
 								{
 									if (me.Distance2D(target) > 1000 + castrange + ensage_error)
 									{
@@ -1116,7 +1221,7 @@ namespace TinkerFastComboPlus
 							if (ghost != null && ethereal == null && ghost.CanBeCasted() 
 								&& target.NetworkPosition.Distance2D(me) <= 800+castrange + ensage_error
 								&& !OneHitLeft(target)
-								&& Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ghost.Name) )
+								&& Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ghost.Name) )
 							{
 								ghost.UseAbility();
 							}
@@ -1126,8 +1231,8 @@ namespace TinkerFastComboPlus
 								
 							var comboMode =
 								Menu.Item("ComboMode").GetValue<StringList>().SelectedIndex;
-							if (Rocket.Level > 0 && Rocket.CanBeCasted() 
-								&& target.NetworkPosition.Distance2D(me) <= 2500
+							if (Rocket.Level > 0 && Rocket.CanBeCasted()
+                                && target.NetworkPosition.Distance2D(me) <= 2500
 								//&& (!EzkillCheck)// || target.NetworkPosition.Distance2D(me) >= 800+castrange + ensage_error)
 								&& !OneHitLeft(target)
 								&& magicimune  
@@ -1136,33 +1241,32 @@ namespace TinkerFastComboPlus
 								&& (((veil == null 
                                     || !veil.CanBeCasted() 
                                     || target.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff") 
-                                    | !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name))))// && target.NetworkPosition.Distance2D(me) <= 1600 + castrange + ensage_error))// || target.NetworkPosition.Distance2D(me) > 1600 + castrange + ensage_error)
+                                    | !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name))))// && target.NetworkPosition.Distance2D(me) <= 1600 + castrange + ensage_error))// || target.NetworkPosition.Distance2D(me) > 1600 + castrange + ensage_error)
 								&& (((ethereal == null 
                                     || (ethereal!=null && !ethereal.CanBeCasted()) 
                                     || IsCasted(ethereal) /*|| target.Modifiers.Any(y => y.Name == "modifier_item_ethereal_blade_ethereal")*/ 
-                                    | !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))))//&& target.NetworkPosition.Distance2D(me) <= 800+castrange + ensage_error)) //|| target.NetworkPosition.Distance2D(me) > 800+castrange + ensage_error)
+                                    | !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))))//&& target.NetworkPosition.Distance2D(me) <= 800+castrange + ensage_error)) //|| target.NetworkPosition.Distance2D(me) > 800+castrange + ensage_error)
 								&& (Laser == null ||  !Laser.CanBeCasted() || comboMode==0)
 								&& (dagon == null ||  !dagon.CanBeCasted() || comboMode==0)
 								&& !(target.Modifiers.Any(y => y.Name == "modifier_teleporting") && IsEulhexFind())
-								&& Utils.SleepCheck("Blinks")
-
-							)
+                                && Menu.Item("ComboSkills: ").GetValue<AbilityToggler>().IsEnabled(Rocket.Name)
+                                && Utils.SleepCheck("Blinks"))
 							{
-								Rocket.UseAbility();
+                                Rocket.UseAbility();
 							}
 							else
-								elsecount += 1; 
+								elsecount += 1;
 						
 						
 
 							/*
-							if (ethereal != null && ethereal.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name) && magicimune && me.Distance2D(target) <= ethereal.CastRange && target.Health >= target.DamageTaken(dagondamage[dagon.Level - 1],DamageType.Magical,me,false,0,0,0))
+							if (ethereal != null && ethereal.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name) && magicimune && me.Distance2D(target) <= ethereal.CastRange && target.Health >= target.DamageTaken(dagondamage[dagon.Level - 1],DamageType.Magical,me,false,0,0,0))
 							{
 								ethereal.UseAbility(target);
 							}
 							else
 								elsecount += 1;
-							if (dagon != null && dagon.CanBeCasted() && (!ethereal.CanBeCasted() || target.Health <= target.DamageTaken(dagondamage[dagon.Level - 1], DamageType.Magical, me, false, 0, 0, 0)) && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled("item_dagon") && magicimune )
+							if (dagon != null && dagon.CanBeCasted() && (!ethereal.CanBeCasted() || target.Health <= target.DamageTaken(dagondamage[dagon.Level - 1], DamageType.Magical, me, false, 0, 0, 0)) && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled("item_dagon") && magicimune )
 							{
 								dagon.UseAbility(target);
 							}
@@ -1170,8 +1274,8 @@ namespace TinkerFastComboPlus
 								elsecount += 1;*/
 
 							if (ethereal != null && ethereal.CanBeCasted() 
-								&& Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name)
-								&& (!veil.CanBeCasted() || target.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff") || veil == null | !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)) 
+								&& Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name)
+								&& (!veil.CanBeCasted() || target.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff") || veil == null | !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)) 
 								//&& (!silence.CanBeCasted() || target.Ishexed())
 								&& magicimune
 								&& !OneHitLeft(target)
@@ -1191,9 +1295,9 @@ namespace TinkerFastComboPlus
 								elsecount += 1;
 
 							if (dagon != null && dagon.CanBeCasted() 
-								&& Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled("item_dagon")
-								&& (!veil.CanBeCasted() || target.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff") || veil == null | !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)) 
-								&& (ethereal == null || (ethereal!=null && !IsCasted(ethereal) && !ethereal.CanBeCasted()) || target.Modifiers.Any(y => y.Name == "modifier_item_ethereal_blade_ethereal") | !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name)) 
+								&& Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled("item_dagon")
+								&& (!veil.CanBeCasted() || target.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff") || veil == null | !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)) 
+								&& (ethereal == null || (ethereal!=null && !IsCasted(ethereal) && !ethereal.CanBeCasted()) || target.Modifiers.Any(y => y.Name == "modifier_item_ethereal_blade_ethereal") | !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name)) 
 								//&& (!silence.CanBeCasted() || target.Ishexed())
 								&& magicimune
 								&& (!CanReflectDamage(target) || me.IsMagicImmune())
@@ -1209,13 +1313,13 @@ namespace TinkerFastComboPlus
 							
 							
 							/*
-							if (Laser != null && Laser.CanBeCasted() && Menu.Item("Skills: ").GetValue<AbilityToggler>().IsEnabled(Laser.Name) && magicimune )
+							if (Laser != null && Laser.CanBeCasted() && Menu.Item("ComboSkills: ").GetValue<AbilityToggler>().IsEnabled(Laser.Name) && magicimune )
 							{
 								Laser.UseAbility(target);
 							}
 							else
 								elsecount += 1;							
-							if (Rocket != null && Rocket.CanBeCasted() && Menu.Item("Skills: ").GetValue<AbilityToggler>().IsEnabled(Rocket.Name) && magicimune  && me.Distance2D(target) <= Rocket.CastRange)
+							if (Rocket != null && Rocket.CanBeCasted() && Menu.Item("ComboSkills: ").GetValue<AbilityToggler>().IsEnabled(Rocket.Name) && magicimune  && me.Distance2D(target) <= Rocket.CastRange)
 							{
 								Rocket.UseAbility();
 
@@ -1226,7 +1330,7 @@ namespace TinkerFastComboPlus
 
 								
 							if (Laser.Level > 0 && Laser.CanBeCasted() 
-								&& Menu.Item("Skills: ").GetValue<AbilityToggler>().IsEnabled(Laser.Name)
+								&& Menu.Item("ComboSkills: ").GetValue<AbilityToggler>().IsEnabled(Laser.Name)
 								//&& !EzkillCheck 
 								&& !OneHitLeft(target)
 								&& magicimune 
@@ -1239,7 +1343,7 @@ namespace TinkerFastComboPlus
 								elsecount += 1;					
 								
 							/*
-							if (shiva != null && shiva.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(shiva.Name) && magicimune )
+							if (shiva != null && shiva.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(shiva.Name) && magicimune )
 							{
 								shiva.UseAbility();
 							}
@@ -1255,9 +1359,12 @@ namespace TinkerFastComboPlus
 								&& (!target.Modifiers.Any(y => y.Name == "modifier_nyx_assassin_spiked_carapace") || me.IsMagicImmune())
 								&& target.NetworkPosition.Distance2D(me) <= 900 + ensage_error
 								&& !(target.Modifiers.Any(y => y.Name == "modifier_teleporting") && IsEulhexFind())
-								&& Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(shiva.Name)
+								&& Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(shiva.Name)
 								&& Utils.SleepCheck("Blinks"))
-								shiva.UseAbility();
+                            {
+                                shiva.UseAbility();
+                            }
+								
 							else
 								elsecount += 1;
 
@@ -1272,9 +1379,9 @@ namespace TinkerFastComboPlus
 									me.Move(Game.MousePosition, false);
 							}*/ 
 							
-							if (elsecount == 12 
+							if (elsecount == 13 
 								&& Refresh != null && Refresh.CanBeCasted() 
-								&& Menu.Item("Skills: ").GetValue<AbilityToggler>().IsEnabled(Refresh.Name) 
+								&& Menu.Item("ComboSkills: ").GetValue<AbilityToggler>().IsEnabled(Refresh.Name) 
 								&& !me.IsChanneling() && !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase) 
 								//&& !OneHitLeft(target)
 								&& Utils.SleepCheck("Rearm") 
@@ -1406,7 +1513,7 @@ namespace TinkerFastComboPlus
                 castrange += (int)talent20.AbilitySpecialData.First(x => x.Name == "value").Value;
             }
 
-            if (bottle != null && !me.IsInvisible() && !me.IsChanneling() && !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase) && !March.IsInAbilityPhase && me.Modifiers.Any(x => x.Name == "modifier_fountain_aura_buff") && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(bottle.Name) && Utils.SleepCheck("bottle1"))
+            if (bottle != null && !me.IsInvisible() && !me.IsChanneling() && !me.Spellbook.Spells.Any(x => x.IsInAbilityPhase) && !March.IsInAbilityPhase && me.Modifiers.Any(x => x.Name == "modifier_fountain_aura_buff") && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(bottle.Name) && Utils.SleepCheck("bottle1"))
             {
                 if (!me.Modifiers.Any(x => x.Name == "modifier_bottle_regeneration") && (me.Health < me.MaximumHealth || me.Mana < me.MaximumMana))
                     bottle.UseAbility();
@@ -2107,12 +2214,12 @@ namespace TinkerFastComboPlus
                             }
 
                             if (soulring != null && soulring.CanBeCasted()
-                                //&& Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)  
+                                //&& Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name)  
                                 && e.NetworkPosition.Distance2D(me) < 2500
                                 && magicimune
                                 && !OneHitLeft(e)
-                                && (((veil == null || !veil.CanBeCasted() || e.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff")  /*| !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)*/) && e.NetworkPosition.Distance2D(me) <= 1600 + castrange) || ((e.NetworkPosition.Distance2D(me) > 1600 + castrange) && (e.Health < (int)GetRocketDamage() * (1 - e.MagicDamageResist))))
-                                && (((ethereal == null || (ethereal != null && !ethereal.CanBeCasted()) || IsCasted(ethereal) /*|| e.Modifiers.Any(y => y.Name == "modifier_item_ethereal_blade_ethereal")*/ /*| !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name)*/) && e.NetworkPosition.Distance2D(me) <= 800 + castrange) || ((e.NetworkPosition.Distance2D(me) > 800 + castrange) && (e.Health < (int)GetRocketDamage() * (1 - e.MagicDamageResist))))
+                                && (((veil == null || !veil.CanBeCasted() || e.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff")  /*| !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)*/) && e.NetworkPosition.Distance2D(me) <= 1600 + castrange) || ((e.NetworkPosition.Distance2D(me) > 1600 + castrange) && (e.Health < (int)GetRocketDamage() * (1 - e.MagicDamageResist))))
+                                && (((ethereal == null || (ethereal != null && !ethereal.CanBeCasted()) || IsCasted(ethereal) /*|| e.Modifiers.Any(y => y.Name == "modifier_item_ethereal_blade_ethereal")*/ /*| !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name)*/) && e.NetworkPosition.Distance2D(me) <= 800 + castrange) || ((e.NetworkPosition.Distance2D(me) > 800 + castrange) && (e.Health < (int)GetRocketDamage() * (1 - e.MagicDamageResist))))
 
                                 )
                                 soulring.UseAbility();
@@ -2120,7 +2227,7 @@ namespace TinkerFastComboPlus
 
                             if (veil != null && veil.CanBeCasted()
                                 && magicimune
-                                //&& Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)
+                                //&& Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)
                                 && e.NetworkPosition.Distance2D(me) <= 1600 + castrange + ensage_error
                                 && !OneHitLeft(e)
                                 && !(e.Modifiers.Any(y => y.Name == "modifier_teleporting") && IsEulhexFind())
@@ -2141,8 +2248,8 @@ namespace TinkerFastComboPlus
                             }
 
                             if (ethereal != null && ethereal.CanBeCasted()
-                                //&& Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name)
-                                && (!veil.CanBeCasted() || e.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff") || veil == null /*| !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)*/)
+                                //&& Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name)
+                                && (!veil.CanBeCasted() || e.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff") || veil == null /*| !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)*/)
                                 && !OneHitLeft(e)
                                 && magicimune
                                 && e.NetworkPosition.Distance2D(me) <= 800 + castrange + ensage_error
@@ -2151,32 +2258,32 @@ namespace TinkerFastComboPlus
                                 ethereal.UseAbility(e);
 
                             if (dagon != null && dagon.CanBeCasted()
-                                //&& Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled("item_dagon")
-                                && (!veil.CanBeCasted() || e.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff") || veil == null /*| !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)*/)
-                                && (ethereal == null || (ethereal != null && !IsCasted(ethereal) && !ethereal.CanBeCasted()) || e.Modifiers.Any(y => y.Name == "modifier_item_ethereal_blade_ethereal") /*| !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name)*/)
+                                //&& Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled("item_dagon")
+                                && (!veil.CanBeCasted() || e.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff") || veil == null /*| !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)*/)
+                                && (ethereal == null || (ethereal != null && !IsCasted(ethereal) && !ethereal.CanBeCasted()) || e.Modifiers.Any(y => y.Name == "modifier_item_ethereal_blade_ethereal") /*| !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name)*/)
                                 && !OneHitLeft(e)
                                 && magicimune
                                 && e.NetworkPosition.Distance2D(me) <= dagondistance[dagon.Level - 1] + castrange + ensage_error
                                 && !(e.Modifiers.Any(y => y.Name == "modifier_teleporting") && IsEulhexFind())
                                 )
                                 dagon.UseAbility(e);
-
+                            
                             if (Rocket.Level > 0 && Rocket.CanBeCasted()
                                 && e.NetworkPosition.Distance2D(me) <= 2500
                                 && (!EzkillCheck || e.NetworkPosition.Distance2D(me) >= 800 + castrange + ensage_error)
                                 && !OneHitLeft(e)
                                 && magicimune
-                                //&& Menu.Item("Skills: ").GetValue<AbilityToggler>().IsEnabled(Rocket.Name) 
-                                //&& (((veil == null || !veil.CanBeCasted() || e.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff")  | !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)) && e.NetworkPosition.Distance2D(me) <= 1600+castrange)|| ((e.NetworkPosition.Distance2D(me) > 1600+castrange) && (e.Health < (int)(e.DamageTaken(rocket_damage[Rocket.Level - 1], DamageType.Magical, me, false, 0, 0, 0)*spellamplymult*lensmult)))   )
-                                //&& (((ethereal == null || (ethereal!=null && !ethereal.CanBeCasted()) || IsCasted(ethereal) /*|| e.Modifiers.Any(y => y.Name == "modifier_item_ethereal_blade_ethereal")*/ | !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))&& e.NetworkPosition.Distance2D(me) <= 800+castrange)|| ((e.NetworkPosition.Distance2D(me) > 800+castrange) && (e.Health < (int)(e.DamageTaken(rocket_damage[Rocket.Level - 1], DamageType.Magical, me, false, 0, 0, 0)*spellamplymult*lensmult)))   )
-                                && (((veil == null || !veil.CanBeCasted() || e.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff")  /*| !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)*/) && e.NetworkPosition.Distance2D(me) <= 1600 + castrange) || (e.NetworkPosition.Distance2D(me) > 1600 + castrange))
-                                && (((ethereal == null || (ethereal != null && !ethereal.CanBeCasted()) || IsCasted(ethereal) /*|| e.Modifiers.Any(y => y.Name == "modifier_item_ethereal_blade_ethereal")*/ /*| !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name)*/) && e.NetworkPosition.Distance2D(me) <= 800 + castrange) || (e.NetworkPosition.Distance2D(me) > 800 + castrange))
+                                //&& Menu.Item("ComboSkills: ").GetValue<AbilityToggler>().IsEnabled(Rocket.Name) 
+                                //&& (((veil == null || !veil.CanBeCasted() || e.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff")  | !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)) && e.NetworkPosition.Distance2D(me) <= 1600+castrange)|| ((e.NetworkPosition.Distance2D(me) > 1600+castrange) && (e.Health < (int)(e.DamageTaken(rocket_damage[Rocket.Level - 1], DamageType.Magical, me, false, 0, 0, 0)*spellamplymult*lensmult)))   )
+                                //&& (((ethereal == null || (ethereal!=null && !ethereal.CanBeCasted()) || IsCasted(ethereal) /*|| e.Modifiers.Any(y => y.Name == "modifier_item_ethereal_blade_ethereal")*/ | !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))&& e.NetworkPosition.Distance2D(me) <= 800+castrange)|| ((e.NetworkPosition.Distance2D(me) > 800+castrange) && (e.Health < (int)(e.DamageTaken(rocket_damage[Rocket.Level - 1], DamageType.Magical, me, false, 0, 0, 0)*spellamplymult*lensmult)))   )
+                                && (((veil == null || !veil.CanBeCasted() || e.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff")  /*| !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)*/) && e.NetworkPosition.Distance2D(me) <= 1600 + castrange) || (e.NetworkPosition.Distance2D(me) > 1600 + castrange))
+                                && (((ethereal == null || (ethereal != null && !ethereal.CanBeCasted()) || IsCasted(ethereal) /*|| e.Modifiers.Any(y => y.Name == "modifier_item_ethereal_blade_ethereal")*/ /*| !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name)*/) && e.NetworkPosition.Distance2D(me) <= 800 + castrange) || (e.NetworkPosition.Distance2D(me) > 800 + castrange))
                                 && !(e.Modifiers.Any(y => y.Name == "modifier_teleporting") && IsEulhexFind())
                                 )
                                 Rocket.UseAbility();
 
                             if (Laser.Level > 0 && Laser.CanBeCasted()
-                                //&& Menu.Item("Skills: ").GetValue<AbilityToggler>().IsEnabled(Laser.Name)
+                                //&& Menu.Item("ComboSkills: ").GetValue<AbilityToggler>().IsEnabled(Laser.Name)
                                 && !EzkillCheck
                                 && !OneHitLeft(e)
                                 && magicimune
@@ -2186,9 +2293,9 @@ namespace TinkerFastComboPlus
                                 Laser.UseAbility(e);
 
                             if (shiva != null && shiva.CanBeCasted()
-                                //&& Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(shiva.Name)
-                                && (!veil.CanBeCasted() || e.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff") || veil == null /*| !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)*/)
-                                && (ethereal == null || (ethereal != null && !IsCasted(ethereal) && !ethereal.CanBeCasted()) || e.Modifiers.Any(y => y.Name == "modifier_item_ethereal_blade_ethereal") /*| !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name)*/)
+                                //&& Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(shiva.Name)
+                                && (!veil.CanBeCasted() || e.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff") || veil == null /*| !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name)*/)
+                                && (ethereal == null || (ethereal != null && !IsCasted(ethereal) && !ethereal.CanBeCasted()) || e.Modifiers.Any(y => y.Name == "modifier_item_ethereal_blade_ethereal") /*| !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name)*/)
                                 && !EzkillCheck
                                 && !OneHitLeft(e)
                                 && magicimune
@@ -2468,6 +2575,7 @@ namespace TinkerFastComboPlus
             //Items
             blink = me.FindItem("item_blink");
             dagon = me.Inventory.Items.FirstOrDefault(item => item.Name.Contains("item_dagon"));
+            atos = me.FindItem("item_rod_of_atos");
             sheep = me.FindItem("item_sheepstick");
             soulring = me.FindItem("item_soul_ring");
             ethereal = me.FindItem("item_ethereal_blade");
@@ -2490,15 +2598,15 @@ namespace TinkerFastComboPlus
 
         static bool Ready_for_refresh()
         {
-            if ((ghost != null && ghost.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ghost.Name))
-                || (soulring != null && soulring.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name))
-                || (sheep != null && sheep.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(sheep.Name))
-                || (Laser != null && Laser.CanBeCasted() && Menu.Item("Skills: ").GetValue<AbilityToggler>().IsEnabled(Laser.Name))
-                || (ethereal != null && ethereal.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
-                || (dagon != null && dagon.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled("item_dagon"))
-                || (Rocket != null && Rocket.CanBeCasted() && Menu.Item("Skills: ").GetValue<AbilityToggler>().IsEnabled(Rocket.Name))
-                || (shiva != null && shiva.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(shiva.Name))
-                || (glimmer != null && glimmer.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(glimmer.Name)))
+            if ((ghost != null && ghost.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ghost.Name))
+                || (soulring != null && soulring.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name))
+                || (sheep != null && sheep.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(sheep.Name))
+                || (Laser != null && Laser.CanBeCasted() && Menu.Item("ComboSkills: ").GetValue<AbilityToggler>().IsEnabled(Laser.Name))
+                || (ethereal != null && ethereal.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
+                || (dagon != null && dagon.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled("item_dagon"))
+                || (Rocket != null && Rocket.CanBeCasted() && Menu.Item("ComboSkills: ").GetValue<AbilityToggler>().IsEnabled(Rocket.Name))
+                || (shiva != null && shiva.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(shiva.Name))
+                || (glimmer != null && glimmer.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(glimmer.Name)))
                 return false;
             else
                 return true;
@@ -2579,32 +2687,32 @@ namespace TinkerFastComboPlus
 			else
 				manarearm = 0;
 				
-			if (dagon != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled("item_dagon"))
+			if (dagon != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled("item_dagon"))
 				manadagon = 180;
 			else
 				manadagon = 0;		
 				
-			if (ethereal != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
+			if (ethereal != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
 				manaethereal = 100;
 			else
 				manaethereal = 0;
 				
-			if (veil != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name))
+			if (veil != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name))
 				manaveil = 50;
 			else
 				manaveil = 0;
 				
-			if (sheep != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(sheep.Name))
+			if (sheep != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(sheep.Name))
 				manasheep = 100;
 			else
 				manasheep = 0;
 				
-			if (shiva != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(shiva.Name))
+			if (shiva != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(shiva.Name))
 				manashiva = 100;
 			else
 				manashiva = 0;
 
-			if (soulring != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name))
+			if (soulring != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name))
 				manasoulring = 150;
 			else
 				manasoulring = 0;
@@ -2631,7 +2739,7 @@ namespace TinkerFastComboPlus
 				manarearm = 0;
 				
 
-			if (soulring != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name))
+			if (soulring != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name))
 				manasoulring = 150;
 			else
 				manasoulring = 0;
@@ -2665,7 +2773,7 @@ namespace TinkerFastComboPlus
 				else
 					manarearm = 0;
 					
-				if (dagon != null && dagon.CanBeCasted())// && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled("item_dagon"))
+				if (dagon != null && dagon.CanBeCasted())// && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled("item_dagon"))
 				{
 					dagondist = dagondistance[dagon.Level - 1];
 					manadagon = 180;
@@ -2675,27 +2783,27 @@ namespace TinkerFastComboPlus
 					manadagon = 0;		
 					dagondist = 0;
 				}	
-				if (ethereal != null && ethereal.CanBeCasted())// && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
+				if (ethereal != null && ethereal.CanBeCasted())// && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
 					manaethereal = 100;
 				else
 					manaethereal = 0;
 					
-				if (veil != null && veil.CanBeCasted() && !en.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff"))// && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name))
+				if (veil != null && veil.CanBeCasted() && !en.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff"))// && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name))
 					manaveil = 50;
 				else
 					manaveil = 0;
 					
-				if (sheep != null && sheep.CanBeCasted())// && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(sheep.Name))
+				if (sheep != null && sheep.CanBeCasted())// && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(sheep.Name))
 					manasheep = 100;
 				else
 					manasheep = 0;
 					
-				if (shiva != null && shiva.CanBeCasted())// && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(shiva.Name))
+				if (shiva != null && shiva.CanBeCasted())// && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(shiva.Name))
 					manashiva = 100;
 				else
 					manashiva = 0;
 
-				if (soulring != null && soulring.CanBeCasted())// && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name))
+				if (soulring != null && soulring.CanBeCasted())// && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(soulring.Name))
 					manasoulring = 150;
 				else
 					manasoulring = 0;
@@ -2762,7 +2870,7 @@ namespace TinkerFastComboPlus
             {
                 /*
                 if ((ethereal != null && ethereal.CanBeCasted())
-                    || (ghost != null && ghost.CanBeCasted() && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ghost.Name))
+                    || (ghost != null && ghost.CanBeCasted() && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ghost.Name))
                     )
                     return ((int)Math.Ceiling((en.Health - procastdamage)/hitDmg));
                 else
@@ -3100,14 +3208,14 @@ namespace TinkerFastComboPlus
 
             var eblade = me.Inventory.Items.FirstOrDefault(x => x.Name.Contains("item_ethereal_blade"));
 
-            if (eblade != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
+            if (eblade != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
             {
                 etheral_blade_magic_reduction = 0.4f;
             }
 
             var veil = me.Inventory.Items.FirstOrDefault(x => x.Name.Contains("item_veil_of_discord"));
 
-            if (veil != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name))
+            if (veil != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name))
             {
                 veil_of_discord_magic_reduction = 0.25f;
             }
@@ -3128,14 +3236,14 @@ namespace TinkerFastComboPlus
 
             var eblade = me.Inventory.Items.FirstOrDefault(x => x.Name.Contains("item_ethereal_blade"));
 
-            if (eblade != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
+            if (eblade != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
             {
                 etheral_blade_magic_reduction = 0.4f;
             }
 
             var veil = me.Inventory.Items.FirstOrDefault(x => x.Name.Contains("item_veil_of_discord"));
 
-            if (veil != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name))
+            if (veil != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name))
             {
                 veil_of_discord_magic_reduction = 0.25f;
             }
@@ -3159,14 +3267,14 @@ namespace TinkerFastComboPlus
 
                 var eblade = me.Inventory.Items.FirstOrDefault(x => x.Name.Contains("item_ethereal_blade"));
 
-                if (eblade != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
+                if (eblade != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
                 {
                     etheral_blade_magic_reduction = 0.4f;
                 }
 
                 var veil = me.Inventory.Items.FirstOrDefault(x => x.Name.Contains("item_veil_of_discord"));
 
-                if (veil != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name))
+                if (veil != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name))
                 {
                     veil_of_discord_magic_reduction = 0.25f;
                 }
@@ -3194,14 +3302,14 @@ namespace TinkerFastComboPlus
 
                 var eblade = me.Inventory.Items.FirstOrDefault(x => x.Name.Contains("item_ethereal_blade"));
 
-                if (eblade != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
+                if (eblade != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
                 {
                     etheral_blade_magic_reduction = 0.4f;
                 }
 
                 var veil = me.Inventory.Items.FirstOrDefault(x => x.Name.Contains("item_veil_of_discord"));
 
-                if (veil != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(veil.Name))
+                if (veil != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(veil.Name))
                 {
                     veil_of_discord_magic_reduction = 0.25f;
                 }
@@ -3227,7 +3335,7 @@ namespace TinkerFastComboPlus
 
                 if (((eblade != null && eblade.CanBeCasted())
                     || (eblade != null && IsCasted(eblade)))
-                    && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled("item_ethereal_blade")
+                    && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled("item_ethereal_blade")
                     && !enemy.Modifiers.Any(y => y.Name == "modifier_item_ethereal_blade_ethereal"))
                 {
                     etheral_blade_magic_reduction = 0.4f;
@@ -3237,7 +3345,7 @@ namespace TinkerFastComboPlus
 
                 if (veil != null
                     && veil.CanBeCasted()
-                    && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled("item_veil_of_discord")
+                    && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled("item_veil_of_discord")
                     && !enemy.Modifiers.Any(y => y.Name == "modifier_item_veil_of_discord_debuff"))
                 {
                     veil_of_discord_magic_reduction = 0.25f;
@@ -3249,7 +3357,7 @@ namespace TinkerFastComboPlus
 
                 if (dagon != null
                     && dagon.CanBeCasted()
-                    && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled("item_dagon")
+                    && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled("item_dagon")
                     && (me.Distance2D(enemy) < dagon.AbilitySpecialData.First(x => x.Name == "#AbilityCastRange").GetValue(dagon.Level - 1) + castrange + ensage_error))
                 {
                     comboDamageByDistance += GetDagonDamage() * totalMagicResistance;
@@ -3257,7 +3365,7 @@ namespace TinkerFastComboPlus
 
                 if (((eblade != null && eblade.CanBeCasted())
                     || (eblade != null && IsCasted(eblade)))
-                    && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled("item_ethereal_blade")
+                    && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled("item_ethereal_blade")
                     && (me.Distance2D(enemy) < 800 + castrange + ensage_error))
                 {
                     comboDamageByDistance += GetEtherealBladeDamage() * totalMagicResistance;
@@ -3292,7 +3400,7 @@ namespace TinkerFastComboPlus
                     && !enemy.IsInvul()
                     && !IsPhysDamageImune(enemy)
                     //&& (ethereal == null || !ethereal.CanBeCasted())
-                    //&& (ghost == null || !ghost.CanBeCasted() || !Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ghost.Name))
+                    //&& (ghost == null || !ghost.CanBeCasted() || !Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ghost.Name))
                     )
                 {
                     comboDamageByDistance += (enemy.DamageTaken(me.BonusDamage + me.DamageAverage, DamageType.Physical, me));
@@ -3383,7 +3491,7 @@ namespace TinkerFastComboPlus
 
             var dagon = me.Inventory.Items.FirstOrDefault(x => x.Name.Contains("item_dagon"));
 
-            if (dagon != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled("item_dagon"))
+            if (dagon != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled("item_dagon"))
             {
                 dagonDamage += (dagon.AbilitySpecialData.FirstOrDefault(x => x.Name == "damage").GetValue(dagon.Level - 1));
             }
@@ -3430,7 +3538,7 @@ namespace TinkerFastComboPlus
 
             var eblade = me.Inventory.Items.FirstOrDefault(x => x.Name.Contains("item_ethereal_blade"));
 
-            if (eblade != null && Menu.Item("Items: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
+            if (eblade != null && Menu.Item("ComboItems: ").GetValue<AbilityToggler>().IsEnabled(ethereal.Name))
             {
                 etherealBladeDamage += ((me.TotalIntelligence * eblade.AbilitySpecialData.FirstOrDefault(x => x.Name == "blast_agility_multiplier").Value) + eblade.AbilitySpecialData.FirstOrDefault(x => x.Name == "blast_damage_base").Value);
             }
