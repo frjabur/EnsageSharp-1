@@ -16,14 +16,14 @@ namespace VisageSharpRewrite.Abilities
 
         public bool FamiliarHasToStone(Unit f)
         {
-            return f.Spellbook.SpellQ.CanBeCasted() && (f.BonusDamage < 20 || f.Health <= 3)
+            return f.Spellbook.SpellQ.CanBeCasted() && /*f.BonusDamage < 20 || */f.Health <= 3
                     // exclude a situation where familiars are in the summon phase
                     && Variables.Hero.Spellbook.Spell4.Cooldown <= 200 - Variables.Hero.Spellbook.Spell4.Level * 20 - 5;              
         }
 
         public bool FamiliarCanStoneEnemies(Hero target, Unit f)
         {
-            return f.Spellbook.SpellQ.CanBeCasted() && (f.BonusDamage < 20) && f.Distance2D(target) <= 250
+            return f.Spellbook.SpellQ.CanBeCasted() /*&& (f.BonusDamage < 20)*/ && f.Distance2D(target) <= 250
                 && !Variables.Familiars.Any(x => x.Spellbook.SpellQ.IsInAbilityPhase)
                 // exclude a situation where familiars are in the summon phase
                 && Variables.Hero.Spellbook.Spell4.Cooldown <= 200 - Variables.Hero.Spellbook.Spell4.Level * 20 - 5; 
@@ -31,12 +31,16 @@ namespace VisageSharpRewrite.Abilities
 
         public bool NotMuchDmgLeft(Unit f)
         {
-            return f.BonusDamage < 20 && f.Spellbook.SpellQ.CanBeCasted();
+            return /*f.BonusDamage < 20 && */f.Spellbook.SpellQ.CanBeCasted();
         }
 
         public void UseStone(Unit f)
         {
-            f.Spellbook.SpellQ.UseAbility();
+            if (Utils.SleepCheck("UseStone"))
+            {
+                f.Spellbook.SpellQ.UseAbility();
+                Utils.Sleep(1200, "UseStone");
+            }               
         }
 
         public void Attack(Unit f, Hero target)

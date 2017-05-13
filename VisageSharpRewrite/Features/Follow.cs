@@ -55,7 +55,7 @@ namespace VisageSharpRewrite.Features
             
             if (familiarControl.AnyFamiliarNearMe(familiars, 1000))
             {
-                if (args.OrderId == OrderId.MoveLocation)
+                if (args.OrderId == OrderId.MoveLocation && Utils.SleepCheck("fsmove"))
                 {
                     foreach (var f in familiars)
                     {
@@ -64,6 +64,7 @@ namespace VisageSharpRewrite.Features
                             f.Move(Game.MousePosition);
                         }
                     }
+                    Utils.Sleep(1000, "fsmove");
                 }
             }
             

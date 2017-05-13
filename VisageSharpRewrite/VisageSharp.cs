@@ -318,10 +318,10 @@ namespace VisageSharpRewrite
             //refinements on follow mode, familiar will duplicate Hero movement if familiars are next the heros, instead of simply following.
             if (sender.Equals(ObjectManager.LocalPlayer))
             {
-                if (Variables.FollowMode)
+                /*if (Variables.FollowMode)
                 {
                     follow.PlayerExecution(args, Familiars);
-                }
+                }*/
             }              
             
             //diable particile effect

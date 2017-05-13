@@ -56,16 +56,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ensage">
-      <HintPath>..\Dota 2\EnsageSharp\References\Ensage.dll</HintPath>
+      <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\Ensage.dll</HintPath>
     </Reference>
     <Reference Include="Ensage.Common">
-      <HintPath>..\Dota 2\EnsageSharp\References\Ensage.Common.dll</HintPath>
+      <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\Ensage.Common.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>..\Dota 2\EnsageSharp\References\SharpDX.dll</HintPath>
+      <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Mathematics">
-      <HintPath>..\Dota 2\EnsageSharp\References\SharpDX.Mathematics.dll</HintPath>
+      <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
