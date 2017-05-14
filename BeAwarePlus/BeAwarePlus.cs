@@ -85,7 +85,7 @@ namespace BeAwarePlus
                 {
                     MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
                     HeroColor = "npc_dota_hero_invoker";
-                    Helper.Hero();
+                    Helper.HeroSpells();
                 }                                               
             }
 
@@ -104,7 +104,7 @@ namespace BeAwarePlus
                 {
                     MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
                     HeroColor = "npc_dota_hero_kunkka";
-                    Helper.Hero();
+                    Helper.HeroSpells();
                 }                                                
             }
 
@@ -123,7 +123,7 @@ namespace BeAwarePlus
                 {
                     MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
                     HeroColor = "npc_dota_hero_monkey_king";
-                    Helper.Hero();
+                    Helper.HeroSpells();
                 }         
             }
 
@@ -173,7 +173,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
                         HeroColor = "npc_dota_hero_spirit_breaker";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }       
                 }
 
@@ -206,7 +206,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
                         HeroColor = "npc_dota_hero_sniper";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }              
                 }
 
@@ -252,7 +252,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
                         HeroColor = "npc_dota_hero_bloodseeker";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }                                       
                     Utils.Sleep(10000, "bloodseeker_thirst");
                 }
@@ -495,7 +495,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_ancient_apparation";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -517,7 +517,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_mirana";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -531,7 +531,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_mirana";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -553,7 +553,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_sand_king";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -576,7 +576,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = ("npc_dota_hero_furion");                        
-                        Helper.Hero();
+                        Helper.HeroSpells();
                         FurionFix = false;
                     }
                 });
@@ -591,12 +591,12 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(1));
                         HeroColor = "npc_dota_hero_furion";
-                        DrawingMiniMap.NamePositionSpell.Add(MiniMapPosition);
-                        DrawingMiniMap.HeroNameSpell = ("Nature's Prophet");
-                        DrawingMiniMap.HeroNamePosSpell = (int)(("Nature's Prophet").Length * 3.84f);
-                        DrawingMiniMap.HeroNameColorSpell = Color.Red;
+                        DrawingMiniMap.NamePositionFurion.Add(MiniMapPosition);
+                        DrawingMiniMap.HeroNameFurion = ("Nature's Prophet");
+                        DrawingMiniMap.HeroNamePosFurion = (int)(("Nature's Prophet").Length * 3.84f);
+                        DrawingMiniMap.HeroNameColorFurion = Color.Red;
                         DrawingMiniMap.Remover2(MiniMapPosition);
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -618,7 +618,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_furion";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -640,7 +640,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_alchemist";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -662,7 +662,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_bounty_hunter";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -684,7 +684,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_clinkz";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -706,7 +706,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_nyx_assassin";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -728,7 +728,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_wisp";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -742,7 +742,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_wisp";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -764,7 +764,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_wisp";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -786,7 +786,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_troll_warlord";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -808,7 +808,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_ursa";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -822,7 +822,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_spirit_breaker";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
@@ -844,7 +844,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(1));
                         HeroColor = "npc_dota_hero_monkey_king";
-                        Helper.Hero();
+                        Helper.HeroSpells();
                     }
                 });
             }
