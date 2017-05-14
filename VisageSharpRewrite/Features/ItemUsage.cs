@@ -94,10 +94,52 @@ namespace VisageSharpRewrite.Features
             }
         }
 
+        public void UseOrchid(Hero target)
+        {
+            Item Orchid = me.FindItem("item_orchid");
+            if (Orchid == null) return;
+            bool OrchidCond = !target.IsMagicImmune() && target.Distance2D(me) <= Orchid.CastRange + (hasLens ? 200 : 0) + 100 && Orchid.CanBeCasted();
+            if (!OrchidCond) return;
+            if (Utils.SleepCheck("Orchid"))
+            {
+                Orchid.UseAbility(target);
+                Utils.Sleep(100, "Orchid");
+            }
+        }
+
+        public void UseBloodthorn(Hero target)
+        {
+            Item Bloodthorn = me.FindItem("item_bloodthorn");
+            if (Bloodthorn == null) return;
+            bool BloodthornCond = !target.IsMagicImmune() && target.Distance2D(me) <= Bloodthorn.CastRange + (hasLens ? 200 : 0) + 100 && Bloodthorn.CanBeCasted();
+            if (!BloodthornCond) return;
+            if (Utils.SleepCheck("Bloodthorn"))
+            {
+                Bloodthorn.UseAbility(target);
+                Utils.Sleep(100, "Bloodthorn");
+            }
+        }
+
+        public void UseSheepstick(Hero target)
+        {
+            Item Sheepstick = me.FindItem("item_sheepstick");
+            if (Sheepstick == null) return;
+            bool SheepstickCond = !target.IsMagicImmune() && target.Distance2D(me) <= Sheepstick.CastRange + (hasLens ? 200 : 0) + 100 && Sheepstick.CanBeCasted();
+            if (!SheepstickCond) return;
+            if (Utils.SleepCheck("Bloodthorn"))
+            {
+                Sheepstick.UseAbility(target);
+                Utils.Sleep(100, "Bloodthorn");
+            }
+        }
+
 
 
         public void OffensiveItem(Hero target)
         {
+            UseSheepstick(target);
+            UseBloodthorn(target);
+            UseOrchid(target);
             UseVeil(target);
             Medalion(target);
             SolarCrest(target);

@@ -45,6 +45,8 @@ namespace VisageSharpRewrite.Features
 
         private AutoNuke autoNuke;
 
+        private Hero me;
+
         private Dictionary<float, Orbwalker> orbwalkerDictionary = new Dictionary<float, Orbwalker>();
 
 
@@ -62,24 +64,42 @@ namespace VisageSharpRewrite.Features
 
         public void FamiliarOrbwalk(List<Unit> familiars, Hero Target)
         {
-            if (familiars == null) return;
-            if (Target == null) return;
-            if (familiars.All(x => !x.CanMove())) return;
-            Orbwalker orbwalker;
-            foreach (var f in familiars)
+            try
             {
-                if (!orbwalkerDictionary.TryGetValue(f.Handle, out orbwalker))
+                if (familiars == null) return;
+                if (Target == null) return;
+                if (familiars.All(x => !x.CanMove())) return;
+                Orbwalker orbwalker;
+                foreach (var f in familiars)
                 {
-                    orbwalker = new Orbwalker(f);
-                    orbwalkerDictionary.Add(f.Handle, orbwalker);
+                    if (!orbwalkerDictionary.TryGetValue(f.Handle, out orbwalker))
+                    {
+                        orbwalker = new Orbwalker(f);
+                        orbwalkerDictionary.Add(f.Handle, orbwalker);
+                    }
+
+                    orbwalker.OrbwalkOn(Target);
                 }
-                orbwalker.OrbwalkOn(Target);
+            }
+            catch
+            {
+                return;
             }
 
         }
 
         public void Execute(Hero me, Hero target, List<Unit> familiars)
         {
+
+            if (target == null)
+            {
+                if (Utils.SleepCheck("MousePosition"))
+                {
+                    me.Move(Game.MousePosition);
+                    Utils.Sleep(150, "MousePosition");
+                }
+
+            }
             if (!me.IsAlive) return;
             if (target == null) return;
             Update(me);
@@ -156,21 +176,31 @@ namespace VisageSharpRewrite.Features
                         //me.Move(target.Position);
                         Utils.Sleep(100, "move");
                     }
-                }
+                }   
+                             
                 //Orbwalk
                 if (Utils.SleepCheck("orbwalk"))
                 {
-                    if (Orbwalking.AttackOnCooldown()) //target != null is to avoid an null exception case in Orbwalk
+                    try
                     {
-                        Orbwalking.Orbwalk(target, 0, 0, false, true);
+                        if (Orbwalking.AttackOnCooldown()) //target != null is to avoid an null exception case in Orbwalk
+                        {
+                            Orbwalking.Orbwalk(target, 0, 0, false, true);
+                        }
+                        else
+                        {
+                            Orbwalking.Attack(target, true);
+                        }
+                        Utils.Sleep(200, "orbwalk");
                     }
-                    else
+                    catch
                     {
-                        Orbwalking.Attack(target, true);
+                        return;
                     }
-                    Utils.Sleep(200, "orbwalk");
+                    
                 }
                 
+
                 //soulAssumption
                 autoNuke.KillSteal(me);
                 // max dmg on target
