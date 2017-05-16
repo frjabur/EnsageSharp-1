@@ -23,8 +23,6 @@ namespace DotaMapPlus
             var zoomhackMenu = new Menu("Zoom Hack", "Zoom Hack");
             Menu.AddSubMenu(zoomhackMenu);
 
-            zoomKey.SetValue(new KeyBind(0x11, KeyBindType.Press)).SetTooltip("Hold the key and scroll with your mouse to change the zoom value");
-            zoomhackMenu.AddItem(zoomKey);
             var slider = new MenuItem("distance", "Camera Distance").SetValue(new Slider(1550, 1134, 9000));
 			slider.ValueChanged += Slider_ValueChanged;
             zoomhackMenu.AddItem(slider);
@@ -108,7 +106,7 @@ namespace DotaMapPlus
 		{
             if (args.Msg == (ulong) WindowsMessages.MOUSEWHEEL && Game.IsInGame )
             {
-                if (Menu.Item("zoomKey").IsActive())
+                if (Game.IsKeyDown(0x11))                   
                 {
 					var delta = (short)((args.WParam >> 16) & 0xFFFF);
 					var zoomValue = ZoomVar.GetInt();
