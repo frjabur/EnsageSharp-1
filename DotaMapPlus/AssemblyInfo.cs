@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // Общие сведения об этой сборке предоставляются следующим набором 
 // атрибутов. Отредактируйте значения этих атрибутов, чтобы изменить
 // общие сведения об этой сборке.
-[assembly: AssemblyTitle("WeatherPlus")]
+[assembly: AssemblyTitle("DotaMapPlus")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("WeatherPlus")]
+[assembly: AssemblyProduct("DotaMapPlus")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Следующий GUID служит для идентификации библиотеки типов, если этот проект будет видимым для COM
-[assembly: Guid("4b0ca9ac-d6bf-4585-9d46-1a00a08fd8bf")]
+[assembly: Guid("b0e97a84-b9d0-4a25-8819-941df3acc40f")]
 
 // Сведения о версии сборки состоят из следующих четырех значений:
 //
