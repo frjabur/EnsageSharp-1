@@ -1,19 +1,24 @@
-namespace UnitAllPush
-{
-    using System.Security.Permissions;
-    using System;
-    using System.Linq;
-    using System.Collections.Generic;
-    using Ensage;
-    using SharpDX;
-    using Ensage.Common.Extensions;
-    using Ensage.Common;
-    using SharpDX.Direct3D9;
-    using Ensage.Common.Menu;
+// credits: VickTheRock
+using Ensage;
+using Ensage.Common;
+using Ensage.Common.Extensions;
+using Ensage.Common.Menu;
+using SharpDX;
+using SharpDX.Direct3D9;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Permissions;
+
+namespace AllUnitsPush
+{    
     [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
     internal class Program
     {
-
+        private static readonly Menu Menu = new Menu("All Unit's Push", "All Unit's Push", true).SetFontColor(Color.Aqua);
+        private static int range => Menu.Item("range").GetValue<Slider>().Value;
+        private static int textX => Menu.Item("textX").GetValue<Slider>().Value;
+        private static int textV => Menu.Item("textV").GetValue<Slider>().Value;
         private static bool activated;
         private static Font txt;
         private static Font not;
@@ -69,67 +74,57 @@ namespace UnitAllPush
             new Vector3(2555, 5812, 255),
             new Vector3(4084, 5802, 384),
         };
-
-        private static readonly Menu Menu = new Menu("All Unit's Push", "AllUnit's Push", true);
         static void Main(string[] args)
         {
-
-
             Menu.AddItem(new MenuItem("Push key", "Togle key Push").SetValue(new KeyBind('K', KeyBindType.Toggle)));
+            Menu.AddItem(new MenuItem("range", "Range").SetValue(new Slider(100, 0, 2000)));
+            Menu.AddItem(new MenuItem("drawing", "Enable Drawing").SetValue(true));
+            Menu.AddItem(new MenuItem("textX", "Drawing X").SetValue(new Slider(1200, 0, 2000)));
+            Menu.AddItem(new MenuItem("textV", "Drawing V").SetValue(new Slider(37, 0, 1000)));
             Menu.AddToMainMenu();
 
-
             Game.OnUpdate += Game_OnUpdate;
-            Console.WriteLine("> Unit by Vick.Rework!");
 
-            txt = new Font(
-               Drawing.Direct3DDevice9,
-               new FontDescription
-               {
-                   FaceName = "Tahoma",
-                   Height = 11,
-                   OutputPrecision = FontPrecision.Default,
-                   Quality = FontQuality.Default
-               });
+            if (Drawing.RenderMode == RenderMode.Dx9)
+            {
+                txt = new Font(                       
+                    Drawing.Direct3DDevice9,  
+                    new FontDescription
+                    {
+                        FaceName = "Arial",
+                        Height = 16,
+                        OutputPrecision = FontPrecision.Default,
+                        Quality = FontQuality.Draft
+                    });
 
-            not = new Font(
-               Drawing.Direct3DDevice9,
-               new FontDescription
-               {
-                   FaceName = "Tahoma",
-                   Height = 12,
-                   OutputPrecision = FontPrecision.Default,
-                   Quality = FontQuality.Default
-               });
+                not = new Font(
+                   Drawing.Direct3DDevice9,
+                   new FontDescription
+                   {
+                       FaceName = "Arial",
+                       Height = 16,
+                       OutputPrecision = FontPrecision.Default,
+                       Quality = FontQuality.Draft
+                   });
+            }                
 
             Drawing.OnPreReset += Drawing_OnPreReset;
             Drawing.OnPostReset += Drawing_OnPostReset;
             Drawing.OnEndScene += Drawing_OnEndScene;
             AppDomain.CurrentDomain.DomainUnload += CurrentDomain_DomainUnload;
         }
-
-
-
         private static void Game_OnUpdate(EventArgs args)
         {
-
             var me = ObjectManager.LocalHero;
             if (!Game.IsInGame || me == null || Game.IsWatchingGame)
                 return;
             activated = Menu.Item("Push key").GetValue<KeyBind>().Active;
-
             if (activated && !Game.IsPaused)
             {
                 var unit = ObjectManager.GetEntities<Unit>().Where(creep =>
                     (creep.ClassId == ClassId.CDOTA_BaseNPC_Creep_Neutral
-                     || creep.ClassId == ClassId.CDOTA_BaseNPC_Additive
-                     || creep.ClassId == ClassId.CDOTA_BaseNPC_Invoker_Forged_Spirit
-                     || creep.ClassId == ClassId.CDOTA_BaseNPC_Warlock_Golem
-                     || creep.ClassId == ClassId.CDOTA_BaseNPC_Creep
-                     || creep.ClassId == ClassId.CDOTA_Unit_Hero_Beastmaster_Boar
-                     || creep.ClassId == ClassId.CDOTA_Unit_SpiritBear
-                     || creep.ClassId == ClassId.CDOTA_Unit_Broodmother_Spiderling
-                     )
+                     || creep.ClassId == ClassId.CDOTA_BaseNPC_Additive                    
+                     || creep.ClassId == ClassId.CDOTA_BaseNPC_Creep)
                     && creep.IsAlive
                     && creep.NetworkActivity != NetworkActivity.Move
                     && creep.Team == me.Team
@@ -145,44 +140,44 @@ namespace UnitAllPush
                     Vector3 Mid = GetClosestToVector(mid, unit[i]);
                     Vector3 Top = GetClosestToVector(top, unit[i]);
                     Vector3 Bot = GetClosestToVector(bot, unit[i]);
-                    if (me.Distance2D(unit[i]) <= 600) return;
+                    if (me.Distance2D(unit[i]) <= range) return;
                     var v =
                             ObjectManager.GetEntities<Hero>()
                                 .Where(x => x.Team != me.Team && x.IsAlive && x.IsVisible && !x.IsIllusion)
                                 .ToList();
                    
-                    if (Mid.Distance2D(unit[i]) <= 1700)
+                    if (Mid.Distance2D(unit[i]) <= 4000)
                     {
                          for (int x = 0; x < mid.Count(); ++x)
                             {
                                 var b = mid[x];
                                 if (
-                                    unit[i].Distance2D(fount) +170 < b.Distance2D(fount) && unit[i].Distance2D(b) <= 1700 && Utils.SleepCheck(unit[i].Handle.ToString()))
+                                    unit[i].Distance2D(fount) +170 < b.Distance2D(fount) && unit[i].Distance2D(b) <= 4000 && Utils.SleepCheck(unit[i].Handle.ToString()))
                                 {
                                     unit[i].Attack(b); Utils.Sleep(1500, unit[i].Handle.ToString());
                                 }
                             }
                     }
-                    if (Bot.Distance2D(unit[i]) <= 1700)
+                    if (Bot.Distance2D(unit[i]) <= 4000)
                     {
                          for (int x = 0; x < bot.Count(); ++x)
                             {
                                 var b = bot[x];
                                 if (
-                                    unit[i].Distance2D(fount) + 170 < b.Distance2D(fount) && unit[i].Distance2D(b) <= 1700 && Utils.SleepCheck(unit[i].Handle.ToString()))
+                                    unit[i].Distance2D(fount) + 170 < b.Distance2D(fount) && unit[i].Distance2D(b) <= 4000 && Utils.SleepCheck(unit[i].Handle.ToString()))
                                 {
                                     unit[i].Attack(b); Utils.Sleep(1500, unit[i].Handle.ToString());
                                 }
                             }
                         
                     }
-                    if (Top.Distance2D(unit[i]) <= 1700)
+                    if (Top.Distance2D(unit[i]) <= 4000)
                     {
                         for (int x = 0; x < top.Count(); ++x)
                             {
                                 var b = top[x];
                                 if (
-                                    unit[i].Distance2D(fount) + 170 < b.Distance2D(fount) && unit[i].Distance2D(b) <= 1700 && Utils.SleepCheck(unit[i].Handle.ToString()))
+                                    unit[i].Distance2D(fount) + 170 < b.Distance2D(fount) && unit[i].Distance2D(b) <= 4000 && Utils.SleepCheck(unit[i].Handle.ToString()))
                                 {
                                     unit[i].Attack(b); Utils.Sleep(1500, unit[i].Handle.ToString());
                                 }
@@ -191,8 +186,6 @@ namespace UnitAllPush
                 }
             }
         }
-
-
         private static Vector3 GetClosestToVector(Vector3[] coords, Unit z)
         {
             var closestVector = coords.First();
@@ -200,13 +193,11 @@ namespace UnitAllPush
                 closestVector = v;
             return closestVector;
         }
-
         static void CurrentDomain_DomainUnload(object sender, EventArgs e)
         {
             txt.Dispose();
             not.Dispose();
         }
-
         static void Drawing_OnEndScene(EventArgs args)
         {
             if (Drawing.Direct3DDevice9 == null || Drawing.Direct3DDevice9.IsDisposed || !Game.IsInGame)
@@ -216,24 +207,23 @@ namespace UnitAllPush
             if (me == null)
                 return;
 
-            if (activated)
+            if (activated && Menu.Item("drawing").GetValue<bool>())
             {
-                txt.DrawText(null, "Unit Push Active", 1200, 37, Color.Coral);
+                txt.DrawText(null, "Unit Push Active", textX, textV, Color.Lime);
+                txt.DrawText(null, "Active Range", textX, textV + 20, Color.Lime);
+                txt.DrawText(null, ""+ range +"", textX + 80, textV + 20, Color.Aqua);
             }
 
-            if (!activated)
+            if (!activated && Menu.Item("drawing").GetValue<bool>())
             {
-                txt.DrawText(null, "Unit Push UnActive", 1200, 37, Color.DarkRed);
+                txt.DrawText(null, "Unit Push UnActive", textX, textV, Color.Red);
             }
         }
-
-
         static void Drawing_OnPostReset(EventArgs args)
         {
             txt.OnResetDevice();
             not.OnResetDevice();
         }
-
         static void Drawing_OnPreReset(EventArgs args)
         {
             txt.OnLostDevice();
