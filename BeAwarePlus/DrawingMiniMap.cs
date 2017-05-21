@@ -14,29 +14,16 @@ namespace BeAwarePlus
         private static Font Font;
         private static Font HeroNameFont;
 
-        //TP/////////////////////////////////
-        internal static ColorBGRA HeroColorTP_0;
-        internal static ColorBGRA HeroColorTP_1;
-        internal static ColorBGRA HeroColorTP_2;
-        internal static ColorBGRA HeroColorTP_3;
-        internal static ColorBGRA HeroColorTP_4;
-        internal static ColorBGRA HeroColorTP_5;
-        internal static ColorBGRA HeroColorTP_6;
-        internal static ColorBGRA HeroColorTP_7;
-        internal static ColorBGRA HeroColorTP_8;
-        internal static ColorBGRA HeroColorTP_9;
-
-        //Spells//////////////////////////////
-        internal static ColorBGRA HeroColorSpells_0;
-        internal static ColorBGRA HeroColorSpells_1;
-        internal static ColorBGRA HeroColorSpells_2;
-        internal static ColorBGRA HeroColorSpells_3;
-        internal static ColorBGRA HeroColorSpells_4;
-        internal static ColorBGRA HeroColorSpells_5;
-        internal static ColorBGRA HeroColorSpells_6;
-        internal static ColorBGRA HeroColorSpells_7;
-        internal static ColorBGRA HeroColorSpells_8;
-        internal static ColorBGRA HeroColorSpells_9;
+        internal static ColorBGRA HeroColor_0;
+        internal static ColorBGRA HeroColor_1;
+        internal static ColorBGRA HeroColor_2;
+        internal static ColorBGRA HeroColor_3;
+        internal static ColorBGRA HeroColor_4;
+        internal static ColorBGRA HeroColor_5;
+        internal static ColorBGRA HeroColor_6;
+        internal static ColorBGRA HeroColor_7;
+        internal static ColorBGRA HeroColor_8;
+        internal static ColorBGRA HeroColor_9;      
 
         internal static ColorBGRA HeroNameColor_0;
         internal static ColorBGRA HeroNameColor_1;
@@ -48,37 +35,24 @@ namespace BeAwarePlus
         internal static ColorBGRA HeroNameColor_7;
         internal static ColorBGRA HeroNameColor_8;
         internal static ColorBGRA HeroNameColor_9;
-        internal static ColorBGRA HeroNameColorFurion;
+        internal static ColorBGRA HeroNameColorSpell;
 
 
 
-        //TP/////////////////////////////////
-        internal static List<Vector2> PositionTP_0 = new List<Vector2>();
-        internal static List<Vector2> PositionTP_1 = new List<Vector2>();
-        internal static List<Vector2> PositionTP_2 = new List<Vector2>();
-        internal static List<Vector2> PositionTP_3 = new List<Vector2>();
-        internal static List<Vector2> PositionTP_4 = new List<Vector2>();
-        internal static List<Vector2> PositionTP_5 = new List<Vector2>();
-        internal static List<Vector2> PositionTP_6 = new List<Vector2>();
-        internal static List<Vector2> PositionTP_7 = new List<Vector2>();
-        internal static List<Vector2> PositionTP_8 = new List<Vector2>();
-        internal static List<Vector2> PositionTP_9 = new List<Vector2>();
 
-        //Spells//////////////////////////////
-        internal static List<Vector2> PositionSpells_0 = new List<Vector2>();
-        internal static List<Vector2> PositionSpells_1 = new List<Vector2>();
-        internal static List<Vector2> PositionSpells_2 = new List<Vector2>();
-        internal static List<Vector2> PositionSpells_3 = new List<Vector2>();
-        internal static List<Vector2> PositionSpells_4 = new List<Vector2>();
-        internal static List<Vector2> PositionSpells_5 = new List<Vector2>();
-        internal static List<Vector2> PositionSpells_6 = new List<Vector2>();
-        internal static List<Vector2> PositionSpells_7 = new List<Vector2>();
-        internal static List<Vector2> PositionSpells_8 = new List<Vector2>();
-        internal static List<Vector2> PositionSpells_9 = new List<Vector2>();
+        internal static List<Vector2> Position_0 = new List<Vector2>();
+        internal static List<Vector2> Position_1 = new List<Vector2>();
+        internal static List<Vector2> Position_2 = new List<Vector2>();
+        internal static List<Vector2> Position_3 = new List<Vector2>();
+        internal static List<Vector2> Position_4 = new List<Vector2>();
+        internal static List<Vector2> Position_5 = new List<Vector2>();
+        internal static List<Vector2> Position_6 = new List<Vector2>();
+        internal static List<Vector2> Position_7 = new List<Vector2>();
+        internal static List<Vector2> Position_8 = new List<Vector2>();
+        internal static List<Vector2> Position_9 = new List<Vector2>();
 
         internal static List<Vector2> Position_Item = new List<Vector2>();
         internal static List<Vector2> Position_BT_Enemy = new List<Vector2>();
-        internal static List<Vector2> Position_BT_Ally = new List<Vector2>();
 
         internal static List<Vector2> NamePosition_0 = new List<Vector2>();
         internal static List<Vector2> NamePosition_1 = new List<Vector2>();
@@ -90,7 +64,7 @@ namespace BeAwarePlus
         internal static List<Vector2> NamePosition_7 = new List<Vector2>();
         internal static List<Vector2> NamePosition_8 = new List<Vector2>();
         internal static List<Vector2> NamePosition_9 = new List<Vector2>();
-        internal static List<Vector2> NamePositionFurion = new List<Vector2>();
+        internal static List<Vector2> NamePositionSpell = new List<Vector2>();
 
         internal static string HeroName_0;
         internal static string HeroName_1;
@@ -102,7 +76,7 @@ namespace BeAwarePlus
         internal static string HeroName_7;
         internal static string HeroName_8;
         internal static string HeroName_9;
-        internal static string HeroNameFurion;
+        internal static string HeroNameSpell;
 
         internal static int HeroNamePos_0;       
         internal static int HeroNamePos_1;
@@ -114,7 +88,7 @@ namespace BeAwarePlus
         internal static int HeroNamePos_7;
         internal static int HeroNamePos_8;
         internal static int HeroNamePos_9;
-        internal static int HeroNamePosFurion;
+        internal static int HeroNamePosSpell;
 
         private static int x;
         private static int y;
@@ -279,88 +253,88 @@ namespace BeAwarePlus
             f.DrawText(null, stext, x + 2, y + 2, Color.Black);
             f.DrawText(null, stext, x, y, color);
         }
-        //(*Spells)
+        //(*)
         internal static void DrawHeroPositionSpells(EventArgs args)
         {
             //0               
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionSpells_0 in PositionSpells_0.ToList())
+                foreach (Vector2 HeroPosition_0 in Position_0.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]),
-                        (int)HeroPositionSpells_0.X - 12 - MiniMapSizeIcon / 6 - x,
-                        (int)HeroPositionSpells_0.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorSpells_0);
+                        (int)HeroPosition_0.X - 12 - MiniMapSizeIcon / 6 - x,
+                        (int)HeroPosition_0.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_0);
             }
             //1
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionSpells_1 in PositionSpells_1.ToList())
+                foreach (Vector2 HeroPosition_1 in Position_1.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]),
-                        (int)HeroPositionSpells_1.X - 12 - MiniMapSizeIcon / 6 - x,
-                        (int)HeroPositionSpells_1.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorSpells_1);
+                        (int)HeroPosition_1.X - 12 - MiniMapSizeIcon / 6 - x,
+                        (int)HeroPosition_1.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_1);
             }
             //2
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionSpells_2 in PositionSpells_2.ToList())
+                foreach (Vector2 HeroPosition_2 in Position_2.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]),
-                        (int)HeroPositionSpells_2.X - 12 - MiniMapSizeIcon / 6 - x,
-                        (int)HeroPositionSpells_2.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorSpells_2);
+                        (int)HeroPosition_2.X - 12 - MiniMapSizeIcon / 6 - x,
+                        (int)HeroPosition_2.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_2);
             }
             //3
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionSpells_3 in PositionSpells_3.ToList())
+                foreach (Vector2 HeroPosition_3 in Position_3.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]),
-                        (int)HeroPositionSpells_3.X - 12 - MiniMapSizeIcon / 6 - x,
-                        (int)HeroPositionSpells_3.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorSpells_3);
+                        (int)HeroPosition_3.X - 12 - MiniMapSizeIcon / 6 - x,
+                        (int)HeroPosition_3.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_3);
             }
             //4
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionSpells_4 in PositionSpells_4.ToList())
+                foreach (Vector2 HeroPosition_4 in Position_4.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]),
-                        (int)HeroPositionSpells_4.X - 12 - MiniMapSizeIcon / 6 - x,
-                        (int)HeroPositionSpells_4.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorSpells_4);
+                        (int)HeroPosition_4.X - 12 - MiniMapSizeIcon / 6 - x,
+                        (int)HeroPosition_4.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_4);
             }
             //5
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionSpells_5 in PositionSpells_5.ToList())
+                foreach (Vector2 HeroPosition_5 in Position_5.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]),
-                        (int)HeroPositionSpells_5.X - 12 - MiniMapSizeIcon / 6 - x,
-                        (int)HeroPositionSpells_5.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorSpells_5);
+                        (int)HeroPosition_5.X - 12 - MiniMapSizeIcon / 6 - x,
+                        (int)HeroPosition_5.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_5);
             }
             //6
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionSpells_6 in PositionSpells_6.ToList())
+                foreach (Vector2 HeroPosition_6 in Position_6.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]),
-                        (int)HeroPositionSpells_6.X - 12 - MiniMapSizeIcon / 6 - x,
-                        (int)HeroPositionSpells_6.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorSpells_6);
+                        (int)HeroPosition_6.X - 12 - MiniMapSizeIcon / 6 - x,
+                        (int)HeroPosition_6.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_6);
             }
             //7
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionSpells_7 in PositionSpells_7.ToList())
+                foreach (Vector2 HeroPosition_7 in Position_7.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]),
-                        (int)HeroPositionSpells_7.X - 12 - MiniMapSizeIcon / 6 - x,
-                        (int)HeroPositionSpells_7.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorSpells_7);
+                        (int)HeroPosition_7.X - 12 - MiniMapSizeIcon / 6 - x,
+                        (int)HeroPosition_7.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_7);
             }
             //8
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionSpells_8 in PositionSpells_8.ToList())
+                foreach (Vector2 HeroPosition_8 in Position_8.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]),
-                        (int)HeroPositionSpells_8.X - 12 - MiniMapSizeIcon / 6 - x,
-                        (int)HeroPositionSpells_8.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorSpells_8);
+                        (int)HeroPosition_8.X - 12 - MiniMapSizeIcon / 6 - x,
+                        (int)HeroPosition_8.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_8);
             }
             //9
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionSpells_9 in PositionSpells_9.ToList())
+                foreach (Vector2 HeroPosition_9 in Position_9.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]),
-                        (int)HeroPositionSpells_9.X - 12 - MiniMapSizeIcon / 6 - x,
-                        (int)HeroPositionSpells_9.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorSpells_9);
+                        (int)HeroPosition_9.X - 12 - MiniMapSizeIcon / 6 - x,
+                        (int)HeroPosition_9.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_9);
             }
         }
 
@@ -370,82 +344,82 @@ namespace BeAwarePlus
             //0               
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {                     
-                    foreach (Vector2 HeroPositionTP_0 in PositionTP_0.ToList())
+                    foreach (Vector2 HeroPosition_0 in Position_0.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]), 
-                        (int)HeroPositionTP_0.X - 12 - MiniMapSizeIcon / 6 - x , 
-                        (int)HeroPositionTP_0.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorTP_0);                               
+                        (int)HeroPosition_0.X - 12 - MiniMapSizeIcon / 6 - x , 
+                        (int)HeroPosition_0.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_0);                               
             }
             //1
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionTP_1 in PositionTP_1.ToList())
+                foreach (Vector2 HeroPosition_1 in Position_1.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]), 
-                        (int)HeroPositionTP_1.X - 12 - MiniMapSizeIcon / 6 - x, 
-                        (int)HeroPositionTP_1.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorTP_1);
+                        (int)HeroPosition_1.X - 12 - MiniMapSizeIcon / 6 - x, 
+                        (int)HeroPosition_1.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_1);
             }
             //2
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionTP_2 in PositionTP_2.ToList())
+                foreach (Vector2 HeroPosition_2 in Position_2.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]), 
-                        (int)HeroPositionTP_2.X - 12 - MiniMapSizeIcon / 6 - x, 
-                        (int)HeroPositionTP_2.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorTP_2);
+                        (int)HeroPosition_2.X - 12 - MiniMapSizeIcon / 6 - x, 
+                        (int)HeroPosition_2.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_2);
             }
             //3
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionTP_3 in PositionTP_3.ToList())
+                foreach (Vector2 HeroPosition_3 in Position_3.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]), 
-                        (int)HeroPositionTP_3.X - 12 - MiniMapSizeIcon / 6 - x, 
-                        (int)HeroPositionTP_3.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorTP_3);
+                        (int)HeroPosition_3.X - 12 - MiniMapSizeIcon / 6 - x, 
+                        (int)HeroPosition_3.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_3);
             }
             //4
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionTP_4 in PositionTP_4.ToList())
+                foreach (Vector2 HeroPosition_4 in Position_4.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]), 
-                        (int)HeroPositionTP_4.X - 12 - MiniMapSizeIcon / 6 - x, 
-                        (int)HeroPositionTP_4.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorTP_4);
+                        (int)HeroPosition_4.X - 12 - MiniMapSizeIcon / 6 - x, 
+                        (int)HeroPosition_4.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_4);
             }
             //5
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionTP_5 in PositionTP_5.ToList())
+                foreach (Vector2 HeroPosition_5 in Position_5.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]), 
-                        (int)HeroPositionTP_5.X - 12 - MiniMapSizeIcon / 6 - x, 
-                        (int)HeroPositionTP_5.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorTP_5);
+                        (int)HeroPosition_5.X - 12 - MiniMapSizeIcon / 6 - x, 
+                        (int)HeroPosition_5.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_5);
             }
             //6
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionTP_6 in PositionTP_6.ToList())
+                foreach (Vector2 HeroPosition_6 in Position_6.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]), 
-                        (int)HeroPositionTP_6.X - 12 - MiniMapSizeIcon / 6 - x, 
-                        (int)HeroPositionTP_6.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorTP_6);
+                        (int)HeroPosition_6.X - 12 - MiniMapSizeIcon / 6 - x, 
+                        (int)HeroPosition_6.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_6);
             }
             //7
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionTP_7 in PositionTP_7.ToList())
+                foreach (Vector2 HeroPosition_7 in Position_7.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]), 
-                        (int)HeroPositionTP_7.X - 12 - MiniMapSizeIcon / 6 - x, 
-                        (int)HeroPositionTP_7.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorTP_7);
+                        (int)HeroPosition_7.X - 12 - MiniMapSizeIcon / 6 - x, 
+                        (int)HeroPosition_7.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_7);
             }
             //8
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionTP_8 in PositionTP_8.ToList())
+                foreach (Vector2 HeroPosition_8 in Position_8.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]), 
-                        (int)HeroPositionTP_8.X - 12 - MiniMapSizeIcon / 6 - x, 
-                        (int)HeroPositionTP_8.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorTP_8);
+                        (int)HeroPosition_8.X - 12 - MiniMapSizeIcon / 6 - x, 
+                        (int)HeroPosition_8.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_8);
             }
             //9
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroPositionTP_9 in PositionTP_9.ToList())
+                foreach (Vector2 HeroPosition_9 in Position_9.ToList())
                     DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]), 
-                        (int)HeroPositionTP_9.X - 12 - MiniMapSizeIcon / 6 - x, 
-                        (int)HeroPositionTP_9.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColorTP_9);
+                        (int)HeroPosition_9.X - 12 - MiniMapSizeIcon / 6 - x, 
+                        (int)HeroPosition_9.Y - 23 - MiniMapSizeIcon / 3 - y, HeroColor_9);
             }
         }
         //Name
@@ -554,63 +528,103 @@ namespace BeAwarePlus
                         ColorSelectBT[MenuManager.Menu.Item("colorbt").GetValue<StringList>().SelectedValue]);
             }
 
-            //BT Teleport Ally
-            if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
-            {
-                foreach (Vector2 HeroPosition_BT_Ally in Position_BT_Ally.ToList())
-                    DrawShadowText(Font, (DrawMinimapIcon[DrawMinimapIndex]),
-                        (int)HeroPosition_BT_Ally.X - 12 - MiniMapSizeIcon / 6 - x,
-                        (int)HeroPosition_BT_Ally.Y - 23 - MiniMapSizeIcon / 3 - y, Color.White);
-            }
-
             //Furion
             if (MenuManager.Menu.Item("enable_minimap").GetValue<bool>())
             {
-                foreach (Vector2 HeroNamePositionFurion in NamePositionFurion.ToList())
-                    DrawShadowText(HeroNameFont, HeroNameFurion,
-                        (int)HeroNamePositionFurion.X - 9 - HeroNamePosFurion + Recalibrate_X,
-                        (int)HeroNamePositionFurion.Y + Recalibrate_Y, HeroNameColorFurion);
+                foreach (Vector2 HeroNamePositionSpell in NamePositionSpell.ToList())
+                    DrawShadowText(HeroNameFont, HeroNameSpell,
+                        (int)HeroNamePositionSpell.X - 9 - HeroNamePosSpell + Recalibrate_X,
+                        (int)HeroNamePositionSpell.Y + Recalibrate_Y, HeroNameColorSpell);
             }
         }
         internal static void Remover(Vector2 val)
         {
             DelayAction.Add(Timer * 1000, () =>
             {                
+
                 //Position
-                if (PositionTP_0.Contains(val)) { PositionTP_0.Remove(val); }
-                if (PositionTP_1.Contains(val)) { PositionTP_1.Remove(val); }
-                if (PositionTP_2.Contains(val)) { PositionTP_2.Remove(val); }
-                if (PositionTP_3.Contains(val)) { PositionTP_3.Remove(val); }
-                if (PositionTP_4.Contains(val)) { PositionTP_4.Remove(val); }
-                if (PositionTP_5.Contains(val)) { PositionTP_5.Remove(val); }
-                if (PositionTP_6.Contains(val)) { PositionTP_6.Remove(val); }
-                if (PositionTP_7.Contains(val)) { PositionTP_7.Remove(val); }
-                if (PositionTP_8.Contains(val)) { PositionTP_8.Remove(val); }
-                if (PositionTP_9.Contains(val)) { PositionTP_9.Remove(val); }
-
-                //PositionTP
-                if (PositionSpells_0.Contains(val)) { PositionSpells_0.Remove(val); }
-                if (PositionSpells_1.Contains(val)) { PositionSpells_1.Remove(val); }
-                if (PositionSpells_2.Contains(val)) { PositionSpells_2.Remove(val); }
-                if (PositionSpells_3.Contains(val)) { PositionSpells_3.Remove(val); }
-                if (PositionSpells_4.Contains(val)) { PositionSpells_4.Remove(val); }
-                if (PositionSpells_5.Contains(val)) { PositionSpells_5.Remove(val); }
-                if (PositionSpells_6.Contains(val)) { PositionSpells_6.Remove(val); }
-                if (PositionSpells_7.Contains(val)) { PositionSpells_7.Remove(val); }
-                if (PositionSpells_8.Contains(val)) { PositionSpells_8.Remove(val); }
-                if (PositionSpells_9.Contains(val)) { PositionSpells_9.Remove(val); }
-
+                if (Position_0.Contains(val))
+                {
+                    Position_0.Remove(val);
+                }
+                if (Position_1.Contains(val))
+                {
+                    Position_1.Remove(val);
+                }
+                if (Position_2.Contains(val))
+                {
+                    Position_2.Remove(val);
+                }
+                if (Position_3.Contains(val))
+                {
+                    Position_3.Remove(val);
+                }
+                if (Position_4.Contains(val))
+                {
+                    Position_4.Remove(val);
+                }
+                if (Position_5.Contains(val))
+                {
+                    Position_5.Remove(val);
+                }
+                if (Position_6.Contains(val))
+                {
+                    Position_6.Remove(val);
+                }
+                if (Position_7.Contains(val))
+                {
+                    Position_7.Remove(val);
+                }
+                if (Position_8.Contains(val))
+                {
+                    Position_8.Remove(val);
+                }
+                if (Position_9.Contains(val))
+                {
+                    Position_9.Remove(val);
+                }
+               
                 //NamePosition
-                if (NamePosition_0.Contains(val)) { NamePosition_0.Remove(val); }
-                if (NamePosition_1.Contains(val)) { NamePosition_1.Remove(val); }
-                if (NamePosition_2.Contains(val)) { NamePosition_2.Remove(val); }
-                if (NamePosition_3.Contains(val)) { NamePosition_3.Remove(val); }
-                if (NamePosition_4.Contains(val)) { NamePosition_4.Remove(val); }
-                if (NamePosition_5.Contains(val)) { NamePosition_5.Remove(val); }
-                if (NamePosition_6.Contains(val)) { NamePosition_6.Remove(val); }
-                if (NamePosition_7.Contains(val)) { NamePosition_7.Remove(val); }
-                if (NamePosition_8.Contains(val)) { NamePosition_8.Remove(val); }
-                if (NamePosition_9.Contains(val)) { NamePosition_9.Remove(val); }
+                if (NamePosition_0.Contains(val))
+                {
+                    NamePosition_0.Remove(val);
+                }
+                if (NamePosition_1.Contains(val))
+                {
+                    NamePosition_1.Remove(val);
+                }
+                if (NamePosition_2.Contains(val))
+                {
+                    NamePosition_2.Remove(val);
+                }
+                if (NamePosition_3.Contains(val))
+                {
+                    NamePosition_3.Remove(val);
+                }
+                if (NamePosition_4.Contains(val))
+                {
+                    NamePosition_4.Remove(val);
+                }
+                if (NamePosition_5.Contains(val))
+                {
+                    NamePosition_5.Remove(val);
+                }
+                if (NamePosition_6.Contains(val))
+                {
+                    NamePosition_6.Remove(val);
+                }
+                if (NamePosition_7.Contains(val))
+                {
+                    NamePosition_7.Remove(val);
+                }
+                if (NamePosition_8.Contains(val))
+                {
+                    NamePosition_8.Remove(val);
+                }
+                if (NamePosition_9.Contains(val))
+                {
+                    NamePosition_9.Remove(val);
+                }
             });
         }
         internal static void Remover2(Vector2 val)
@@ -629,16 +643,10 @@ namespace BeAwarePlus
                     Position_BT_Enemy.Remove(val);
                 }
 
-                //PositionBT Ally
-                if (Position_BT_Ally.Contains(val))
-                {
-                    Position_BT_Ally.Remove(val);
-                }
-
                 //Furion
-                if (NamePositionFurion.Contains(val))
+                if (NamePositionSpell.Contains(val))
                 {
-                    NamePositionFurion.Remove(val);
+                    NamePositionSpell.Remove(val);
                 }
             });
         }

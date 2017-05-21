@@ -232,7 +232,6 @@ namespace BeAwarePlus
             itemsMenu.AddSubMenu(townportalscrollMenu);
 
             var bootsoftravelMenu = new Menu("Boots of Travel", "Boots of Travel", false, "item_travel_boots", true);
-            bootsoftravelMenu.AddItem(new MenuItem("bt_teleport_all", "Enable Teleport All").SetValue(false));
             bootsoftravelMenu.AddItem(new MenuItem("bt_teleport_enemy", "Enable Teleport Enemy").SetValue(true));
             bootsoftravelMenu.AddItem(new MenuItem("bt_teleport_enemy_msg", "Enable Enemy Information Message").SetValue(true));
             bootsoftravelMenu.AddItem(new MenuItem("bt_teleport_enemy_sound", "Enable Enemy Sound").SetValue(true));

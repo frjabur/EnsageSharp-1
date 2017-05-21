@@ -6,7 +6,6 @@ using Ensage.Common.Menu;
 using Ensage.Common.Objects;
 using SharpDX;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 
@@ -14,12 +13,9 @@ namespace BeAwarePlus
 {
     public static class BeAwarePlus
     {
-        private static bool IgnorAllyTP = true;
-        private static bool FurionFix;
-        internal static Player player;
-        private static Vector3 TPID;
+        internal static bool IgnorAllyTP = true;
+        internal static bool FurionFix;
         internal static string HeroColor;
-        private static bool Team;
         internal static Vector2 MiniMapPosition;
         private static bool Roshan_Dead;
         private static int Roshan_Respawn_Min_Time;
@@ -37,7 +33,8 @@ namespace BeAwarePlus
             DrawingMiniMap.Init();
             Others.Init();
             Resolution.Init();
-                       
+            TeleportVision.Init();
+
             Roshan_Dead = false;
             Roshan_Respawn_Min_Time = 480;
             Roshan_Respawn_Max_Time = 660;
@@ -85,7 +82,7 @@ namespace BeAwarePlus
                 {
                     MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
                     HeroColor = "npc_dota_hero_invoker";
-                    Helper.HeroSpells();
+                    Helper.Hero();
                 }                                               
             }
 
@@ -104,7 +101,7 @@ namespace BeAwarePlus
                 {
                     MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
                     HeroColor = "npc_dota_hero_kunkka";
-                    Helper.HeroSpells();
+                    Helper.Hero();
                 }                                                
             }
 
@@ -123,7 +120,7 @@ namespace BeAwarePlus
                 {
                     MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
                     HeroColor = "npc_dota_hero_monkey_king";
-                    Helper.HeroSpells();
+                    Helper.Hero();
                 }         
             }
 
@@ -173,7 +170,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
                         HeroColor = "npc_dota_hero_spirit_breaker";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }       
                 }
 
@@ -206,7 +203,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
                         HeroColor = "npc_dota_hero_sniper";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }              
                 }
 
@@ -252,7 +249,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.Modifier.Owner.Position);
                         HeroColor = "npc_dota_hero_bloodseeker";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }                                       
                     Utils.Sleep(10000, "bloodseeker_thirst");
                 }
@@ -495,7 +492,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_ancient_apparation";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -517,7 +514,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_mirana";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -531,7 +528,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_mirana";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -553,7 +550,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_sand_king";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -576,7 +573,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = ("npc_dota_hero_furion");                        
-                        Helper.HeroSpells();
+                        Helper.Hero();
                         FurionFix = false;
                     }
                 });
@@ -591,12 +588,12 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(1));
                         HeroColor = "npc_dota_hero_furion";
-                        DrawingMiniMap.NamePositionFurion.Add(MiniMapPosition);
-                        DrawingMiniMap.HeroNameFurion = ("Nature's Prophet");
-                        DrawingMiniMap.HeroNamePosFurion = (int)(("Nature's Prophet").Length * 3.84f);
-                        DrawingMiniMap.HeroNameColorFurion = Color.Red;
+                        DrawingMiniMap.NamePositionSpell.Add(MiniMapPosition);
+                        DrawingMiniMap.HeroNameSpell = ("Nature's Prophet");
+                        DrawingMiniMap.HeroNamePosSpell = (int)(("Nature's Prophet").Length * 3.84f);
+                        DrawingMiniMap.HeroNameColorSpell = Color.Red;
                         DrawingMiniMap.Remover2(MiniMapPosition);
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -618,7 +615,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_furion";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -640,7 +637,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_alchemist";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -662,7 +659,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_bounty_hunter";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -684,7 +681,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_clinkz";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -706,7 +703,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_nyx_assassin";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -728,7 +725,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_wisp";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -742,7 +739,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_wisp";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -764,7 +761,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_wisp";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -786,7 +783,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_troll_warlord";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -808,7 +805,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_ursa";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -822,7 +819,7 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
                         HeroColor = "npc_dota_hero_spirit_breaker";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
             }
@@ -844,210 +841,11 @@ namespace BeAwarePlus
                     {
                         MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(1));
                         HeroColor = "npc_dota_hero_monkey_king";
-                        Helper.HeroSpells();
+                        Helper.Hero();
                     }
                 });
-            }
-
-            //Town Portall Scrol Teleport End          
-            if (args.Name.Contains("teleport_end"))
-            {
-                DelayAction.Add(30, () =>
-                {
-                    TPID = args.ParticleEffect.GetControlPoint(6);
-                    player = ObjectManager.GetPlayerById((uint)ColorList.FindIndex(x => x == new Vector3(TPID.X, TPID.Y, TPID.Z)));
-                    try
-                    {
-                        Team = (player.Hero.Owner.Team != me.Team);
-                    }
-                    catch
-                    {
-                        return;
-                    }
-
-                    //TP Ally
-                    if (!Team && MenuManager.Menu.Item("tpscroll_teleport_ally").GetValue<bool>())
-                    {
-                        MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.TPTeleportEnd();
-                        if (MenuManager.Menu.Item("tpscroll_teleport_ally_msg").GetValue<bool>())
-                        {
-                            MessageCreator.MessageItemCreator(player.Hero.Name.Substring(14), "tpscroll");
-                        }
-                        if (MenuManager.Menu.Item("tpscroll_teleport_ally_sound").GetValue<bool>())
-                        {
-                            Sound.PlaySound("default_" + Addition[GetLangId] + ".wav");
-                        }                        
-                    }
-
-                    //TP Enemy                       
-                    if (Team && MenuManager.Menu.Item("tpscroll_teleport_enemy").GetValue<bool>())
-                    {
-                        MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                        Helper.TPTeleportEnd();
-                        if (MenuManager.Menu.Item("tpscroll_teleport_enemy_msg").GetValue<bool>())
-                        {
-                            MessageCreator.MessageItemCreator(player.Hero.Name.Substring(14), "tpscroll");
-                        }
-                        if (MenuManager.Menu.Item("tpscroll_teleport_enemy_sound").GetValue<bool>())
-                        {
-                            Sound.PlaySound("default_" + Addition[GetLangId] + ".wav");
-                        }                        
-                    }
-                });
-            }
-
-            //Town Portall Scrol Teleport Start 
-            if (args.Name.Contains("teleport_start") && MenuManager.Menu.Item("tpscroll_teleport_start").GetValue<bool>())
-            {
-                DelayAction.Add(50, () =>
-                {
-                    try
-                    {
-                        //TP Ally
-                        if (!Team && MenuManager.Menu.Item("tpscroll_teleport_ally").GetValue<bool>())
-                        {
-                            MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                            Helper.TPTeleportStart();
-                        }
-                        //TP Enemy                       
-                        if (Team && MenuManager.Menu.Item("tpscroll_teleport_enemy").GetValue<bool>())
-                        {
-                            MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                            Helper.TPTeleportStart();
-                        }
-                    }
-                    catch
-                    {
-                        return;
-                    }
-                });
-            }
-
-            //Boots Of Travel Teleport Start == End               
-            //TP Enemy 
-            //===========================================================================================//  
-                                                                                 
-            //TP Start
-            if (args.Name.Contains("teleport_start")                  
-                && MenuManager.Menu.Item("bt_teleport_enemy").GetValue<bool>()          
-                && !MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
-            {
-                DelayAction.Add(60, () =>
-                {                    
-                    if (new Vector3(TPID.X, TPID.Y, TPID.Z) == (new Vector3(0, 0, 0)))
-                    {
-                        if (IgnorAllyTP)
-                        {
-                            MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                            Helper.BTTeleportStartEnemy();
-                            if (MenuManager.Menu.Item("bt_teleport_enemy_msg").GetValue<bool>())
-                            {
-                                MessageCreator.MessageItemCreator("default2", "travel_boots");
-                            }
-                            if (MenuManager.Menu.Item("bt_teleport_enemy_sound").GetValue<bool>())
-                            {
-                                Sound.PlaySound("default_" + Addition[GetLangId] + ".wav");
-                            }
-                        }
-                        DelayAction.Add(50, () =>
-                        {
-                            IgnorAllyTP = true;
-                        });                       
-                    }
-                });            
-            }                    
-
-            //TP End                           
-            if ((args.Name.Contains("teleport_end") && !FurionFix)              
-                && MenuManager.Menu.Item("bt_teleport_enemy").GetValue<bool>()    
-                && !MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
-            {
-                DelayAction.Add(60, () =>
-                {
-                    if (new Vector3(TPID.X, TPID.Y, TPID.Z) == (new Vector3(0, 0, 0)))
-                    {
-                        if (IgnorAllyTP)
-                        {
-                            MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                            Helper.BTTeleportStartEnemy();
-                        }
-                    }
-                });                                
-            }
-
-            //TP All
-            //===========================================================================================//
-
-            //TP Start
-            if (args.Name.Contains("teleport_start") && MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
-            {
-                DelayAction.Add(60, () =>
-                {
-                    if (new Vector3(TPID.X, TPID.Y, TPID.Z) == (new Vector3(0, 0, 0)))
-                    {
-                        if (IgnorAllyTP)
-                        {
-                            MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                            Helper.BTTeleportStartEnemy();
-                        }
-                        if (IgnorAllyTP && MenuManager.Menu.Item("bt_teleport_enemy_msg").GetValue<bool>())
-                        {
-                            MessageCreator.MessageItemCreator("default2", "travel_boots");
-                        }
-                        if (IgnorAllyTP && MenuManager.Menu.Item("bt_teleport_enemy_sound").GetValue<bool>())
-                        {
-                            Sound.PlaySound("default_" + Addition[GetLangId] + ".wav");
-                        }
-                        if (!IgnorAllyTP)
-                        {
-                            MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                            Helper.BTTeleportStartAlly();
-                        }
-                    }
-                    DelayAction.Add(50, () =>
-                    {
-                        IgnorAllyTP = true;
-                    });
-                });                             
-            }
-
-            //TP End
-            if (args.Name.Contains("teleport_end") && MenuManager.Menu.Item("bt_teleport_all").GetValue<bool>())
-            {
-                DelayAction.Add(60, () =>
-                {
-                    if (new Vector3(TPID.X, TPID.Y, TPID.Z) == (new Vector3(0, 0, 0)))
-                    {
-
-                        if (IgnorAllyTP)
-                        {
-                            MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                            Helper.BTTeleportStartEnemy();
-                        }
-                        if (!IgnorAllyTP)
-                        {
-                            MiniMapPosition = HUDInfo.WorldToMinimap(args.ParticleEffect.GetControlPoint(0));
-                            Helper.BTTeleportStartAlly();
-                        }
-                    }
-                });
-            }
+            }         
         }                                   
-        public static readonly List<Vector3> ColorList = new List<Vector3>()
-        {
-            new Vector3(0.2f, 0.4588236f, 1),
-            new Vector3(0.4f, 1, 0.7490196f),
-            new Vector3(0.7490196f, 0, 0.7490196f),
-            new Vector3(0.9529412f, 0.9411765f, 0.04313726f),
-            new Vector3(1, 0.4196079f, 0),
-            new Vector3(0.9960785f, 0.5254902f, 0.7607844f),
-            new Vector3(0.6313726f, 0.7058824f, 0.2784314f),
-            new Vector3(0.3960785f, 0.8509805f, 0.9686275f),
-            new Vector3(0, 0.5137255f, 0.1294118f),
-            new Vector3(0.6431373f, 0.4117647f, 0)
-        };
-
         static void Game_OnGameEvent(FireEventEventArgs args)
         {
             if (args.GameEvent.Name == "dota_roshan_kill")
