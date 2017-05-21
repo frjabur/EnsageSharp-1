@@ -218,12 +218,12 @@ namespace UnitAllPush
 
             if (activated)
             {
-                txt.DrawText(null, "Unit Push Active", 1500, 37, Color.Coral);
+                txt.DrawText(null, "Unit Push Active", 1200, 37, Color.Coral);
             }
 
             if (!activated)
             {
-                txt.DrawText(null, "Unit Push UnActive", 1500, 37, Color.DarkRed);
+                txt.DrawText(null, "Unit Push UnActive", 1200, 37, Color.DarkRed);
             }
         }
 
