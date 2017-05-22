@@ -283,19 +283,8 @@ namespace TinkerFastComboPlus
                 var rearm = me.Spellbook().SpellR;
                 var blink = me.FindItem("item_blink");
                 if (Utils.SleepCheck("FASTBLINK"))
-                {
-                    var safeRange = 100 + Game.Ping;
-                    var turnrate = Game.MousePosition;
-                    if (me.Distance2D(Game.MousePosition) > safeRange + ensage_error)
-                    {
-                        var ttpos = me.Position;
-                        var aa = ttpos.ToVector2().FindAngleBetween(Game.MousePosition.ToVector2(), true);
-                        safeRange -= (int)me.HullRadius;
-                        turnrate = new Vector3(
-                            ttpos.X + safeRange * (float)Math.Cos(aa),
-                            ttpos.Y + safeRange * (float)Math.Sin(aa), 100);
-                    }
-                    me.Move(turnrate);
+                {                    
+                    me.MoveToDirection(Game.MousePosition);
                     Utils.Sleep(100, "FASTBLINK");
                 }
                 var blinkrange = 1200 + castrange;
