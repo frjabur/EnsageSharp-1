@@ -77,7 +77,7 @@ namespace AllUnitsPush
         static void Main(string[] args)
         {
             Menu.AddItem(new MenuItem("Push key", "Togle key Push").SetValue(new KeyBind('K', KeyBindType.Toggle)));
-            Menu.AddItem(new MenuItem("range", "Range").SetValue(new Slider(100, 0, 2000)));
+            Menu.AddItem(new MenuItem("range", "Range").SetValue(new Slider(600, 0, 2000)));
             Menu.AddItem(new MenuItem("drawing", "Enable Drawing").SetValue(true));
             Menu.AddItem(new MenuItem("textX", "Drawing X").SetValue(new Slider(1200, 0, 2000)));
             Menu.AddItem(new MenuItem("textV", "Drawing V").SetValue(new Slider(37, 0, 1000)));
@@ -212,7 +212,7 @@ namespace AllUnitsPush
             {
                 txt.DrawText(null, "Unit Push Active", textX, textV, Color.Lime);
                 txt.DrawText(null, "Inactive Range", textX, textV + 20, Color.Lime);
-                txt.DrawText(null, ""+ range +"", textX + 80, textV + 20, Color.Aqua);
+                txt.DrawText(null, ""+ range +"", textX + 90, textV + 20, Color.Aqua);
             }
 
             if (!activated && Menu.Item("drawing").GetValue<bool>())
