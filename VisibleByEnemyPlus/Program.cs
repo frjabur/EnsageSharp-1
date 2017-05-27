@@ -7,6 +7,7 @@ using Ensage.Common.Extensions;
 using Ensage.Common.Menu;
 using SharpDX;
 using SharpDX.Direct3D9;
+using Ensage.Common.Extensions.SharpDX;
 
 namespace VisibleByEnemyPlus
 {
@@ -15,6 +16,8 @@ namespace VisibleByEnemyPlus
         #region Static Fields
 
         private static Dictionary<Unit, ParticleEffect> _effects = new Dictionary<Unit, ParticleEffect>();
+
+        private static ParticleEffect effect;
 
         private static Font Font;
         
@@ -392,13 +395,14 @@ namespace VisibleByEnemyPlus
                     HandleEffect(mine, mine.IsVisibleToEnemies);
                 }
             }
-             if (Menu.Item("shrines").GetValue<bool>())
-             {
-                 foreach (var shrine in units.Where(IsShrine).ToList())
-                 {
+
+            if (Menu.Item("shrines").GetValue<bool>())
+            {
+                foreach (var shrine in units.Where(IsShrine).ToList())
+                {
                      Shrine(shrine, shrine.IsVisibleToEnemies);
-                 }
-             }
+                }
+            }
             if (Menu.Item("neutrals").GetValue<bool>())
             {
                 foreach (var neutral in units.Where(IsNeutral).ToList())
@@ -427,25 +431,24 @@ namespace VisibleByEnemyPlus
             if (!sender.IsValid)
             {
                 return;
-            }
+            }           
+            var MapPosition = sender.Position;
             var MiniMapPosition = HUDInfo.WorldToMinimap(sender.Position);
             if (visible && sender.IsAlive && Menu.Item("draw_minimap_shrines").GetValue<bool>())
-            {
-                
-                var position = (MiniMapPosition);
-                if (position == new Vector2(65, 918))
+            {                
+                if (MapPosition == new Vector3(-4224, 1279.969f, 384))
                 {
                     Position.Add(MiniMapPosition);
                 }
-                else if (position == new Vector2(151, 988))
+                else if (MapPosition == new Vector3(639.9688f, -2560, 384))
                 {
                     Position.Add(MiniMapPosition);
                 }
-                else if (position == new Vector2(214, 970))
+                else if (MapPosition == new Vector3(4191.969f, -1600, 385.1875f))
                 {
                     Position.Add(MiniMapPosition);
                 }
-                else if (position == new Vector2(137, 895))
+                else if (MapPosition == new Vector3(-128.0313f, 2528, 385.1875f))
                 {
                     Position.Add(MiniMapPosition);
                 }
@@ -468,8 +471,7 @@ namespace VisibleByEnemyPlus
             if (index == -1)
                 index = GetEffectId;
             if (visible && unit.IsAlive)
-            {
-                ParticleEffect effect;
+            {               
                 if (!_effects.TryGetValue(unit, out effect))
                 {                   
                     effect = unit.AddParticleEffect(Effects[index]);
@@ -487,7 +489,6 @@ namespace VisibleByEnemyPlus
             }
             else
             {
-                ParticleEffect effect;
                 if (_effects.TryGetValue(unit, out effect))
                 {
                     effect.Dispose();
