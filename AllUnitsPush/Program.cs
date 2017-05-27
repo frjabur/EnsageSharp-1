@@ -124,7 +124,8 @@ namespace AllUnitsPush
                 var unit = ObjectManager.GetEntities<Unit>().Where(creep =>
                     (creep.ClassId == ClassId.CDOTA_BaseNPC_Creep_Neutral
                      || creep.ClassId == ClassId.CDOTA_BaseNPC_Additive                    
-                     || creep.ClassId == ClassId.CDOTA_BaseNPC_Creep)
+                     || creep.ClassId == ClassId.CDOTA_BaseNPC_Creep
+                     || creep.ClassId == ClassId.CDOTA_Unit_Broodmother_Spiderling)
                     && creep.IsAlive
                     && creep.NetworkActivity != NetworkActivity.Move
                     && creep.Team == me.Team
@@ -210,7 +211,7 @@ namespace AllUnitsPush
             if (activated && Menu.Item("drawing").GetValue<bool>())
             {
                 txt.DrawText(null, "Unit Push Active", textX, textV, Color.Lime);
-                txt.DrawText(null, "Active Range", textX, textV + 20, Color.Lime);
+                txt.DrawText(null, "Inactive Range", textX, textV + 20, Color.Lime);
                 txt.DrawText(null, ""+ range +"", textX + 80, textV + 20, Color.Aqua);
             }
 
