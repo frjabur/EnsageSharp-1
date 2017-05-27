@@ -7,7 +7,6 @@ using Ensage.Common.Extensions;
 using Ensage.Common.Menu;
 using SharpDX;
 using SharpDX.Direct3D9;
-using Ensage.Common.Extensions.SharpDX;
 
 namespace VisibleByEnemyPlus
 {
