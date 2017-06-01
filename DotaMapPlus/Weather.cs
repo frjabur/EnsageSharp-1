@@ -12,16 +12,16 @@ namespace DotaMapPlus
 
             MenuItem item;
             item = new MenuItem("weather", "Selected").SetValue(new StringList(new[] {
-                        WeatherString.Default.ToString(),
-                        WeatherString.Snow.ToString(),
-                        WeatherString.Rain.ToString(),
-                        WeatherString.Moonbeam.ToString(),
-                        WeatherString.Pestilence.ToString(),
-                        WeatherString.Harvest.ToString(),
-                        WeatherString.Sirocco.ToString(),
-                        WeatherString.Spring.ToString(),
-                        WeatherString.Ash.ToString(),
-                        WeatherString.Aurora.ToString()
+                WeatherString.Default.ToString(),
+                WeatherString.Snow.ToString(),
+                WeatherString.Rain.ToString(),
+                WeatherString.Moonbeam.ToString(),
+                WeatherString.Pestilence.ToString(),
+                WeatherString.Harvest.ToString(),
+                WeatherString.Sirocco.ToString(),
+                WeatherString.Spring.ToString(),
+                WeatherString.Ash.ToString(),
+                WeatherString.Aurora.ToString()
             }, 0));
             item.ValueChanged += Weather_ValueChanged;
             weatherhackMenu.AddItem(item);
