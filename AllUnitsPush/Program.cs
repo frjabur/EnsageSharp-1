@@ -21,7 +21,6 @@ namespace AllUnitsPush
         private static int textV => Menu.Item("textV").GetValue<Slider>().Value;
         private static bool activated;
         private static Font txt;
-        private static Font not;
 
         private static readonly Vector3[] mid =
         {
@@ -96,16 +95,6 @@ namespace AllUnitsPush
                         OutputPrecision = FontPrecision.Default,
                         Quality = FontQuality.Draft
                     });
-
-                not = new Font(
-                   Drawing.Direct3DDevice9,
-                   new FontDescription
-                   {
-                       FaceName = "Arial",
-                       Height = 16,
-                       OutputPrecision = FontPrecision.Default,
-                       Quality = FontQuality.Draft
-                   });
             }                
 
             Drawing.OnPreReset += Drawing_OnPreReset;
@@ -125,7 +114,8 @@ namespace AllUnitsPush
                     (creep.ClassId == ClassId.CDOTA_BaseNPC_Creep_Neutral
                      || creep.ClassId == ClassId.CDOTA_BaseNPC_Additive                    
                      || creep.ClassId == ClassId.CDOTA_BaseNPC_Creep
-                     || creep.ClassId == ClassId.CDOTA_Unit_Broodmother_Spiderling)
+                     || creep.ClassId == ClassId.CDOTA_Unit_Broodmother_Spiderling
+                     || creep.IsIllusion)
                     && creep.IsAlive
                     && creep.NetworkActivity != NetworkActivity.Move
                     && creep.Team == me.Team
@@ -197,7 +187,6 @@ namespace AllUnitsPush
         static void CurrentDomain_DomainUnload(object sender, EventArgs e)
         {
             txt.Dispose();
-            not.Dispose();
         }
         static void Drawing_OnEndScene(EventArgs args)
         {
@@ -212,7 +201,7 @@ namespace AllUnitsPush
             {
                 txt.DrawText(null, "Unit Push Active", textX, textV, Color.Lime);
                 txt.DrawText(null, "Inactive Range", textX, textV + 20, Color.Lime);
-                txt.DrawText(null, ""+ range +"", textX + 90, textV + 20, Color.Aqua);
+                txt.DrawText(null, range.ToString(), textX + 90, textV + 20, Color.Aqua);
             }
 
             if (!activated && Menu.Item("drawing").GetValue<bool>())
@@ -223,12 +212,10 @@ namespace AllUnitsPush
         static void Drawing_OnPostReset(EventArgs args)
         {
             txt.OnResetDevice();
-            not.OnResetDevice();
         }
         static void Drawing_OnPreReset(EventArgs args)
         {
             txt.OnLostDevice();
-            not.OnLostDevice();
         }
     }
 }
