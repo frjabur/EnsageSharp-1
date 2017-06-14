@@ -296,6 +296,9 @@ namespace VisibleByEnemyPlus
             {
                 return;
             }
+
+            var visible = (args.NewValue & 0xF) == 0xE;
+
             DelayAction.Add(50, () =>
             {
                 try
@@ -313,8 +316,7 @@ namespace VisibleByEnemyPlus
                         return;
                     }
 
-                    var visible = args.NewValue == 0x1E;
-
+                    
                     // heroes
                     if (sender is Hero && Menu.Item("heroes").GetValue<bool>())
                     {
