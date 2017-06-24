@@ -61,21 +61,21 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ensage">
-      <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\Ensage.dll</HintPath>
+      <HintPath>C:\EnsageSharp\References\Ensage.dll</HintPath>
     </Reference>
     <Reference Include="Ensage.Common">
-      <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\Ensage.Common.dll</HintPath>
+      <HintPath>C:\EnsageSharp\References\Ensage.Common.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX, Version=2.6.3.0, Culture=neutral, PublicKeyToken=345b829e6e492981, processorArchitecture=MSIL">
+    <Reference Include="SharpDX">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\SharpDX.dll</HintPath>
+      <HintPath>C:\EnsageSharp\References\SharpDX.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Direct3D9, Version=3.1.0.0, Culture=neutral, PublicKeyToken=7e3dc52b16ce4f66, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.Direct3D9">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>C:\EnsageSharp\References\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Mathematics">
-      <HintPath>C:\Users\osman\Desktop\Dota 2\EnsageSharp\References\SharpDX.Mathematics.dll</HintPath>
+      <HintPath>C:\EnsageSharp\References\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
