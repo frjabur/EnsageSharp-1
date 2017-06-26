@@ -115,7 +115,8 @@ namespace DotaAllCombo.Heroes
 			_arcane = Me.FindItem("item_arcane_boots");
 			_stick = Me.FindItem("item_magic_stick") ?? Me.FindItem("item_magic_wand");
 			_shiva = Me.FindItem("item_shivas_guard");
-
+                    var mod = Me.FindModifier("modifier_ember_spirit_fire_remnant_charge_counter");
+                    var stacks = mod?.StackCount;
 
 			var stoneModif = E.HasModifier("modifier_medusa_stone_gaze_stone");
 
@@ -287,9 +288,7 @@ namespace DotaAllCombo.Heroes
 					)
 				{
 					_r.UseAbility(E.Predict(700));
-					_r.UseAbility(E.Predict(700));
-					_r.UseAbility(E.Predict(700));
-					Utils.Sleep(110, "R");
+					Utils.Sleep(10, "R");
 				} // R Skill end
 				if ( //R Skill
 					_r != null
@@ -301,9 +300,7 @@ namespace DotaAllCombo.Heroes
 					)
 				{
 					_r.UseAbility(E.Predict(700));
-					_r.UseAbility(E.Predict(700));
-					_r.UseAbility(E.Predict(700));
-					Utils.Sleep(5000, "R");
+					Utils.Sleep(50, "R");
 				} // R Skill end
 				if ( // sheep
 					_sheep != null
