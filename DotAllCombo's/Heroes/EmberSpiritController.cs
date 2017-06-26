@@ -53,6 +53,8 @@ namespace DotaAllCombo.Heroes
 							&& Utils.SleepCheck("z"))
 						{
 							_r.UseAbility(pos);
+							_r.UseAbility(pos);
+							_r.UseAbility(pos);
 							Utils.Sleep(1000, "z");
 						}
 					}
