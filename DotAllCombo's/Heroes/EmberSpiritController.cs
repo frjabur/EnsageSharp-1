@@ -27,7 +27,6 @@ namespace DotaAllCombo.Heroes
 		public void Combo()
 		{
 			Active = Game.IsKeyDown(Menu.Item("keyBind").GetValue<KeyBind>().Key);
-
 			Push = Game.IsKeyDown(Menu.Item("keyEscape").GetValue<KeyBind>().Key);
 			_wKey = Game.IsKeyDown(Menu.Item("wKey").GetValue<KeyBind>().Key);
 			_oneUlt = Menu.Item("oneult").IsActive();
@@ -49,13 +48,9 @@ namespace DotaAllCombo.Heroes
 					if (remnant.Count(x => x.Distance2D(Me) <= 10000) == 0)
 					{
 						if (_r != null && _r.CanBeCasted()
-							&& Me.FindModifier("modifier_ember_spirit_fire_remnant_charge_counter").StackCount > 1
+							&& Me.FindModifier("modifier_ember_spirit_fire_remnant_charge_counter").StackCount >= 1
 							&& Utils.SleepCheck("z"))
 						{
-							_r.UseAbility(pos);
-														Utils.Sleep(1000, "z");
-							_r.UseAbility(pos);
-														Utils.Sleep(1000, "z");
 					                _r.UseAbility(pos);
 							Utils.Sleep(1000, "z");
 						}
@@ -292,6 +287,8 @@ namespace DotaAllCombo.Heroes
 					)
 				{
 					_r.UseAbility(E.Predict(700));
+					_r.UseAbility(E.Predict(700));
+					_r.UseAbility(E.Predict(700));
 					Utils.Sleep(110, "R");
 				} // R Skill end
 				if ( //R Skill
@@ -303,6 +300,8 @@ namespace DotaAllCombo.Heroes
 					&& Utils.SleepCheck("R")
 					)
 				{
+					_r.UseAbility(E.Predict(700));
+					_r.UseAbility(E.Predict(700));
 					_r.UseAbility(E.Predict(700));
 					Utils.Sleep(5000, "R");
 				} // R Skill end
