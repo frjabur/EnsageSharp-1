@@ -49,14 +49,12 @@ namespace DotaAllCombo.Heroes
 					if (remnant.Count(x => x.Distance2D(Me) <= 10000) == 0)
 					{
 						if (_r != null && _r.CanBeCasted()
-							&& Me.FindModifier("modifier_ember_spirit_fire_remnant_charge_counter").StackCount >= 3
+							&& Me.FindModifier("modifier_ember_spirit_fire_remnant_charge_counter").StackCount >= 1
 							&& Utils.SleepCheck("z"))
 						{
 							_r.UseAbility(pos);
-							Utils.Sleep(100, "z");
 							_r.UseAbility(pos);
-							Utils.Sleep(100, "z");
-							_r.UseAbility(pos);
+					                _r.UseAbility(pos);
 							Utils.Sleep(1000, "z");
 						}
 					}
@@ -877,7 +875,7 @@ namespace DotaAllCombo.Heroes
 				})));
 			Menu.AddItem(new MenuItem("Heel", "Min targets to BKB").SetValue(new Slider(2, 1, 5)));
 			Menu.AddItem(new MenuItem("Heelm", "Min targets to BladeMail").SetValue(new Slider(2, 1, 5)));
-			Menu.AddItem(new MenuItem("oneult", "Use One ult").SetValue(false));
+			Menu.AddItem(new MenuItem("oneult", "Use All remnants").SetValue(false));
 		}
 
 		public void OnCloseEvent()
