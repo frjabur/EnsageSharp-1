@@ -49,11 +49,13 @@ namespace DotaAllCombo.Heroes
 					if (remnant.Count(x => x.Distance2D(Me) <= 10000) == 0)
 					{
 						if (_r != null && _r.CanBeCasted()
-							&& Me.FindModifier("modifier_ember_spirit_fire_remnant_charge_counter").StackCount >= 1
+							&& Me.FindModifier("modifier_ember_spirit_fire_remnant_charge_counter").StackCount >= 3
 							&& Utils.SleepCheck("z"))
 						{
 							_r.UseAbility(pos);
+							Utils.Sleep(100, "z");
 							_r.UseAbility(pos);
+							Utils.Sleep(100, "z");
 							_r.UseAbility(pos);
 							Utils.Sleep(1000, "z");
 						}
